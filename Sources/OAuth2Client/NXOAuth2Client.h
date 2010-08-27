@@ -8,6 +8,11 @@
 
 #import <Foundation/Foundation.h>
 
+#import "NXOAuth2ConnectionDelegate.h"
+
+
+@class NXOAuth2Connection;
+
 
 /*!
  * The OAuth 2.0 client
@@ -16,19 +21,23 @@
  * - oauth2 draft 10 http://tools.ietf.org/html/draft-ietf-oauth-v2-10
  * - not thread save
  */
-
-
-@interface NXOAuth2Client : NSObject {
+@interface NXOAuth2Client : NSObject <NXOAuth2ConnectionDelegate> {
 @private
-	NSString *clientId;
-	NSString *clientSecret;
+	NSString	*clientId;
+	NSString	*clientSecret;
+	
+	// server information
 	
 	// webserver flow
-	NSURL	*redirectURL;
+	NSURL		*redirectURL;
 	
 	// user credentials flow
-	NSString *username;
-	NSString *password;
+	NSString	*username;
+	NSString	*password;
+	
+	// grand & token exchange
+	NXOAuth2Connection	*authConnection;
+	NSString	*authGrand;
 }
 
 @property (nonatomic, readonly) NSString *clientId;

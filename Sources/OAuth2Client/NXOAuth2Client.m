@@ -6,7 +6,19 @@
 //  Copyright 2010 nxtbgthng. All rights reserved.
 //
 
+#import "NXOAuth2Connection.h"
+
+#import "NSMutableURLRequest+NXOAuth2.h"
+
 #import "NXOAuth2Client.h"
+
+
+@interface NXOAuth2Client ()
+- (void)requestAccessGrand;
+
+- (void)requestTokenWithAuthGrand;
+- (void)requestTokenWithUsernameAndPassword;
+@end
 
 
 @implementation NXOAuth2Client
@@ -44,6 +56,8 @@
 
 - (void)dealloc;
 {
+	[authConnection cancel];
+	[authConnection release];
 	[clientId release];
 	[clientSecret release];
 	[redirectURL release];
@@ -61,14 +75,50 @@
 #pragma mark Flow
 
 
+- (void)requestToken;
+{
+	if (username != nil && password != nil) {	// username password flow
+		[self requestTokenWithUsernameAndPassword];
+	} else {									// web server flow
+		NSAssert(!redirectURL, @"Web server flow without redirectURL");	
+		if (authGrand) {	// we have grand already
+			[self requestTokenWithAuthGrand];
+		} else {
+			[self requestAccessGrand];
+		}
+	}
+}
+
 - (void)requestAccessGrand;
 {
-	if (!redirectURL) { // we're using username & password flow
-		NSAssert(username != nil && password != nil, @"Username & password flow without username & password.");
+	if (authConnection) {	// authentication is already running
 		return;
 	}
 	
+	NSMutableURLRequest *grandRequest = [[NSMutableURLRequest alloc] initWithURL:[NSURL URLWithString:@"http://api.sandbox-soundcloud.com/oauth2/authorize"]];
+	[grandRequest setParameters:[NSDictionary dictionaryWithObjectsAndKeys:
+								 @"code", @"response_type",
+								 clientId, @"client_id",
+								 nil];
 	
+	authConnection = [[NXOAuth2Connection alloc] initWithRequest:grandRequest
+													 oauthClient:nil			// no need to sign this request. we also haven't got the token yet
+														delegate:self];
+	[grandRequest release];
+}
+
+
+#pragma mark NXOAuth2ConnectionDelegate
+
+- (void)oauthConnection:(NXOAuth2Connection *)connection didFinishWithData:(NSData *)data;
+{
+	NSString *string = [[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding] autorelease];
+	NSLog(@"result: %@", string);
+}
+
+- (void)oauthConnection:(NXOAuth2Connection *)connection didFailWithError:(NSError *)error;
+{
+	NSLog(@"Error: %@", [error localizedDescription]);
 }
 
 

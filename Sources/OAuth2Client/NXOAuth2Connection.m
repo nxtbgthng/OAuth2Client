@@ -7,6 +7,7 @@
 //
 
 #import "NXOAuth2PostBodyStream.h"
+#import "NXOAuth2ConnectionDelegate.h"
 
 #import "NXOAuth2Connection.h"
 
