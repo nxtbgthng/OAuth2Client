@@ -21,6 +21,7 @@
 @property (nonatomic, readonly) BOOL doesExpire;
 @property (nonatomic, readonly) BOOL hasExpired;
 
-- (id)initWithSomething;
+- (id)initWithAccessToken:(NSString *)accessToken;
+- (id)initWithAccessToken:(NSString *)accessToken refreshToken:(NSString *)refreshToken expiresAt:(NSDate *)expiryDate;	// designated
 
 @end

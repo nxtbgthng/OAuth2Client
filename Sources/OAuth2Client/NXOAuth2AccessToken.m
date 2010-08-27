@@ -13,9 +13,17 @@
 
 #pragma mark Lifecycle
 
-- (id)initWithSomething;
+- (id)initWithAccessToken:(NSString *)anAccessToken;
+{
+	return [self initWithAccessToken:anAccessToken refreshToken:nil expiresAt:nil];
+}
+
+- (id)initWithAccessToken:(NSString *)anAccessToken refreshToken:(NSString *)aRefreshToken expiresAt:(NSDate *)anExpiryDate;
 {
 	if (self = [super init]) {
+		accessToken = [anAccessToken copy];
+		refreshToken = [aRefreshToken copy];
+		expiresAt = [anExpiryDate copy];
 	}
 	return self;
 }
@@ -31,8 +39,8 @@
 
 #pragma mark Accessors
 
-@dynamic accessToken;
-@dynamic refreshToken;
+@synthesize accessToken;
+@synthesize refreshToken;
 @synthesize expiresAt;
 
 - (BOOL)doesExpire;
@@ -48,61 +56,8 @@
 
 - (NSString *)description;
 {
-	return [NSString stringWithFormat:@"<NXOAuth2Token token:%@ expiresAt:%@>", self.accessToken, self.expiresAt];
+	return [NSString stringWithFormat:@"<NXOAuth2Token token:%@ refreshToken:%@ expiresAt:%@>", self.accessToken, self.refreshToken, self.expiresAt];
 }
 
-
-#pragma mark Keychain
-
-- (id)initWithDefaultKeychainUsingAppName:(NSString *)name serviceProviderName:(NSString *)provider;
-{
-	NSDictionary *result = nil;
-	NSString *serviceName = [NSString stringWithFormat:@"%@::OAuth2::%@", name, provider];
-	NSDictionary *query = [NSDictionary dictionaryWithObjectsAndKeys:
-						   (NSString *)kSecClassGenericPassword, kSecClass,
-						   serviceName, kSecAttrService,
-						   kCFBooleanTrue, kSecReturnAttributes,
-						   nil];
-	OSStatus status = SecItemCopyMatching((CFDictionaryRef)query, (CFTypeRef *)&result);
-	
-	if (status != noErr) {
-		if (status != errSecItemNotFound) {
-			NSLog(@"Error while initializing OAtoken: %d", status);
-		}
-		[result release];
-		return nil;
-	}
-	
-	if (self = [self init]) {
-		self.key = [result objectForKey:(NSString *)kSecAttrAccount];
-		self.secret = [result objectForKey:(NSString *)kSecAttrGeneric];
-	}
-	[result release];
-	return self;
-}
-
-- (int)storeInDefaultKeychainWithAppName:(NSString *)name serviceProviderName:(NSString *)provider;
-{
-	NSString *serviceName = [NSString stringWithFormat:@"%@::OAuth2::%@", name, provider];
-	NSDictionary *query = [NSDictionary dictionaryWithObjectsAndKeys:
-						   (NSString *)kSecClassGenericPassword, kSecClass,
-						   serviceName, kSecAttrService,
-						   @"SoundCloud API OAuth Token", kSecAttrLabel,
-						   self.key, kSecAttrAccount,
-						   self.secret, kSecAttrGeneric,
-						   nil];
-	[self removeFromDefaultKeychainWithAppName:name serviceProviderName:provider];
-	return SecItemAdd((CFDictionaryRef)query, NULL);
-}
-
-- (int)removeFromDefaultKeychainWithAppName:(NSString *)name serviceProviderName:(NSString *)provider;
-{
-	NSString *serviceName = [NSString stringWithFormat:@"%@::OAuth2::%@", name, provider];	
-	NSDictionary *query = [NSDictionary dictionaryWithObjectsAndKeys:
-						   (NSString *)kSecClassGenericPassword, kSecClass,
-						   serviceName, kSecAttrService,
-						   nil];
-	return SecItemDelete((CFDictionaryRef)query);
-}
 
 @end
