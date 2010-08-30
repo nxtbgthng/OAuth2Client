@@ -15,7 +15,7 @@
 
 
 @interface NXOAuth2Connection ()
-+ (NSURLConnection *)createStartedConnectionWithRequest:(NSURLRequest *)aRequest connectionDelegate:(id)connectionDelegate streamDelegate:(id)streamDelegate client:(NXOAuth2Client *)theClient;
++ (NSURLConnection *)startedConnectionWithRequest:(NSURLRequest *)aRequest connectionDelegate:(id)connectionDelegate streamDelegate:(id)streamDelegate client:(NXOAuth2Client *)theClient;
 @end
 
 
@@ -34,7 +34,7 @@
 		client = [aClient retain];	// TODO: check if assign is better here
 		
 		request = [aRequest copy];
-		connection = [[self class] createStartedConnectionWithRequest:request connectionDelegate:self streamDelegate:self client:client];
+		connection = [[[self class] startedConnectionWithRequest:request connectionDelegate:self streamDelegate:self client:client] retain];
 	}
 	return self;
 }
@@ -72,13 +72,13 @@
 {
 	[self cancel];
 	[connection release];
-	connection = [[self class] createStartedConnectionWithRequest:request connectionDelegate:self streamDelegate:self client:client];
+	connection = [[[self class] startedConnectionWithRequest:request connectionDelegate:self streamDelegate:self client:client] retain];
 }
 
 
 #pragma mark Private
 
-+ (NSURLConnection *)createStartedConnectionWithRequest:(NSURLRequest *)aRequest connectionDelegate:(id)connectionDelegate streamDelegate:(id)streamDelegate client:(NXOAuth2Client *)theClient;
++ (NSURLConnection *)startedConnectionWithRequest:(NSURLRequest *)aRequest connectionDelegate:(id)connectionDelegate streamDelegate:(id)streamDelegate client:(NXOAuth2Client *)theClient;
 {
 	NSMutableURLRequest *startRequest = [[aRequest mutableCopy] autorelease];
 	
@@ -95,7 +95,7 @@
 	NSURLConnection *aConnection = [[NSURLConnection alloc] initWithRequest:startRequest delegate:connectionDelegate startImmediately:NO];	// don't start yet
 	[aConnection scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];												// let's first schedule it in the current runloop. (see http://github.com/soundcloud/cocoa-api-wrapper/issues#issue/2 )
 	[aConnection start];	// now start
-	return aConnection;
+	return [aConnection autorelease];
 }
 
 
