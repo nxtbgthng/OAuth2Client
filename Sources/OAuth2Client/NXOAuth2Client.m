@@ -45,6 +45,7 @@
 		redirectURL = [aRedirectURL copy];
 		
 		authDelegate = anAuthDelegate;
+		if (self.accessToken && !self.accessToken.hasExpired) [authDelegate oauthClientDidAuthorize:self];	// if we have a valid access token in the keychain
 	}
 	return self;
 }
@@ -68,6 +69,7 @@
 		password = [aPassword copy];
 		
 		authDelegate = anAuthDelegate;
+		if (self.accessToken && !self.accessToken.hasExpired) [authDelegate oauthClientDidAuthorize:self];	// if we have a valid access token in the keychain
 	}
 	return self;	
 }
@@ -88,7 +90,29 @@
 
 #pragma mark Accessors
 
-@synthesize clientId, clientSecret, accessToken;
+@synthesize clientId, clientSecret;
+
+@dynamic accessToken;
+
+- (NXOAuth2AccessToken *)accessToken;
+{
+	if (accessToken) return accessToken;
+	accessToken = [NXOAuth2AccessToken tokenFromDefaultKeychainWithServiceProviderName:[tokenURL host]];
+	return accessToken;
+}
+
+- (void)setAccessToken:(NXOAuth2AccessToken *)value;
+{
+	if (!value) {
+		[self.accessToken removeFromDefaultKeychainWithServiceProviderName:[tokenURL host]];
+	}
+	
+	[self willChangeValueForKey:@"accessToken"];
+	[value retain];	[accessToken release]; accessToken = value;
+	[self didChangeValueForKey:@"accessToken"];
+	
+	[accessToken storeInDefaultKeychainWithServiceProviderName:[tokenURL host]];
+}
 
 
 #pragma mark Flow
@@ -98,7 +122,7 @@
 	if (username != nil && password != nil) {	// username password flow
 		[self requestTokenWithUsernameAndPassword];
 	} else {									// web server flow
-		NSAssert(!redirectURL, @"Web server flow without redirectURL");	
+		NSAssert(redirectURL, @"Web server flow without redirectURL");	
 		if (authGrand) {	// we have grand already
 			[self requestTokenWithAuthGrand];
 		} else {
@@ -223,8 +247,7 @@
 		NSString *result = [[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding] autorelease];
 		NXOAuth2AccessToken *newToken = [NXOAuth2AccessToken tokenWithResponseBody:result];
 		NSAssert(newToken != nil, @"invalid response?");
-		[accessToken release];
-		accessToken = [newToken retain];
+		self.accessToken = newToken;
 		[authDelegate oauthClientDidAuthorize:self];
 		
 		for (NXOAuth2Connection *retryConnection in retryConnectionsAfterTokenExchange) {
