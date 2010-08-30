@@ -50,7 +50,7 @@
 @property (nonatomic, readonly) NSString *clientId;
 @property (nonatomic, readonly) NSString *clientSecret;
 
-@property (nonatomic, readonly) NXOAuth2AccessToken	*accessToken;
+@property (nonatomic, retain) NXOAuth2AccessToken	*accessToken;
 
 
 #pragma mark WebServer Flow
