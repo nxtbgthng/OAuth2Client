@@ -8,10 +8,28 @@
 
 #import "NXOAuth2AccessToken.h"
 
+#import "JSON/JSON.h"
+#import "NSString+NXOAuth2.h"
 
 @implementation NXOAuth2AccessToken
 
 #pragma mark Lifecycle
+
++ (id)tokenWithResponseBody:(NSString *)responseBody;
+{
+	id jsonDict = [responseBody JSONValue];
+	NSNumber *expiresIn = [jsonDict objectForKey:@"expires_in"];
+	NSString *anAccessToken = [jsonDict objectForKey:@"access_token"];
+	NSString *aRefreshToken = [jsonDict objectForKey:@"refresh_token"];
+	
+	NSDate *expiryDate = nil;
+	if (expiresIn) {
+		expiryDate = [NSDate dateWithTimeIntervalSinceNow:[expiresIn integerValue]];
+	}
+	return [[[self class] alloc] initWithAccessToken:anAccessToken
+										refreshToken:aRefreshToken
+										   expiresAt:expiryDate];
+}
 
 - (id)initWithAccessToken:(NSString *)anAccessToken;
 {
