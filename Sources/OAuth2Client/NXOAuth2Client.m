@@ -7,6 +7,7 @@
 //
 
 #import "NXOAuth2Connection.h"
+#import "NXOAuth2AccessToken.h"
 
 #import "NSURL+NXOAuth2.h"
 #import "NSMutableURLRequest+NXOAuth2.h"
@@ -181,8 +182,13 @@
 
 - (void)oauthConnection:(NXOAuth2Connection *)connection didFinishWithData:(NSData *)data;
 {
-	NSString *string = [[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding] autorelease];
-	NSLog(@"result: %@", string);
+	if (connection == authConnection) {
+		NSString *result = [[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding] autorelease];
+		NXOAuth2AccessToken *newToken = [NXOAuth2AccessToken tokenWithResponseBody:result];
+		NSAssert(newToken != nil, @"invalid response?");
+		[accessToken release];
+		accessToken = [newToken retain];
+	}
 }
 
 - (void)oauthConnection:(NXOAuth2Connection *)connection didFailWithError:(NSError *)error;

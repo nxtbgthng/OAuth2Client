@@ -11,7 +11,7 @@
 #import "NXOAuth2ConnectionDelegate.h"
 
 
-@class NXOAuth2Connection;
+@class NXOAuth2Connection, NXOAuth2AccessToken;
 @protocol NXOAuth2ClientAuthDelegate;
 
 /*!
@@ -40,6 +40,7 @@
 	// grand & token exchange
 	NXOAuth2Connection	*authConnection;
 	NSString	*authGrand;
+	NXOAuth2AccessToken	*accessToken;
 	
 	// delegates
 	NSObject<NXOAuth2ClientAuthDelegate>*	authDelegate;	// assigned
@@ -76,6 +77,9 @@
 			  username:(NSString *)username
 			  password:(NSString *)password
 		  authDelegate:(NSObject<NXOAuth2ClientAuthDelegate> *)authDelegate;
+
+
+#pragma mark Perform Requests
 
 @end
 
