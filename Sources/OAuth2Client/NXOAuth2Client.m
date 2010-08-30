@@ -119,7 +119,11 @@
 
 - (void)requestAccess;
 {
-	if (username != nil && password != nil) {	// username password flow
+	if (self.accessToken) {
+		if (self.accessToken.hasExpired){
+			[self refreshAccessToken];
+		}
+	} else if (username != nil && password != nil) {	// username password flow
 		[self requestTokenWithUsernameAndPassword];
 	} else {									// web server flow
 		NSAssert(redirectURL, @"Web server flow without redirectURL");	
