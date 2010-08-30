@@ -12,7 +12,7 @@
 
 
 @class NXOAuth2Connection;
-
+@protocol NXOAuth2ClientAuthDelegate;
 
 /*!
  * The OAuth 2.0 client
@@ -27,6 +27,8 @@
 	NSString	*clientSecret;
 	
 	// server information
+	NSURL		*authorizeURL;
+	NSURL		*tokenURL;
 	
 	// webserver flow
 	NSURL		*redirectURL;
@@ -38,25 +40,44 @@
 	// grand & token exchange
 	NXOAuth2Connection	*authConnection;
 	NSString	*authGrand;
+	
+	// delegates
+	NSObject<NXOAuth2ClientAuthDelegate>*	authDelegate;
 }
 
 @property (nonatomic, readonly) NSString *clientId;
 @property (nonatomic, readonly) NSString *clientSecret;
 
 
-/*!
- * WebServer Flow
- */
-- (id)initWithClientID:(NSString *)clientId
-		  clientSecret:(NSString *)clientSecret
-		   redirectURL:(NSURL *)redirectURL;
+#pragma mark WebServer Flow
 
 /*!
- * User credentials Flow
+ * Initializes the Client
  */
 - (id)initWithClientID:(NSString *)clientId
 		  clientSecret:(NSString *)clientSecret
+		  authorizeURL:(NSURL *)authorizeURL
+			  tokenURL:(NSURL *)tokenURL
+		   redirectURL:(NSURL *)redirectURL;
+
+- (BOOL)openURL:(NSURL *)URL;
+
+
+#pragma mark User credentials Flow
+
+/*!
+ * Initializes the Client
+ */
+- (id)initWithClientID:(NSString *)clientId
+		  clientSecret:(NSString *)clientSecret
+		  authorizeURL:(NSURL *)authorizeURL
+			  tokenURL:(NSURL *)tokenURL
 			  username:(NSString *)username
 			  password:(NSString *)password;
 
+@end
+
+
+@protocol NXOAuth2ClientAuthDelegate
+- (void)oauthClient:(NXOAuth2Client *)client requestedAuthorizationWithURL:(NSURL *)authorizationURL;
 @end

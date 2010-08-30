@@ -8,6 +8,7 @@
 
 #import "NXOAuth2Connection.h"
 
+#import "NSURL+NXOAuth2.h"
 #import "NSMutableURLRequest+NXOAuth2.h"
 
 #import "NXOAuth2Client.h"
@@ -28,12 +29,17 @@
 
 - (id)initWithClientID:(NSString *)aClientId
 		  clientSecret:(NSString *)aClientSecret
+		  authorizeURL:(NSURL *)anAuthorizeURL
+			  tokenURL:(NSURL *)aTokenURL
 		   redirectURL:(NSURL *)aRedirectURL;
 {
 	NSAssert(aRedirectURL != nil, @"WebServer flow without redirectURL.");
+	NSAssert(aTokenURL != nil && anAuthorizeURL != nil, @"No token or no authorize URL");
 	if (self = [super init]) {
 		clientId = [aClientId copy];
 		clientSecret = [aClientSecret copy];
+		authorizeURL = [anAuthorizeURL copy];
+		tokenURL = [aTokenURL copy];
 		redirectURL = [aRedirectURL copy];
 	}
 	return self;
@@ -41,13 +47,18 @@
 
 - (id)initWithClientID:(NSString *)aClientId
 		  clientSecret:(NSString *)aClientSecret
+		  authorizeURL:(NSURL *)anAuthorizeURL
+			  tokenURL:(NSURL *)aTokenURL
 			  username:(NSString *)aUsername
 			  password:(NSString *)aPassword;
 {
 	NSAssert(aUsername != nil && aPassword != nil, @"Username & password flow without username & password.");
+	NSAssert(aTokenURL != nil && anAuthorizeURL != nil, @"No token or no authorize URL");
 	if (self = [super init]) {
 		clientId = [aClientId copy];
 		clientSecret = [aClientSecret copy];
+		authorizeURL = [anAuthorizeURL copy];
+		tokenURL = [aTokenURL copy];
 		username = [aUsername copy];
 		password = [aPassword copy];
 	}
@@ -74,7 +85,6 @@
 
 #pragma mark Flow
 
-
 - (void)requestToken;
 {
 	if (username != nil && password != nil) {	// username password flow
@@ -95,16 +105,68 @@
 		return;
 	}
 	
-	NSMutableURLRequest *grandRequest = [[NSMutableURLRequest alloc] initWithURL:[NSURL URLWithString:@"http://api.sandbox-soundcloud.com/oauth2/authorize"]];
-	[grandRequest setParameters:[NSDictionary dictionaryWithObjectsAndKeys:
-								 @"code", @"response_type",
-								 clientId, @"client_id",
-								 nil];
+	NSURL *URL = [authorizeURL URLByAddingParameters:[NSDictionary dictionaryWithObjectsAndKeys:
+													  @"code", @"response_type",
+													  clientId, @"client_id",
+													  [redirectURL absoluteString], @"redirect_uri",
+													  nil]];
+	[authDelegate oauthClient:self requestedAuthorizationWithURL:URL];
+}
+
+
+// Web Server Flow only
+- (BOOL)openURL:(NSURL *)URL;
+{
+	NSString *accessGrand = [URL valueForQueryParameterKey:@"code"];
+	if (accessGrand) {
+		[authGrand release];
+		authGrand = [accessGrand copy];
+		[self requestTokenWithAuthGrand];
+		return YES;
+	}
+	return NO;
+}
+
+#pragma mark accessGrand -> accessToken
+
+// Web Server Flow only
+- (void)requestTokenWithAuthGrand;
+{
+	NSAssert(!authConnection, @"invalid state");
 	
-	authConnection = [[NXOAuth2Connection alloc] initWithRequest:grandRequest
-													 oauthClient:nil			// no need to sign this request. we also haven't got the token yet
+	NSMutableURLRequest *tokenRequest = [NSMutableURLRequest requestWithURL:tokenURL];
+	[tokenRequest setHTTPMethod:@"POST"];
+	[tokenRequest setParameters:[NSDictionary dictionaryWithObjectsAndKeys:
+								 @"authorization_code", @"grant_type",
+								 clientId, @"client_id",
+								 clientSecret, @"client_secret",
+								 authGrand, @"code",
+								 redirectURL, @"redirect_uri",
+								 nil]];
+	[authConnection release]; // just to be sure
+	authConnection = [[NXOAuth2Connection alloc] initWithRequest:tokenRequest
+													 oauthClient:self
 														delegate:self];
-	[grandRequest release];
+}
+
+
+// User Password Flow Only
+- (void)requestTokenWithUsernameAndPassword;
+{
+	NSAssert(!authConnection, @"invalid state");
+	NSMutableURLRequest *tokenRequest = [NSMutableURLRequest requestWithURL:tokenURL];
+	[tokenRequest setHTTPMethod:@"POST"];
+	[tokenRequest setParameters:[NSDictionary dictionaryWithObjectsAndKeys:
+								 @"authorization_code", @"password",
+								 clientId, @"client_id",
+								 clientSecret, @"client_secret",
+								 username, @"username",
+								 password, @"password",
+								 nil]];
+	 [authConnection release]; // just to be sure
+	 authConnection = [[NXOAuth2Connection alloc] initWithRequest:tokenRequest
+													  oauthClient:self
+														 delegate:self];
 }
 
 
