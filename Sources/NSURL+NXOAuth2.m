@@ -13,7 +13,7 @@
 
 @implementation NSURL (SoundCloudAPI)
 
-- (NSURL *)urlByAddingParameters:(NSDictionary *)parameterDictionary {
+- (NSURL *)URLByAddingParameters:(NSDictionary *)parameterDictionary {
 	if (!parameterDictionary || [parameterDictionary count] == 0) {
 		return self;
 	}
