@@ -11,7 +11,7 @@
 		9429B3AB12267A3100D31807 /* NXOAuth2Client.m in Sources */ = {isa = PBXBuildFile; fileRef = 9429B3A912267A3100D31807 /* NXOAuth2Client.m */; };
 		9429B4D91226987D00D31807 /* NXOAuth2AccessToken.h in Headers */ = {isa = PBXBuildFile; fileRef = 9429B4D71226987D00D31807 /* NXOAuth2AccessToken.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9429B4DA1226987D00D31807 /* NXOAuth2AccessToken.m in Sources */ = {isa = PBXBuildFile; fileRef = 9429B4D81226987D00D31807 /* NXOAuth2AccessToken.m */; };
-		9429B5181226CB5800D31807 /* NXOAuth2Connection.h in Headers */ = {isa = PBXBuildFile; fileRef = 9429B5161226CB5800D31807 /* NXOAuth2Connection.h */; };
+		9429B5181226CB5800D31807 /* NXOAuth2Connection.h in Headers */ = {isa = PBXBuildFile; fileRef = 9429B5161226CB5800D31807 /* NXOAuth2Connection.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9429B5191226CB5800D31807 /* NXOAuth2Connection.m in Sources */ = {isa = PBXBuildFile; fileRef = 9429B5171226CB5800D31807 /* NXOAuth2Connection.m */; };
 		9429B5341226D7A600D31807 /* NXOAuth2Constants.h in Headers */ = {isa = PBXBuildFile; fileRef = 9429B5321226D7A600D31807 /* NXOAuth2Constants.h */; };
 		9429B5351226D7A600D31807 /* NXOAuth2Constants.m in Sources */ = {isa = PBXBuildFile; fileRef = 9429B5331226D7A600D31807 /* NXOAuth2Constants.m */; };
