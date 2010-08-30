@@ -13,6 +13,9 @@
 
 + (NSString *)stringWithUUID;
 
++ (NSString *)stringWithEncodedQueryParameters:(NSDictionary *)parameters;
+- (NSDictionary *)parametersFromEncodedQueryString;
+
 - (NSString *)URLEncodedString;
 - (NSString *)URLDecodedString;
 

@@ -10,7 +10,7 @@
 
 @interface NSURL (NXOAuth2)
 
-- (NSURL *)urlByAddingParameters:(NSDictionary *)parameters;
+- (NSURL *)URLByAddingParameters:(NSDictionary *)parameters;
 
 /*!
  * returns the value of the first parameter on the query string that matches the key

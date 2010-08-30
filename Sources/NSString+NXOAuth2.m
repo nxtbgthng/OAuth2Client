@@ -20,6 +20,38 @@
     return [(NSString *)string autorelease];
 }
 
+
+#pragma mark Query String Helpers
+
++ (NSString *)stringWithEncodedQueryParameters:(NSDictionary *)parameters;
+{
+	
+	NSMutableArray *parameterPairs = [NSMutableArray array];
+	for (NSString *key in [parameters allKeys]) {
+		NSString *pair = [NSString stringWithFormat:@"%@=%@", [key URLEncodedString], [[parameters objectForKey:key] URLEncodedString]];
+		[parameterPairs addObject:pair];
+	}
+	return [parameterPairs componentsJoinedByString:@"&"];
+}
+
+- (NSDictionary *)parametersFromEncodedQueryString;
+{
+	NSArray *encodedParameterPairs = [self componentsSeparatedByString:@"&"];
+    NSMutableDictionary *requestParameters = [NSMutableDictionary dictionary];
+    
+    for (NSString *encodedPair in encodedParameterPairs) {
+        NSArray *encodedPairElements = [encodedPair componentsSeparatedByString:@"="];
+		if (encodedPairElements.count == 2) {
+			[requestParameters setValue:[[encodedPairElements objectAtIndex:1] URLDecodedString]
+								 forKey:[[encodedPairElements objectAtIndex:0] URLDecodedString]];
+		}
+    }
+	return requestParameters;
+}
+
+
+#pragma mark URLEncoding
+
 - (NSString *)URLEncodedString 
 {
     NSString *result = (NSString *)CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault,
