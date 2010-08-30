@@ -26,7 +26,7 @@
 		delegate = aDelegate;	// assign only
 		client = [aClient retain];	// TODO: check if assign is better here
 		
-		NSURLRequest *request = [client sign:aRequest];	// TODO: sign
+		NSURLRequest *request = aRequest;//[client sign:aRequest];	// TODO: sign
 		
 		NSInputStream *bodyStream = [request HTTPBodyStream];
 		if ([bodyStream isKindOfClass:[NXOAuth2PostBodyStream class]]){
