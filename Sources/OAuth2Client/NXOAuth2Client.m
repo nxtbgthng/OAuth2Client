@@ -146,8 +146,8 @@
 								 @"authorization_code", @"grant_type",
 								 clientId, @"client_id",
 								 clientSecret, @"client_secret",
+								 [redirectURL absoluteString], @"redirect_uri",
 								 authGrand, @"code",
-								 redirectURL, @"redirect_uri",
 								 nil]];
 	[authConnection release]; // just to be sure
 	authConnection = [[NXOAuth2Connection alloc] initWithRequest:tokenRequest
@@ -166,6 +166,7 @@
 								 @"authorization_code", @"password",
 								 clientId, @"client_id",
 								 clientSecret, @"client_secret",
+								 [redirectURL absoluteString], @"redirect_uri",
 								 username, @"username",
 								 password, @"password",
 								 nil]];
