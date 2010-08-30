@@ -28,9 +28,9 @@
 	if (expiresIn) {
 		expiryDate = [NSDate dateWithTimeIntervalSinceNow:[expiresIn integerValue]];
 	}
-	return [[[self class] alloc] initWithAccessToken:anAccessToken
-										refreshToken:aRefreshToken
-										   expiresAt:expiryDate];
+	return [[[[self class] alloc] initWithAccessToken:anAccessToken
+										 refreshToken:aRefreshToken
+											expiresAt:expiryDate] autorelease];
 }
 
 - (id)initWithAccessToken:(NSString *)anAccessToken;
