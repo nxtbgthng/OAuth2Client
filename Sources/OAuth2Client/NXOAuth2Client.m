@@ -31,7 +31,8 @@
 		  clientSecret:(NSString *)aClientSecret
 		  authorizeURL:(NSURL *)anAuthorizeURL
 			  tokenURL:(NSURL *)aTokenURL
-		   redirectURL:(NSURL *)aRedirectURL;
+		   redirectURL:(NSURL *)aRedirectURL
+		  authDelegate:(NSObject<NXOAuth2ClientAuthDelegate> *)anAuthDelegate;
 {
 	NSAssert(aRedirectURL != nil, @"WebServer flow without redirectURL.");
 	NSAssert(aTokenURL != nil && anAuthorizeURL != nil, @"No token or no authorize URL");
@@ -41,6 +42,8 @@
 		authorizeURL = [anAuthorizeURL copy];
 		tokenURL = [aTokenURL copy];
 		redirectURL = [aRedirectURL copy];
+		
+		authDelegate = anAuthDelegate;
 	}
 	return self;
 }
@@ -50,7 +53,8 @@
 		  authorizeURL:(NSURL *)anAuthorizeURL
 			  tokenURL:(NSURL *)aTokenURL
 			  username:(NSString *)aUsername
-			  password:(NSString *)aPassword;
+			  password:(NSString *)aPassword
+		  authDelegate:(NSObject<NXOAuth2ClientAuthDelegate> *)anAuthDelegate;
 {
 	NSAssert(aUsername != nil && aPassword != nil, @"Username & password flow without username & password.");
 	NSAssert(aTokenURL != nil && anAuthorizeURL != nil, @"No token or no authorize URL");
@@ -61,6 +65,8 @@
 		tokenURL = [aTokenURL copy];
 		username = [aUsername copy];
 		password = [aPassword copy];
+		
+		authDelegate = anAuthDelegate;
 	}
 	return self;	
 }

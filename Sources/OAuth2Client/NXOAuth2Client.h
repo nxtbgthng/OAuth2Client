@@ -42,7 +42,7 @@
 	NSString	*authGrand;
 	
 	// delegates
-	NSObject<NXOAuth2ClientAuthDelegate>*	authDelegate;
+	NSObject<NXOAuth2ClientAuthDelegate>*	authDelegate;	// assigned
 }
 
 @property (nonatomic, readonly) NSString *clientId;
@@ -58,7 +58,8 @@
 		  clientSecret:(NSString *)clientSecret
 		  authorizeURL:(NSURL *)authorizeURL
 			  tokenURL:(NSURL *)tokenURL
-		   redirectURL:(NSURL *)redirectURL;
+		   redirectURL:(NSURL *)redirectURL
+		  authDelegate:(NSObject<NXOAuth2ClientAuthDelegate> *)authDelegate;
 
 - (BOOL)openURL:(NSURL *)URL;
 
@@ -73,7 +74,8 @@
 		  authorizeURL:(NSURL *)authorizeURL
 			  tokenURL:(NSURL *)tokenURL
 			  username:(NSString *)username
-			  password:(NSString *)password;
+			  password:(NSString *)password
+		  authDelegate:(NSObject<NXOAuth2ClientAuthDelegate> *)authDelegate;
 
 @end
 
