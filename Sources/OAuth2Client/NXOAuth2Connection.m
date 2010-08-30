@@ -15,7 +15,7 @@
 
 
 @interface NXOAuth2Connection ()
-- (NSURLConnection *)createStartedConnectionWithRequest:(NSURLRequest *)aRequest connectionDelegate:(id)connectionDelegate streamDelegate:(id)streamDelegate;
++ (NSURLConnection *)createStartedConnectionWithRequest:(NSURLRequest *)aRequest connectionDelegate:(id)connectionDelegate streamDelegate:(id)streamDelegate client:(NXOAuth2Client *)theClient;
 @end
 
 
@@ -34,7 +34,7 @@
 		client = [aClient retain];	// TODO: check if assign is better here
 		
 		request = [aRequest copy];
-		connection = [self createStartedConnectionWithRequest:request connectionDelegate:self streamDelegate:self];
+		connection = [[self class] createStartedConnectionWithRequest:request connectionDelegate:self streamDelegate:self client:client];
 	}
 	return self;
 }
@@ -72,18 +72,19 @@
 {
 	[self cancel];
 	[connection release];
-	connection = [self createStartedConnectionWithRequest:request connectionDelegate:self streamDelegate:self];
+	connection = [[self class] createStartedConnectionWithRequest:request connectionDelegate:self streamDelegate:self client:client];
 }
 
 
 #pragma mark Private
 
-- (NSURLConnection *)createStartedConnectionWithRequest:(NSURLRequest *)aRequest connectionDelegate:(id)connectionDelegate streamDelegate:(id)streamDelegate;
++ (NSURLConnection *)createStartedConnectionWithRequest:(NSURLRequest *)aRequest connectionDelegate:(id)connectionDelegate streamDelegate:(id)streamDelegate client:(NXOAuth2Client *)theClient;
 {
 	NSMutableURLRequest *startRequest = [[aRequest mutableCopy] autorelease];
 	
-	if (client.accessToken) {
-		[startRequest setValue:client.accessToken.accessToken forHTTPHeaderField:@"Authorization"];
+	if (theClient.accessToken) {
+		[startRequest setValue:[NSString stringWithFormat:@"OAuth %@", theClient.accessToken.accessToken]
+			forHTTPHeaderField:@"Authorization"];
 	}
 	
 	NSInputStream *bodyStream = [startRequest HTTPBodyStream];
@@ -92,7 +93,7 @@
 	}
 	
 	NSURLConnection *aConnection = [[NSURLConnection alloc] initWithRequest:startRequest delegate:connectionDelegate startImmediately:NO];	// don't start yet
-	[aConnection scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];				// let's first schedule it in the current runloop. (see http://github.com/soundcloud/cocoa-api-wrapper/issues#issue/2 )
+	[aConnection scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];												// let's first schedule it in the current runloop. (see http://github.com/soundcloud/cocoa-api-wrapper/issues#issue/2 )
 	[aConnection start];	// now start
 	return aConnection;
 }
@@ -170,9 +171,20 @@
 	}
 }
 
+- (BOOL)connection:(NSURLConnection *)connection canAuthenticateAgainstProtectionSpace:(NSURLProtectionSpace *)protectionSpace;
+{
+	return [protectionSpace.authenticationMethod isEqualToString:NSURLAuthenticationMethodServerTrust];
+}
+
 - (void)connection:(NSURLConnection *)connection didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge;
 {
 	// TODO: handle request signed with expired token
+	NSLog(@"%@", challenge.protectionSpace.authenticationMethod);
+	if ([challenge.protectionSpace.authenticationMethod isEqualToString:NSURLAuthenticationMethodServerTrust]) {
+		//if ([trustedHosts containsObject:challenge.protectionSpace.host])
+		[challenge.sender useCredential:[NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust] forAuthenticationChallenge:challenge];
+	}
+	[challenge.sender continueWithoutCredentialForAuthenticationChallenge:challenge];
 }
 
 
