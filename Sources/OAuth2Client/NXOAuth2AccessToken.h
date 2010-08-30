@@ -7,9 +7,10 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <Security/Security.h>
 
 
-@interface NXOAuth2AccessToken : NSObject {
+@interface NXOAuth2AccessToken : NSObject <NSCoding> {
 @private
 	NSString *accessToken;
 	NSString *refreshToken;
@@ -25,5 +26,12 @@
 
 - (id)initWithAccessToken:(NSString *)accessToken;
 - (id)initWithAccessToken:(NSString *)accessToken refreshToken:(NSString *)refreshToken expiresAt:(NSDate *)expiryDate;	// designated
+
+
+#pragma mark Keychain Support
+
++ (id)tokenFromDefaultKeychainWithServiceProviderName:(NSString *)provider;
+- (void)storeInDefaultKeychainWithServiceProviderName:(NSString *)provider;
+- (void)removeFromDefaultKeychainWithServiceProviderName:(NSString *)provider;
 
 @end
