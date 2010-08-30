@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9414FE2C122BD6F100852F70 /* libjson.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9414FE27122BD6E900852F70 /* libjson.a */; };
 		9429B3AA12267A3100D31807 /* NXOAuth2Client.h in Headers */ = {isa = PBXBuildFile; fileRef = 9429B3A812267A3100D31807 /* NXOAuth2Client.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9429B3AB12267A3100D31807 /* NXOAuth2Client.m in Sources */ = {isa = PBXBuildFile; fileRef = 9429B3A912267A3100D31807 /* NXOAuth2Client.m */; };
 		9429B4D91226987D00D31807 /* NXOAuth2AccessToken.h in Headers */ = {isa = PBXBuildFile; fileRef = 9429B4D71226987D00D31807 /* NXOAuth2AccessToken.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -33,7 +34,53 @@
 		AACBBE4A0F95108600F1A2B1 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AACBBE490F95108600F1A2B1 /* Foundation.framework */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		9414FE22122BD6E900852F70 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 9414FE14122BD6E800852F70 /* JSON.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 53D229810C96121600276605 /* JSON.framework */;
+			remoteInfo = JSON;
+		};
+		9414FE24122BD6E900852F70 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 9414FE14122BD6E800852F70 /* JSON.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 53D2298D0C96122A00276605 /* Tests.octest */;
+			remoteInfo = Tests;
+		};
+		9414FE26122BD6E900852F70 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 9414FE14122BD6E800852F70 /* JSON.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = FE2BBD800D8B0D3900184787 /* libjson.a */;
+			remoteInfo = libjson;
+		};
+		9414FE28122BD6E900852F70 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 9414FE14122BD6E800852F70 /* JSON.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = FE2BBDAB0D8B0EE000184787 /* libjsontests.octest */;
+			remoteInfo = libjsontests;
+		};
+		9414FE2A122BD6E900852F70 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 9414FE14122BD6E800852F70 /* JSON.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 53EF4D400DC247B3005F5E6D /* bench */;
+			remoteInfo = bench;
+		};
+		9414FE2D122BD6F600852F70 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 9414FE14122BD6E800852F70 /* JSON.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = FE2BBD7F0D8B0D3900184787 /* libjson */;
+			remoteInfo = libjson;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
+		9414FE14122BD6E800852F70 /* JSON.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = JSON.xcodeproj; path = "JSON-Framework/JSON.xcodeproj"; sourceTree = "<group>"; };
 		9429B3A812267A3100D31807 /* NXOAuth2Client.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NXOAuth2Client.h; sourceTree = "<group>"; };
 		9429B3A912267A3100D31807 /* NXOAuth2Client.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NXOAuth2Client.m; sourceTree = "<group>"; };
 		9429B4D71226987D00D31807 /* NXOAuth2AccessToken.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NXOAuth2AccessToken.h; sourceTree = "<group>"; };
@@ -66,6 +113,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9414FE2C122BD6F100852F70 /* libjson.a in Frameworks */,
 				AACBBE4A0F95108600F1A2B1 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -84,6 +132,7 @@
 		0867D691FE84028FC02AAC07 /* OAuth2Client */ = {
 			isa = PBXGroup;
 			children = (
+				9414FE10122BD6CC00852F70 /* Outsourced */,
 				08FB77AEFE84172EC02AAC07 /* Sources */,
 				0867D69AFE84028FC02AAC07 /* Frameworks */,
 				034768DFFF38A50411DB9C8B /* Products */,
@@ -107,6 +156,26 @@
 				AA747D9E0F9514B9006C5449 /* OAuth2Client_Prefix.pch */,
 			);
 			path = Sources;
+			sourceTree = "<group>";
+		};
+		9414FE10122BD6CC00852F70 /* Outsourced */ = {
+			isa = PBXGroup;
+			children = (
+				9414FE14122BD6E800852F70 /* JSON.xcodeproj */,
+			);
+			path = Outsourced;
+			sourceTree = "<group>";
+		};
+		9414FE15122BD6E800852F70 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				9414FE23122BD6E900852F70 /* JSON.framework */,
+				9414FE25122BD6E900852F70 /* Tests.octest */,
+				9414FE27122BD6E900852F70 /* libjson.a */,
+				9414FE29122BD6E900852F70 /* libjsontests.octest */,
+				9414FE2B122BD6E900852F70 /* bench */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 		9429B38B1226789400D31807 /* OAuth2Client */ = {
@@ -190,6 +259,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				9414FE2E122BD6F600852F70 /* PBXTargetDependency */,
 			);
 			name = OAuth2Client;
 			productName = OAuth2Client;
@@ -210,12 +280,56 @@
 			mainGroup = 0867D691FE84028FC02AAC07 /* OAuth2Client */;
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 9414FE15122BD6E800852F70 /* Products */;
+					ProjectRef = 9414FE14122BD6E800852F70 /* JSON.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				D2AAC07D0554694100DB518D /* OAuth2Client */,
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		9414FE23122BD6E900852F70 /* JSON.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = JSON.framework;
+			remoteRef = 9414FE22122BD6E900852F70 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		9414FE25122BD6E900852F70 /* Tests.octest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = Tests.octest;
+			remoteRef = 9414FE24122BD6E900852F70 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		9414FE27122BD6E900852F70 /* libjson.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libjson.a;
+			remoteRef = 9414FE26122BD6E900852F70 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		9414FE29122BD6E900852F70 /* libjsontests.octest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = libjsontests.octest;
+			remoteRef = 9414FE28122BD6E900852F70 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		9414FE2B122BD6E900852F70 /* bench */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = bench;
+			remoteRef = 9414FE2A122BD6E900852F70 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXSourcesBuildPhase section */
 		D2AAC07B0554694100DB518D /* Sources */ = {
@@ -237,6 +351,14 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		9414FE2E122BD6F600852F70 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = libjson;
+			targetProxy = 9414FE2D122BD6F600852F70 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
 		1DEB921F08733DC00010E9CD /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -255,6 +377,7 @@
 				INSTALL_PATH = /usr/local/lib;
 				PRODUCT_NAME = OAuth2Client;
 				SDKROOT = iphoneos3.2;
+				USER_HEADER_SEARCH_PATHS = "/tmp/*.dst/usr/local/include";
 			};
 			name = Debug;
 		};
@@ -271,6 +394,7 @@
 				INSTALL_PATH = /usr/local/lib;
 				PRODUCT_NAME = OAuth2Client;
 				SDKROOT = iphoneos3.2;
+				USER_HEADER_SEARCH_PATHS = "/tmp/*.dst/usr/local/include";
 			};
 			name = Release;
 		};
