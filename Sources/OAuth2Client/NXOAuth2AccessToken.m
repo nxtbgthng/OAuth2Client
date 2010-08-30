@@ -92,7 +92,7 @@
 + (id)tokenFromDefaultKeychainWithServiceProviderName:(NSString *)provider;
 {
 	NSString *serviceName = [[self class] serviceNameWithProvider:provider];
-	NSData *result = nil;
+	NSDictionary *result = nil;
 	NSDictionary *query = [NSDictionary dictionaryWithObjectsAndKeys:
 						   (NSString *)kSecClassGenericPassword, kSecClass,
 						   serviceName, kSecAttrService,
@@ -106,7 +106,7 @@
 		return nil;
 	}
 	
-	return [NSKeyedUnarchiver unarchiveObjectWithData:result];
+	return [NSKeyedUnarchiver unarchiveObjectWithData:[result objectForKey:(NSString *)kSecAttrGeneric]];
 }
 
 - (void)storeInDefaultKeychainWithServiceProviderName:(NSString *)provider;
@@ -132,7 +132,7 @@
 						   serviceName, kSecAttrService,
 						   nil];
 	OSStatus err = SecItemDelete((CFDictionaryRef)query);
-	NSAssert1(err == noErr, @"error while deleting token from keychain: %d", err);
+	NSAssert1((err == noErr || err == errSecItemNotFound), @"error while deleting token from keychain: %d", err);
 }
 
 
