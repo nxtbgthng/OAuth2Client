@@ -74,6 +74,7 @@
 
 - (void)dealloc;
 {
+	[retryConnectionsAfterTokenExchange release];
 	[authConnection cancel];
 	[authConnection release];
 	[clientId release];
@@ -87,12 +88,12 @@
 
 #pragma mark Accessors
 
-@synthesize clientId, clientSecret;
+@synthesize clientId, clientSecret, accessToken;
 
 
 #pragma mark Flow
 
-- (void)requestToken;
+- (void)requestAccess;
 {
 	if (username != nil && password != nil) {	// username password flow
 		[self requestTokenWithUsernameAndPassword];
@@ -122,7 +123,7 @@
 
 
 // Web Server Flow only
-- (BOOL)openURL:(NSURL *)URL;
+- (BOOL)openRedirectURL:(NSURL *)URL;
 {
 	NSString *accessGrand = [URL valueForQueryParameterKey:@"code"];
 	if (accessGrand) {
@@ -164,7 +165,7 @@
 	NSMutableURLRequest *tokenRequest = [NSMutableURLRequest requestWithURL:tokenURL];
 	[tokenRequest setHTTPMethod:@"POST"];
 	[tokenRequest setParameters:[NSDictionary dictionaryWithObjectsAndKeys:
-								 @"authorization_code", @"password",
+								 @"password", @"grant_type",
 								 clientId, @"client_id",
 								 clientSecret, @"client_secret",
 								 [redirectURL absoluteString], @"redirect_uri",
@@ -178,6 +179,42 @@
 }
 
 
+#pragma mark Public
+
+- (void)refreshAccessToken;
+{
+	[self refreshAccessTokenAndRetryConnection:nil];
+}
+
+- (void)refreshAccessTokenAndRetryConnection:(NXOAuth2Connection *)retryConnection;
+{
+	NSAssert((accessToken.refreshToken != nil), @"invalid state");
+	NSMutableURLRequest *tokenRequest = [NSMutableURLRequest requestWithURL:tokenURL];
+	[tokenRequest setHTTPMethod:@"POST"];
+	[tokenRequest setParameters:[NSDictionary dictionaryWithObjectsAndKeys:
+								 @"refresh_token", @"grant_type",
+								 clientId, @"client_id",
+								 clientSecret, @"client_secret",
+								 accessToken.refreshToken, @"refresh_token",
+								 nil]];
+	[authConnection release]; // just to be sure
+	authConnection = [[NXOAuth2Connection alloc] initWithRequest:tokenRequest
+													 oauthClient:self
+														delegate:self];
+	if (retryConnection) {
+		if (!retryConnectionsAfterTokenExchange) retryConnectionsAfterTokenExchange = [[NSMutableArray alloc] init];
+		[retryConnectionsAfterTokenExchange addObject:retryConnection];
+	}
+}
+
+- (void)abortRetryOfConnection:(NXOAuth2Connection *)retryConnection;
+{
+	if (retryConnection) {
+		[retryConnectionsAfterTokenExchange removeObject:retryConnection];
+	}
+}
+
+
 #pragma mark NXOAuth2ConnectionDelegate
 
 - (void)oauthConnection:(NXOAuth2Connection *)connection didFinishWithData:(NSData *)data;
@@ -188,12 +225,20 @@
 		NSAssert(newToken != nil, @"invalid response?");
 		[accessToken release];
 		accessToken = [newToken retain];
+		[authDelegate oauthClientDidAuthorize:self];
+		
+		for (NXOAuth2Connection *retryConnection in retryConnectionsAfterTokenExchange) {
+			[retryConnection retry];
+		}
+		[retryConnectionsAfterTokenExchange removeAllObjects];
 	}
 }
 
 - (void)oauthConnection:(NXOAuth2Connection *)connection didFailWithError:(NSError *)error;
 {
-	NSLog(@"Error: %@", [error localizedDescription]);
+	if (connection == authConnection) {
+		[authDelegate oauthClient:self didFailToAuthorizeWithError:error]; // TODO: create own error domain?
+	}
 }
 
 

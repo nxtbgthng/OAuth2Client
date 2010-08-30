@@ -33,12 +33,14 @@
 @interface NXOAuth2Connection : NSObject <NXOAuth2PostBodyStreamMonitorDelegate> {
 @private
 	NSURLConnection		*connection;
+	NSURLRequest		*request;
 	
 	NSMutableData		*data;
 	NSUInteger	expectedContentLength;
 	NSInteger	statusCode;
 	
 	id context;
+	NSDictionary *userInfo;
 	
 	NXOAuth2Client		*client;
 	
@@ -49,11 +51,14 @@
 @property (readonly) NSUInteger expectedContentLength;
 @property (readonly) NSInteger statusCode;
 @property (retain) id context;
+@property (retain) NSDictionary *userInfo;
 
 - (id)initWithRequest:(NSURLRequest *)request
 		  oauthClient:(NXOAuth2Client *)client
 			 delegate:(NSObject<NXOAuth2ConnectionDelegate> *)delegate;
 
 - (void)cancel;
+
+- (void)retry;
 
 @end

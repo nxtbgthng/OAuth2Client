@@ -41,6 +41,7 @@
 	NXOAuth2Connection	*authConnection;
 	NSString	*authGrand;
 	NXOAuth2AccessToken	*accessToken;
+	NSMutableArray	*retryConnectionsAfterTokenExchange;
 	
 	// delegates
 	NSObject<NXOAuth2ClientAuthDelegate>*	authDelegate;	// assigned
@@ -48,6 +49,8 @@
 
 @property (nonatomic, readonly) NSString *clientId;
 @property (nonatomic, readonly) NSString *clientSecret;
+
+@property (nonatomic, readonly) NXOAuth2AccessToken	*accessToken;
 
 
 #pragma mark WebServer Flow
@@ -62,7 +65,7 @@
 		   redirectURL:(NSURL *)redirectURL
 		  authDelegate:(NSObject<NXOAuth2ClientAuthDelegate> *)authDelegate;
 
-- (BOOL)openURL:(NSURL *)URL;
+- (BOOL)openRedirectURL:(NSURL *)URL;
 
 
 #pragma mark User credentials Flow
@@ -79,11 +82,19 @@
 		  authDelegate:(NSObject<NXOAuth2ClientAuthDelegate> *)authDelegate;
 
 
-#pragma mark Perform Requests
+#pragma mark Public
+
+- (void)requestAccess;
+
+- (void)refreshAccessToken;
+- (void)refreshAccessTokenAndRetryConnection:(NXOAuth2Connection *)retryConnection;
+- (void)abortRetryOfConnection:(NXOAuth2Connection *)retryConnection;
 
 @end
 
 
 @protocol NXOAuth2ClientAuthDelegate
 - (void)oauthClient:(NXOAuth2Client *)client requestedAuthorizationWithURL:(NSURL *)authorizationURL;
+- (void)oauthClientDidAuthorize:(NXOAuth2Client *)client;
+- (void)oauthClient:(NXOAuth2Client *)client didFailToAuthorizeWithError:(NSError *)error;
 @end
