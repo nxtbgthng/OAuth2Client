@@ -39,42 +39,42 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = 9414FE14122BD6E800852F70 /* JSON.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 53D229810C96121600276605 /* JSON.framework */;
+			remoteGlobalIDString = 53D229810C96121600276605;
 			remoteInfo = JSON;
 		};
 		9414FE24122BD6E900852F70 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 9414FE14122BD6E800852F70 /* JSON.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 53D2298D0C96122A00276605 /* Tests.octest */;
+			remoteGlobalIDString = 53D2298D0C96122A00276605;
 			remoteInfo = Tests;
 		};
 		9414FE26122BD6E900852F70 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 9414FE14122BD6E800852F70 /* JSON.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = FE2BBD800D8B0D3900184787 /* libjson.a */;
+			remoteGlobalIDString = FE2BBD800D8B0D3900184787;
 			remoteInfo = libjson;
 		};
 		9414FE28122BD6E900852F70 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 9414FE14122BD6E800852F70 /* JSON.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = FE2BBDAB0D8B0EE000184787 /* libjsontests.octest */;
+			remoteGlobalIDString = FE2BBDAB0D8B0EE000184787;
 			remoteInfo = libjsontests;
 		};
 		9414FE2A122BD6E900852F70 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 9414FE14122BD6E800852F70 /* JSON.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 53EF4D400DC247B3005F5E6D /* bench */;
+			remoteGlobalIDString = 53EF4D400DC247B3005F5E6D;
 			remoteInfo = bench;
 		};
 		9414FE2D122BD6F600852F70 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 9414FE14122BD6E800852F70 /* JSON.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = FE2BBD7F0D8B0D3900184787 /* libjson */;
+			remoteGlobalIDString = FE2BBD7F0D8B0D3900184787;
 			remoteInfo = libjson;
 		};
 /* End PBXContainerItemProxy section */
@@ -377,7 +377,7 @@
 				INSTALL_PATH = /usr/local/lib;
 				PRODUCT_NAME = OAuth2Client;
 				SDKROOT = iphoneos3.2;
-				USER_HEADER_SEARCH_PATHS = "/tmp/*.dst/usr/local/include";
+				USER_HEADER_SEARCH_PATHS = /tmp/JSON.dst/usr/local/include;
 			};
 			name = Debug;
 		};
@@ -394,7 +394,7 @@
 				INSTALL_PATH = /usr/local/lib;
 				PRODUCT_NAME = OAuth2Client;
 				SDKROOT = iphoneos3.2;
-				USER_HEADER_SEARCH_PATHS = "/tmp/*.dst/usr/local/include";
+				USER_HEADER_SEARCH_PATHS = /tmp/JSON.dst/usr/local/include;
 			};
 			name = Release;
 		};
