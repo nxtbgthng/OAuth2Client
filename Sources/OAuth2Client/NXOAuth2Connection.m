@@ -136,10 +136,18 @@
 	}
 	
 	NSString *authenticateHeader = nil;
-	if ([response isKindOfClass:[NSHTTPURLResponse class]])
-		authenticateHeader = [[(NSHTTPURLResponse *)response allHeaderFields] objectForKey:@"WWW-Authenticate"];
-	if (self.statusCode == 401
-		&& client.accessToken.refreshToken != nil
+	if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
+		NSDictionary *headerFields = [(NSHTTPURLResponse *)response allHeaderFields];
+		for (NSString *headerKey in headerFields.allKeys) {
+			if ([[headerKey lowercaseString] isEqualToString:@"www-authenticate"]) {
+				authenticateHeader = [headerFields objectForKey:headerKey];
+				break;
+			}
+		}
+	}
+	if (/*self.statusCode == 401 // TODO: check for status code once the bug returning 500 is fixed
+		&&*/ client.accessToken.refreshToken != nil
+		&& authenticateHeader
 		&& [authenticateHeader rangeOfString:@"expired_token"].location != NSNotFound) {
 		[self cancel];
 		[client refreshAccessTokenAndRetryConnection:self];
@@ -200,7 +208,6 @@
 
 - (void)connection:(NSURLConnection *)connection didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge;
 {
-	NSLog(@"Auth error: ", [challenge.error localizedDescription]);
 	if ([challenge.protectionSpace.authenticationMethod isEqualToString:NSURLAuthenticationMethodServerTrust]) {
 		//if ([trustedHosts containsObject:challenge.protectionSpace.host])
 		[challenge.sender useCredential:[NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust] forAuthenticationChallenge:challenge];
