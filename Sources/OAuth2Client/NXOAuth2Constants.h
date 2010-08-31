@@ -15,3 +15,4 @@ extern NSString * const NXOAuth2ErrorDomain;
 
 extern NSInteger const NXOAuth2HTTPErrorCode;
 extern NSString * const NXOAuth2HTTPErrorKey;
+extern NSString * const NXOAuth2DidRetryConnectionKey;

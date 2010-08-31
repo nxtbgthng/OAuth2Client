@@ -34,13 +34,12 @@
 @private
 	NSURLConnection		*connection;
 	NSURLRequest		*request;
+	NSURLResponse		*response;
 	
 	NSMutableData		*data;
-	NSUInteger	expectedContentLength;
-	NSInteger	statusCode;
 	
-	id context;
-	NSDictionary *userInfo;
+	id					context;
+	NSDictionary		*userInfo;
 	
 	NXOAuth2Client		*client;
 	
@@ -48,7 +47,7 @@
 }
 
 @property (readonly) NSData *data;
-@property (readonly) NSUInteger expectedContentLength;
+@property (readonly) long long expectedContentLength;
 @property (readonly) NSInteger statusCode;
 @property (retain) id context;
 @property (retain) NSDictionary *userInfo;

@@ -11,6 +11,6 @@
 
 NSString * const NXOAuth2ErrorDomain = @"NXOAuth2ErrorDomain";
 
-
 NSInteger const NXOAuth2HTTPErrorCode = 1001;
 NSString * const NXOAuth2HTTPErrorKey = @"NXOAuth2HTTPErrorKey";
+NSString * const NXOAuth2DidRetryConnectionKey = @"NXOAuth2DidRetryConnectionKey";

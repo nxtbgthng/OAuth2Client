@@ -30,16 +30,8 @@
 	NSURL		*authorizeURL;
 	NSURL		*tokenURL;
 	
-	// webserver flow
-	NSURL		*redirectURL;
-	
-	// user credentials flow
-	NSString	*username;
-	NSString	*password;
-	
-	// grand & token exchange
+	// token exchange
 	NXOAuth2Connection	*authConnection;
-	NSString	*authGrand;
 	NXOAuth2AccessToken	*accessToken;
 	NSMutableArray	*retryConnectionsAfterTokenExchange;
 	
@@ -51,9 +43,7 @@
 @property (nonatomic, readonly) NSString *clientSecret;
 
 @property (nonatomic, retain) NXOAuth2AccessToken	*accessToken;
-
-
-#pragma mark WebServer Flow
+@property (nonatomic, assign) NSObject<NXOAuth2ClientAuthDelegate>*	authDelegate;
 
 /*!
  * Initializes the Client
@@ -62,24 +52,20 @@
 		  clientSecret:(NSString *)clientSecret
 		  authorizeURL:(NSURL *)authorizeURL
 			  tokenURL:(NSURL *)tokenURL
-		   redirectURL:(NSURL *)redirectURL
 		  authDelegate:(NSObject<NXOAuth2ClientAuthDelegate> *)authDelegate;
+
 
 - (BOOL)openRedirectURL:(NSURL *)URL;
 
-
-#pragma mark User credentials Flow
+/*!
+ * returns the URL to be opened to get access grant
+ */
+- (NSURL *)authorizeWithRedirectURL:(NSURL *)redirectURL;	// web server flow
 
 /*!
- * Initializes the Client
+ * authenticate with username & password
  */
-- (id)initWithClientID:(NSString *)clientId
-		  clientSecret:(NSString *)clientSecret
-		  authorizeURL:(NSURL *)authorizeURL
-			  tokenURL:(NSURL *)tokenURL
-			  username:(NSString *)username
-			  password:(NSString *)password
-		  authDelegate:(NSObject<NXOAuth2ClientAuthDelegate> *)authDelegate;
+- (void)authorizeWithUsername:(NSString *)username password:(NSString *)password;	// user credentials flow
 
 
 #pragma mark Public
@@ -94,7 +80,11 @@
 
 
 @protocol NXOAuth2ClientAuthDelegate
-- (void)oauthClient:(NXOAuth2Client *)client requestedAuthorizationWithURL:(NSURL *)authorizationURL;
-- (void)oauthClientDidAuthorize:(NXOAuth2Client *)client;
-- (void)oauthClient:(NXOAuth2Client *)client didFailToAuthorizeWithError:(NSError *)error;
+- (void)oauthClientDidGetAccessToken:(NXOAuth2Client *)client;
+- (void)oauthClient:(NXOAuth2Client *)client didFailToGetAccessTokenWithError:(NSError *)error;
+
+/*!
+ * use one of the -autherize* methods
+ */
+- (void)oauthClientRequestedAuthorization:(NXOAuth2Client *)client;
 @end

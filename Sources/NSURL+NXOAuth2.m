@@ -11,7 +11,7 @@
 #import "NSURL+NXOAuth2.h"
 
 
-@implementation NSURL (SoundCloudAPI)
+@implementation NSURL (NXOAuth2)
 
 - (NSURL *)URLByAddingParameters:(NSDictionary *)parameterDictionary {
 	if (!parameterDictionary || [parameterDictionary count] == 0) {
@@ -37,7 +37,12 @@
 	return [parameters objectForKey:key];
 }
 
-- (NSString *)URLStringWithoutQuery 
+- (NSURL *)URLWithoutQueryString;
+{
+	return [NSURL URLWithString:[self URLStringWithoutQueryString]];
+}
+
+- (NSString *)URLStringWithoutQueryString;
 {
     NSArray *parts = [[self absoluteString] componentsSeparatedByString:@"?"];
     return [parts objectAtIndex:0];

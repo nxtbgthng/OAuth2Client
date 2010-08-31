@@ -18,6 +18,7 @@
  */
 - (NSString *)valueForQueryParameterKey:(NSString *)key;
 
-- (NSString *)URLStringWithoutQuery;
+- (NSURL *)URLWithoutQueryString;
+- (NSString *)URLStringWithoutQueryString;
 
 @end

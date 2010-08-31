@@ -16,10 +16,7 @@
 
 
 @interface NXOAuth2Client ()
-- (void)requestAccessGrand;
-
-- (void)requestTokenWithAuthGrand;
-- (void)requestTokenWithUsernameAndPassword;
+- (void)requestTokenWithAuthGrand:(NSString *)authGrand andRedirectURL:(NSURL *)redirectURL;
 @end
 
 
@@ -32,46 +29,18 @@
 		  clientSecret:(NSString *)aClientSecret
 		  authorizeURL:(NSURL *)anAuthorizeURL
 			  tokenURL:(NSURL *)aTokenURL
-		   redirectURL:(NSURL *)aRedirectURL
 		  authDelegate:(NSObject<NXOAuth2ClientAuthDelegate> *)anAuthDelegate;
 {
-	NSAssert(aRedirectURL != nil, @"WebServer flow without redirectURL.");
 	NSAssert(aTokenURL != nil && anAuthorizeURL != nil, @"No token or no authorize URL");
 	if (self = [super init]) {
 		clientId = [aClientId copy];
 		clientSecret = [aClientSecret copy];
 		authorizeURL = [anAuthorizeURL copy];
 		tokenURL = [aTokenURL copy];
-		redirectURL = [aRedirectURL copy];
 		
-		authDelegate = anAuthDelegate;
-		if (self.accessToken && !self.accessToken.hasExpired) [authDelegate oauthClientDidAuthorize:self];	// if we have a valid access token in the keychain
+		self.authDelegate = anAuthDelegate;
 	}
 	return self;
-}
-
-- (id)initWithClientID:(NSString *)aClientId
-		  clientSecret:(NSString *)aClientSecret
-		  authorizeURL:(NSURL *)anAuthorizeURL
-			  tokenURL:(NSURL *)aTokenURL
-			  username:(NSString *)aUsername
-			  password:(NSString *)aPassword
-		  authDelegate:(NSObject<NXOAuth2ClientAuthDelegate> *)anAuthDelegate;
-{
-	NSAssert(aUsername != nil && aPassword != nil, @"Username & password flow without username & password.");
-	NSAssert(aTokenURL != nil && anAuthorizeURL != nil, @"No token or no authorize URL");
-	if (self = [super init]) {
-		clientId = [aClientId copy];
-		clientSecret = [aClientSecret copy];
-		authorizeURL = [anAuthorizeURL copy];
-		tokenURL = [aTokenURL copy];
-		username = [aUsername copy];
-		password = [aPassword copy];
-		
-		authDelegate = anAuthDelegate;
-		if (self.accessToken && !self.accessToken.hasExpired) [authDelegate oauthClientDidAuthorize:self];	// if we have a valid access token in the keychain
-	}
-	return self;	
 }
 
 - (void)dealloc;
@@ -81,23 +50,20 @@
 	[authConnection release];
 	[clientId release];
 	[clientSecret release];
-	[redirectURL release];
-	[username release];
-	[password release];
 	[super dealloc];
 }
 
 
 #pragma mark Accessors
 
-@synthesize clientId, clientSecret;
+@synthesize clientId, clientSecret, authDelegate;
 
 @dynamic accessToken;
 
 - (NXOAuth2AccessToken *)accessToken;
 {
 	if (accessToken) return accessToken;
-	accessToken = [NXOAuth2AccessToken tokenFromDefaultKeychainWithServiceProviderName:[tokenURL host]];
+	accessToken = [[NXOAuth2AccessToken tokenFromDefaultKeychainWithServiceProviderName:[tokenURL host]] retain];
 	return accessToken;
 }
 
@@ -119,34 +85,20 @@
 
 - (void)requestAccess;
 {
-	if (self.accessToken) {
-		if (self.accessToken.hasExpired){
-			[self refreshAccessToken];
-		}
-	} else if (username != nil && password != nil) {	// username password flow
-		[self requestTokenWithUsernameAndPassword];
-	} else {									// web server flow
-		NSAssert(redirectURL, @"Web server flow without redirectURL");	
-		if (authGrand) {	// we have grand already
-			[self requestTokenWithAuthGrand];
-		} else {
-			[self requestAccessGrand];
-		}
+	if (!self.accessToken) {
+		[authDelegate oauthClientRequestedAuthorization:self];
+	} else {
+		[authDelegate oauthClientDidGetAccessToken:self];
 	}
 }
 
-- (void)requestAccessGrand;
+- (NSURL *)authorizeWithRedirectURL:(NSURL *)redirectURL;
 {
-	if (authConnection) {	// authentication is already running
-		return;
-	}
-	
-	NSURL *URL = [authorizeURL URLByAddingParameters:[NSDictionary dictionaryWithObjectsAndKeys:
-													  @"code", @"response_type",
-													  clientId, @"client_id",
-													  [redirectURL absoluteString], @"redirect_uri",
-													  nil]];
-	[authDelegate oauthClient:self requestedAuthorizationWithURL:URL];
+	return [authorizeURL URLByAddingParameters:[NSDictionary dictionaryWithObjectsAndKeys:
+												@"code", @"response_type",
+												clientId, @"client_id",
+												[redirectURL absoluteString], @"redirect_uri",
+												nil]];
 }
 
 
@@ -155,9 +107,7 @@
 {
 	NSString *accessGrand = [URL valueForQueryParameterKey:@"code"];
 	if (accessGrand) {
-		[authGrand release];
-		authGrand = [accessGrand copy];
-		[self requestTokenWithAuthGrand];
+		[self requestTokenWithAuthGrand:accessGrand andRedirectURL:[URL URLWithoutQueryString]];
 		return YES;
 	}
 	return NO;
@@ -166,7 +116,7 @@
 #pragma mark accessGrand -> accessToken
 
 // Web Server Flow only
-- (void)requestTokenWithAuthGrand;
+- (void)requestTokenWithAuthGrand:(NSString *)authGrand andRedirectURL:(NSURL *)redirectURL;
 {
 	NSAssert(!authConnection, @"invalid state");
 	
@@ -187,7 +137,7 @@
 
 
 // User Password Flow Only
-- (void)requestTokenWithUsernameAndPassword;
+- (void)authorizeWithUsername:(NSString *)username password:(NSString *)password;
 {
 	NSAssert(!authConnection, @"invalid state");
 	NSMutableURLRequest *tokenRequest = [NSMutableURLRequest requestWithURL:tokenURL];
@@ -196,7 +146,6 @@
 								 @"password", @"grant_type",
 								 clientId, @"client_id",
 								 clientSecret, @"client_secret",
-								 [redirectURL absoluteString], @"redirect_uri",
 								 username, @"username",
 								 password, @"password",
 								 nil]];
@@ -216,22 +165,24 @@
 
 - (void)refreshAccessTokenAndRetryConnection:(NXOAuth2Connection *)retryConnection;
 {
-	NSAssert((accessToken.refreshToken != nil), @"invalid state");
-	NSMutableURLRequest *tokenRequest = [NSMutableURLRequest requestWithURL:tokenURL];
-	[tokenRequest setHTTPMethod:@"POST"];
-	[tokenRequest setParameters:[NSDictionary dictionaryWithObjectsAndKeys:
-								 @"refresh_token", @"grant_type",
-								 clientId, @"client_id",
-								 clientSecret, @"client_secret",
-								 accessToken.refreshToken, @"refresh_token",
-								 nil]];
-	[authConnection release]; // just to be sure
-	authConnection = [[NXOAuth2Connection alloc] initWithRequest:tokenRequest
-													 oauthClient:self
-														delegate:self];
 	if (retryConnection) {
 		if (!retryConnectionsAfterTokenExchange) retryConnectionsAfterTokenExchange = [[NSMutableArray alloc] init];
 		[retryConnectionsAfterTokenExchange addObject:retryConnection];
+	}
+	if (!authConnection) {
+		NSAssert((accessToken.refreshToken != nil), @"invalid state");
+		NSMutableURLRequest *tokenRequest = [NSMutableURLRequest requestWithURL:tokenURL];
+		[tokenRequest setHTTPMethod:@"POST"];
+		[tokenRequest setParameters:[NSDictionary dictionaryWithObjectsAndKeys:
+									 @"refresh_token", @"grant_type",
+									 clientId, @"client_id",
+									 clientSecret, @"client_secret",
+									 accessToken.refreshToken, @"refresh_token",
+									 nil]];
+		[authConnection release]; // not needed, but looks more clean to me :)
+		authConnection = [[NXOAuth2Connection alloc] initWithRequest:tokenRequest
+														 oauthClient:nil
+															delegate:self];	
 	}
 }
 
@@ -252,7 +203,7 @@
 		NXOAuth2AccessToken *newToken = [NXOAuth2AccessToken tokenWithResponseBody:result];
 		NSAssert(newToken != nil, @"invalid response?");
 		self.accessToken = newToken;
-		[authDelegate oauthClientDidAuthorize:self];
+		[authDelegate oauthClientDidGetAccessToken:self];
 		
 		for (NXOAuth2Connection *retryConnection in retryConnectionsAfterTokenExchange) {
 			[retryConnection retry];
@@ -264,7 +215,7 @@
 - (void)oauthConnection:(NXOAuth2Connection *)connection didFailWithError:(NSError *)error;
 {
 	if (connection == authConnection) {
-		[authDelegate oauthClient:self didFailToAuthorizeWithError:error]; // TODO: create own error domain?
+		[authDelegate oauthClient:self didFailToGetAccessTokenWithError:error]; // TODO: create own error domain?
 	}
 }
 

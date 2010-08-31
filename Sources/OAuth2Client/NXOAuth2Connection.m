@@ -28,8 +28,6 @@
 			 delegate:(NSObject<NXOAuth2ConnectionDelegate> *)aDelegate;
 {
 	if (self = [super init]) {
-		statusCode = 0;
-		expectedContentLength = 0;
 		delegate = aDelegate;	// assign only
 		client = [aClient retain];	// TODO: check if assign is better here
 		
@@ -55,8 +53,20 @@
 #pragma mark Accessors
 
 @synthesize data;
-@synthesize expectedContentLength, statusCode;
 @synthesize context, userInfo;
+
+- (NSInteger)statusCode;
+{
+	NSHTTPURLResponse *httpResponse = nil;
+	if ([response isKindOfClass:[NSHTTPURLResponse class]])
+		httpResponse = (NSHTTPURLResponse *)response;
+	return httpResponse.statusCode;
+}
+
+- (long long)expectedContentLength;
+{
+	return response.expectedContentLength;
+}
 
 
 #pragma mark Public
@@ -71,6 +81,7 @@
 - (void)retry;
 {
 	[self cancel];
+	[response release]; response = nil;
 	[connection release];
 	connection = [[[self class] startedConnectionWithRequest:request connectionDelegate:self streamDelegate:self client:client] retain];
 }
@@ -112,17 +123,27 @@
 
 #pragma mark NSURLConnectionDelegate
 
-- (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response;
+- (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)theResponse;
 {
-	expectedContentLength = response.expectedContentLength;
-	statusCode = [(NSHTTPURLResponse *)response statusCode];
+	NSAssert(response == nil, @"invalid state");
+	[response release];	// just to be sure
+	response = [theResponse retain];
 	
 	if (!data) {
 		data = [[NSMutableData alloc] init];
 	} else {
 		[data setLength:0];
 	}
-	if ([delegate respondsToSelector:@selector(oauthConnection:didReceiveData:)]) {
+	
+	NSString *authenticateHeader = nil;
+	if ([response isKindOfClass:[NSHTTPURLResponse class]])
+		authenticateHeader = [[(NSHTTPURLResponse *)response allHeaderFields] objectForKey:@"WWW-Authenticate"];
+	if (self.statusCode == 401
+		&& client.accessToken.refreshToken != nil
+		&& [authenticateHeader rangeOfString:@"expired_token"].location != NSNotFound) {
+		[self cancel];
+		[client refreshAccessTokenAndRetryConnection:self];
+	} else if ([delegate respondsToSelector:@selector(oauthConnection:didReceiveData:)]) {
 		[delegate oauthConnection:self didReceiveData:data];	// inform the delegate that we start with empty data
 	}
 }
@@ -137,21 +158,22 @@
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection;
 {
-	if(statusCode < 400) {
+	if(self.statusCode < 400) {
 		if ([delegate respondsToSelector:@selector(oauthConnection:didFinishWithData:)]) {
 			[delegate oauthConnection:self didFinishWithData:data];
 		}
 	} else {
 		NSError *httpError = [NSError errorWithDomain:NSURLErrorDomain
-												 code:statusCode
+												 code:self.statusCode
 											 userInfo:[NSDictionary dictionaryWithObjectsAndKeys:
-													   [NSHTTPURLResponse localizedStringForStatusCode:statusCode], NSLocalizedDescriptionKey,
+													   [NSHTTPURLResponse localizedStringForStatusCode:self.statusCode], NSLocalizedDescriptionKey,
 													   nil]];
+		NSMutableDictionary *errorInfo = [NSMutableDictionary dictionaryWithObjectsAndKeys:
+										 httpError, NXOAuth2HTTPErrorKey,
+										 nil];
 		NSError *error = [NSError errorWithDomain:NXOAuth2ErrorDomain
 											 code:NXOAuth2HTTPErrorCode
-										 userInfo:[NSDictionary dictionaryWithObjectsAndKeys:
-												   httpError, NXOAuth2HTTPErrorKey,
-												   nil]];
+										 userInfo:errorInfo];
 		if ([delegate respondsToSelector:@selector(oauthConnection:didFailWithError:)]) {
 			[delegate oauthConnection:self didFailWithError:error];
 		}
@@ -178,8 +200,7 @@
 
 - (void)connection:(NSURLConnection *)connection didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge;
 {
-	// TODO: handle request signed with expired token
-	NSLog(@"%@", challenge.protectionSpace.authenticationMethod);
+	NSLog(@"Auth error: ", [challenge.error localizedDescription]);
 	if ([challenge.protectionSpace.authenticationMethod isEqualToString:NSURLAuthenticationMethodServerTrust]) {
 		//if ([trustedHosts containsObject:challenge.protectionSpace.host])
 		[challenge.sender useCredential:[NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust] forAuthenticationChallenge:challenge];
