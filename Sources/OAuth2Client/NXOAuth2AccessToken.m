@@ -80,6 +80,26 @@
 }
 
 
+#pragma mark NSCoding
+
+- (void)encodeWithCoder:(NSCoder *)aCoder
+{
+	[aCoder encodeObject:accessToken forKey:@"accessToken"];
+	[aCoder encodeObject:refreshToken forKey:@"refreshToken"];
+	[aCoder encodeObject:expiresAt forKey:@"expiresAt"];
+}
+
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+	if (self = [super init]) {
+		accessToken = [[aDecoder decodeObjectForKey:@"accessToken"] copy];
+		refreshToken = [[aDecoder decodeObjectForKey:@"refreshToken"] copy];
+		expiresAt = [[aDecoder decodeObjectForKey:@"expiresAt"] retain];
+	}
+	return self;
+}
+
+
 #pragma mark Keychain Support
 
 + (NSString *)serviceNameWithProvider:(NSString *)provider;
@@ -88,6 +108,8 @@
 	
 	return [NSString stringWithFormat:@"%@::OAuth2::%@", appName, provider];
 }
+
+#if TARGET_OS_IPHONE
 
 + (id)tokenFromDefaultKeychainWithServiceProviderName:(NSString *)provider;
 {
@@ -135,26 +157,102 @@
 	NSAssert1((err == noErr || err == errSecItemNotFound), @"error while deleting token from keychain: %d", err);
 }
 
+#else
 
-#pragma mark NSCoding
-
-- (void)encodeWithCoder:(NSCoder *)aCoder
++ (id)tokenFromDefaultKeychainWithServiceProviderName:(NSString *)provider;
 {
-	[aCoder encodeObject:accessToken forKey:@"accessToken"];
-	[aCoder encodeObject:refreshToken forKey:@"refreshToken"];
-	[aCoder encodeObject:expiresAt forKey:@"expiresAt"];
-}
-
-- (id)initWithCoder:(NSCoder *)aDecoder
-{
-	if (self = [super init]) {
-		accessToken = [[aDecoder decodeObjectForKey:@"accessToken"] copy];
-		refreshToken = [[aDecoder decodeObjectForKey:@"refreshToken"] copy];
-		expiresAt = [[aDecoder decodeObjectForKey:@"expiresAt"] retain];
+	NSString *serviceName = [[self class] serviceNameWithProvider:provider];
+	
+	SecKeychainItemRef item = nil;
+	OSStatus err = SecKeychainFindGenericPassword(NULL,
+													 strlen([serviceName UTF8String]),
+													 [serviceName UTF8String],
+													 0,
+													 NULL,
+													 NULL,
+													 NULL,
+													 &item);
+	if (err != noErr) {
+		NSAssert1(err == errSecItemNotFound, @"unexpected error while fetching token from keychain: %d", err);
+		return nil;
 	}
-	return self;
+    
+    // from Advanced Mac OS X Programming, ch. 16
+    UInt32 length;
+    char *password;
+	NSData *result = nil;
+    SecKeychainAttribute attributes[8];
+    SecKeychainAttributeList list;
+	
+    attributes[0].tag = kSecAccountItemAttr;
+    attributes[1].tag = kSecDescriptionItemAttr;
+    attributes[2].tag = kSecLabelItemAttr;
+    attributes[3].tag = kSecModDateItemAttr;
+    
+    list.count = 4;
+    list.attr = attributes;
+    
+    err = SecKeychainItemCopyContent(item, NULL, &list, &length, (void **)&password);
+    if (err == noErr) {
+        if (password != NULL) {
+			result = [NSData dataWithBytes:password length:length];
+        }
+        SecKeychainItemFreeContent(&list, password);
+    } else {
+		// TODO find out why this always works in i386 and always fails on ppc
+		NSLog(@"Error from SecKeychainItemCopyContent: %d", err);
+        return nil;
+    }
+    CFRelease(item);
+	return [NSKeyedUnarchiver unarchiveObjectWithData:[result objectForKey:(NSString *)kSecAttrGeneric]];
 }
 
+- (void)storeInDefaultKeychainWithServiceProviderName:(NSString *)provider;
+{
+	NSString *serviceName = [[self class] serviceNameWithProvider:provider];
+	NSData *data = [NSKeyedArchiver archivedDataWithRootObject:self];
+	
+	OSStatus err = SecKeychainAddGenericPassword(NULL,
+												 [serviceName cStringLength], 
+												 [serviceName cString],
+												 NULL,
+												 NULL,
+												 [data length],
+												 [data bytes],
+												 NULL);
+	
+	
+	NSAssert1(err == noErr, @"error while adding token to keychain: %d", err);
+}
 
+- (void)removeFromDefaultKeychainWithServiceProviderName:(NSString *)provider;
+{
+	NSString *serviceName = [[self class] serviceNameWithProvider:provider];
+	NSDictionary *query = [NSDictionary dictionaryWithObjectsAndKeys:
+						   (NSString *)kSecClassGenericPassword, kSecClass,
+						   serviceName, kSecAttrService,
+						   nil];
+	OSStatus err = SecItemDelete((CFDictionaryRef)query);
+	NSAssert1((err == noErr || err == errSecItemNotFound), @"error while deleting token from keychain: %d", err);
+	
+	
+	
+	SecKeychainItemRef item = nil;
+	OSStatus err = SecKeychainFindGenericPassword(NULL,
+											[serviceName cStringLength],
+											[serviceName cString],
+											0,
+											NULL,
+											NULL,
+											NULL,
+											&item);
+	NSAssert1((err == noErr || err == errSecItemNotFound), @"error while deleting token from keychain: %d", err);
+	if (err == noErr) {
+		err = SecKeychainItemDelete(item);
+	}
+	CFRelease(item);
+	NSAssert1((err == noErr || err == errSecItemNotFound), @"error while deleting token from keychain: %d", err);
+}
 
+#endif
 @end
