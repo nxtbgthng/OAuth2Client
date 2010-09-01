@@ -165,13 +165,13 @@
 	
 	SecKeychainItemRef item = nil;
 	OSStatus err = SecKeychainFindGenericPassword(NULL,
-													 strlen([serviceName UTF8String]),
-													 [serviceName UTF8String],
-													 0,
-													 NULL,
-													 NULL,
-													 NULL,
-													 &item);
+												  strlen([serviceName UTF8String]),
+												  [serviceName UTF8String],
+												  0,
+												  NULL,
+												  NULL,
+												  NULL,
+												  &item);
 	if (err != noErr) {
 		NSAssert1(err == errSecItemNotFound, @"unexpected error while fetching token from keychain: %d", err);
 		return nil;
@@ -204,7 +204,7 @@
         return nil;
     }
     CFRelease(item);
-	return [NSKeyedUnarchiver unarchiveObjectWithData:[result objectForKey:(NSString *)kSecAttrGeneric]];
+	return [NSKeyedUnarchiver unarchiveObjectWithData:result];
 }
 
 - (void)storeInDefaultKeychainWithServiceProviderName:(NSString *)provider;
@@ -221,31 +221,22 @@
 												 [data bytes],
 												 NULL);
 	
-	
 	NSAssert1(err == noErr, @"error while adding token to keychain: %d", err);
+	if (err);	// silences warning about unused variable
 }
 
 - (void)removeFromDefaultKeychainWithServiceProviderName:(NSString *)provider;
 {
 	NSString *serviceName = [[self class] serviceNameWithProvider:provider];
-	NSDictionary *query = [NSDictionary dictionaryWithObjectsAndKeys:
-						   (NSString *)kSecClassGenericPassword, kSecClass,
-						   serviceName, kSecAttrService,
-						   nil];
-	OSStatus err = SecItemDelete((CFDictionaryRef)query);
-	NSAssert1((err == noErr || err == errSecItemNotFound), @"error while deleting token from keychain: %d", err);
-	
-	
-	
 	SecKeychainItemRef item = nil;
 	OSStatus err = SecKeychainFindGenericPassword(NULL,
-											[serviceName cStringLength],
-											[serviceName cString],
-											0,
-											NULL,
-											NULL,
-											NULL,
-											&item);
+												  [serviceName cStringLength],
+												  [serviceName cString],
+												  0,
+												  NULL,
+												  NULL,
+												  NULL,
+												  &item);
 	NSAssert1((err == noErr || err == errSecItemNotFound), @"error while deleting token from keychain: %d", err);
 	if (err == noErr) {
 		err = SecKeychainItemDelete(item);
@@ -255,4 +246,5 @@
 }
 
 #endif
+
 @end
