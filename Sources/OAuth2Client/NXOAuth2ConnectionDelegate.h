@@ -1,11 +1,13 @@
-/*
- *  NXOAuth2ConnectionDelegate.h
- *  OAuth2Client
- *
- *  Created by Ullrich Schäfer on 27.08.10.
- *  Copyright 2010 nxtbgthng. All rights reserved.
- *
- */
+//
+//  NXOAuth2ConnectionDelegate.h
+//  OAuth2Client
+//
+//  Created by Ullrich Schäfer on 27.08.10.
+//  Copyright 2010 nxtbgthng. All rights reserved. 
+//  Licenced under the new BSD-licence.
+//  See README.md in this reprository for 
+//  the full licence.
+//
 
 
 @class NXOAuth2Connection;
