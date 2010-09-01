@@ -83,6 +83,11 @@
 	[self didChangeValueForKey:@"accessToken"];
 	
 	[accessToken storeInDefaultKeychainWithServiceProviderName:[tokenURL host]];
+	if (accessToken) {
+		[authDelegate oauthClientDidGetAccessToken:self];
+	} else {
+		[authDelegate oauthClientDidLoseAccessToken:self];
+	}
 }
 
 
@@ -92,12 +97,10 @@
 {
 	if (!self.accessToken) {
 		[authDelegate oauthClientRequestedAuthorization:self];
-	} else {
-		[authDelegate oauthClientDidGetAccessToken:self];
 	}
 }
 
-- (NSURL *)authorizeWithRedirectURL:(NSURL *)redirectURL;
+- (NSURL *)authorizationURLWithRedirectURL:(NSURL *)redirectURL;
 {
 	return [authorizeURL URLByAddingParameters:[NSDictionary dictionaryWithObjectsAndKeys:
 												@"code", @"response_type",
@@ -208,7 +211,6 @@
 		NXOAuth2AccessToken *newToken = [NXOAuth2AccessToken tokenWithResponseBody:result];
 		NSAssert(newToken != nil, @"invalid response?");
 		self.accessToken = newToken;
-		[authDelegate oauthClientDidGetAccessToken:self];
 		
 		for (NXOAuth2Connection *retryConnection in retryConnectionsAfterTokenExchange) {
 			[retryConnection retry];

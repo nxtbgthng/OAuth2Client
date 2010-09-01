@@ -65,7 +65,7 @@
 /*!
  * returns the URL to be opened to get access grant
  */
-- (NSURL *)authorizeWithRedirectURL:(NSURL *)redirectURL;	// web server flow
+- (NSURL *)authorizationURLWithRedirectURL:(NSURL *)redirectURL;	// web server flow
 
 /*!
  * authenticate with username & password
@@ -86,6 +86,7 @@
 
 @protocol NXOAuth2ClientAuthDelegate
 - (void)oauthClientDidGetAccessToken:(NXOAuth2Client *)client;
+- (void)oauthClientDidLoseAccessToken:(NXOAuth2Client *)client;
 - (void)oauthClient:(NXOAuth2Client *)client didFailToGetAccessTokenWithError:(NSError *)error;
 
 /*!
