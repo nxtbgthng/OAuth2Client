@@ -15,8 +15,6 @@
 
 #import "NSString+NXOAuth2.h"
 
-#import "JSON/JSON.h"
-
 
 @implementation NXOAuth2AccessToken
 
@@ -24,8 +22,18 @@
 
 + (id)tokenWithResponseBody:(NSString *)responseBody;
 {
-	id jsonDict = [responseBody JSONValue];
-	NSNumber *expiresIn = [jsonDict objectForKey:@"expires_in"];
+	// do we really need a JSON dependency? We can easily split this up ourselfs
+	responseBody = [[[responseBody stringByReplacingOccurrencesOfString:@"{" withString:@""]
+					 stringByReplacingOccurrencesOfString:@"}" withString:@""]
+					stringByReplacingOccurrencesOfString:@"\"" withString:@""];
+	NSMutableDictionary *jsonDict = [NSMutableDictionary dictionary];
+	for (NSString *keyValuePair in [responseBody componentsSeparatedByString:@","]) {
+		NSArray *keyAndValue = [keyValuePair componentsSeparatedByString:@":"];
+		if (keyAndValue.count == 2) {
+			[jsonDict setObject:[keyAndValue objectAtIndex:1] forKey:[keyAndValue objectAtIndex:0]];
+		}
+	}
+	NSString *expiresIn = [jsonDict objectForKey:@"expires_in"];
 	NSString *anAccessToken = [jsonDict objectForKey:@"access_token"];
 	NSString *aRefreshToken = [jsonDict objectForKey:@"refresh_token"];
 	
