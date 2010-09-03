@@ -69,6 +69,9 @@
 {
 	if (accessToken) return accessToken;
 	accessToken = [[NXOAuth2AccessToken tokenFromDefaultKeychainWithServiceProviderName:[tokenURL host]] retain];
+	if (accessToken) {
+		[authDelegate oauthClientDidGetAccessToken:self];
+	}
 	return accessToken;
 }
 
