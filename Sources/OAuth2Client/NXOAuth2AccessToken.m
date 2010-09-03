@@ -226,9 +226,9 @@
 	NSData *data = [NSKeyedArchiver archivedDataWithRootObject:self];
 	
 	OSStatus err = SecKeychainAddGenericPassword(NULL,
-												 [serviceName cStringLength], 
-												 [serviceName cString],
-												 NULL,
+												 strlen([serviceName UTF8String]),
+												 [serviceName UTF8String],
+												 0,
 												 NULL,
 												 [data length],
 												 [data bytes],
@@ -243,8 +243,8 @@
 	NSString *serviceName = [[self class] serviceNameWithProvider:provider];
 	SecKeychainItemRef item = nil;
 	OSStatus err = SecKeychainFindGenericPassword(NULL,
-												  [serviceName cStringLength],
-												  [serviceName cString],
+												  strlen([serviceName UTF8String]),
+												  [serviceName UTF8String],
 												  0,
 												  NULL,
 												  NULL,
