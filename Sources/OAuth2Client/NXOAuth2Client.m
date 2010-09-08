@@ -77,6 +77,8 @@
 
 - (void)setAccessToken:(NXOAuth2AccessToken *)value;
 {
+	if (accessToken == value) return;
+	
 	if (!value) {
 		[self.accessToken removeFromDefaultKeychainWithServiceProviderName:[tokenURL host]];
 	}
@@ -226,6 +228,7 @@
 {
 	if (connection == authConnection) {
 		[authDelegate oauthClient:self didFailToGetAccessTokenWithError:error]; // TODO: create own error domain?
+		self.accessToken = nil;
 	}
 }
 
