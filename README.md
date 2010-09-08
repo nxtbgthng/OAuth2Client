@@ -21,7 +21,8 @@ In your Xcode project:
 
 ## BSD License 
 
-Copyright © 2010, nxtbgthng
+Copyright © 2010, nxtbgthng UG (haftungsbeschränkt)
+
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
