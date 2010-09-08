@@ -204,6 +204,18 @@
 	}
 }
 
+- (NSURLRequest *)connection:(NSURLConnection *)aConnection willSendRequest:(NSURLRequest *)aRequest redirectResponse:(NSURLResponse *)aResponse;
+{
+	if (![[aRequest.URL.scheme lowercaseString] isEqualToString:@"https"] ||
+		![[[aRequest.URL host] lowercaseString] isEqualToString:[[aResponse.URL host] lowercaseString]]) {
+		NSMutableURLRequest *mutableRequest = [aRequest mutableCopy];
+		[mutableRequest setValue:nil
+			  forHTTPHeaderField:@"Authorization"];
+		return mutableRequest;
+	}
+	return aRequest;
+}
+
 #if TARGET_OS_IPHONE
 - (BOOL)connection:(NSURLConnection *)connection canAuthenticateAgainstProtectionSpace:(NSURLProtectionSpace *)protectionSpace;
 {
