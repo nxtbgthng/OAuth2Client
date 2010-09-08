@@ -131,7 +131,7 @@
 // Web Server Flow only
 - (void)requestTokenWithAuthGrand:(NSString *)authGrand andRedirectURL:(NSURL *)redirectURL;
 {
-	NSAssert(!authConnection, @"invalid state");
+	NSAssert1(!authConnection, @"authConnection already running with: %@", authConnection);
 	
 	NSMutableURLRequest *tokenRequest = [NSMutableURLRequest requestWithURL:tokenURL];
 	[tokenRequest setHTTPMethod:@"POST"];
@@ -142,7 +142,7 @@
 								 [redirectURL absoluteString], @"redirect_uri",
 								 authGrand, @"code",
 								 nil]];
-	[authConnection release]; // just to be sure
+	[authConnection cancel]; [authConnection release]; // just to be sure
 	authConnection = [[NXOAuth2Connection alloc] initWithRequest:tokenRequest
 													 oauthClient:self
 														delegate:self];
@@ -152,7 +152,8 @@
 // User Password Flow Only
 - (void)authorizeWithUsername:(NSString *)username password:(NSString *)password;
 {
-	NSAssert(!authConnection, @"invalid state");
+	NSAssert1(!authConnection, @"authConnection already running with: %@", authConnection);
+	
 	NSMutableURLRequest *tokenRequest = [NSMutableURLRequest requestWithURL:tokenURL];
 	[tokenRequest setHTTPMethod:@"POST"];
 	[tokenRequest setParameters:[NSDictionary dictionaryWithObjectsAndKeys:
@@ -162,7 +163,7 @@
 								 username, @"username",
 								 password, @"password",
 								 nil]];
-	 [authConnection release]; // just to be sure
+	 [authConnection cancel]; [authConnection release]; // just to be sure
 	 authConnection = [[NXOAuth2Connection alloc] initWithRequest:tokenRequest
 													  oauthClient:self
 														 delegate:self];
@@ -192,7 +193,7 @@
 									 clientSecret, @"client_secret",
 									 accessToken.refreshToken, @"refresh_token",
 									 nil]];
-		[authConnection release]; // not needed, but looks more clean to me :)
+		[authConnection cancel]; [authConnection release]; // not needed, but looks more clean to me :)
 		authConnection = [[NXOAuth2Connection alloc] initWithRequest:tokenRequest
 														 oauthClient:nil
 															delegate:self];	

@@ -71,6 +71,10 @@
 	return response.expectedContentLength;
 }
 
+- (NSString *)description;
+{
+	return [NSString stringWithFormat:@"NXOAuth2Connection to: %@", request.URL];
+}
 
 #pragma mark Public
 
