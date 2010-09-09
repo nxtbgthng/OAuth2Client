@@ -208,13 +208,19 @@
 	}
 }
 
-- (NSURLRequest *)connection:(NSURLConnection *)aConnection willSendRequest:(NSURLRequest *)aRequest redirectResponse:(NSURLResponse *)aResponse;
+- (NSURLRequest *)connection:(NSURLConnection *)aConnection willSendRequest:(NSURLRequest *)aRequest redirectResponse:(NSURLResponse *)aRedirectResponse;
 {
-	if (![[aRequest.URL.scheme lowercaseString] isEqualToString:@"https"] ||
-		![[[aRequest.URL host] lowercaseString] isEqualToString:[[aResponse.URL host] lowercaseString]]) {
+	if (!aRedirectResponse) return aRequest; // if not redirecting do nothing
+	
+	BOOL hostChanged = [aRequest.URL.host caseInsensitiveCompare:aRedirectResponse.URL.host] != NSOrderedSame;
+	
+	BOOL schemeChanged = [aRequest.URL.scheme caseInsensitiveCompare:aRedirectResponse.URL.scheme] != NSOrderedSame;
+	BOOL schemeChangedToHTTPS = schemeChanged && ([aRedirectResponse.URL.scheme caseInsensitiveCompare:@"https"] == NSOrderedSame);
+	
+	if(hostChanged
+	   || (schemeChanged && !schemeChangedToHTTPS)) {
 		NSMutableURLRequest *mutableRequest = [aRequest mutableCopy];
-		[mutableRequest setValue:nil
-			  forHTTPHeaderField:@"Authorization"];
+		[mutableRequest setValue:nil forHTTPHeaderField:@"Authorization"]; // strip Authorization information
 		return mutableRequest;
 	}
 	return aRequest;
