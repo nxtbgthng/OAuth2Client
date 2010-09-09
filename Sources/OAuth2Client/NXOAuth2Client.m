@@ -225,6 +225,8 @@
 			[retryConnection retry];
 		}
 		[retryConnectionsAfterTokenExchange removeAllObjects];
+		
+		[authConnection release]; authConnection = nil;
 	}
 }
 
@@ -233,6 +235,8 @@
 	if (connection == authConnection) {
 		[authDelegate oauthClient:self didFailToGetAccessTokenWithError:error]; // TODO: create own error domain?
 		self.accessToken = nil;
+		
+		[authConnection release]; authConnection = nil;
 	}
 }
 
