@@ -78,7 +78,8 @@
 - (void)setAccessToken:(NXOAuth2AccessToken *)value;
 {
 	if (accessToken == value) return;
-	
+	BOOL didGetOrDidLoseToken = ((accessToken == nil) && (value != nil)		// did get
+								  || (accessToken != nil) && (value == nil));	// did lose
 	if (!value) {
 		[self.accessToken removeFromDefaultKeychainWithServiceProviderName:[tokenURL host]];
 	}
@@ -88,10 +89,12 @@
 	[self didChangeValueForKey:@"accessToken"];
 	
 	[accessToken storeInDefaultKeychainWithServiceProviderName:[tokenURL host]];
-	if (accessToken) {
-		[authDelegate oauthClientDidGetAccessToken:self];
-	} else {
-		[authDelegate oauthClientDidLoseAccessToken:self];
+	if (didGetOrDidLoseToken) {
+		if (accessToken) {
+			[authDelegate oauthClientDidGetAccessToken:self];
+		} else {
+			[authDelegate oauthClientDidLoseAccessToken:self];
+		}
 	}
 }
 
