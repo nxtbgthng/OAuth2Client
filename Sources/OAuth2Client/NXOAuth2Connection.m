@@ -87,9 +87,8 @@
 
 - (void)retry;
 {
-	[self cancel];
 	[response release]; response = nil;
-	[connection release];
+	[connection cancel]; [connection release];
 	connection = [[[self class] startedConnectionWithRequest:request connectionDelegate:self streamDelegate:self client:client] retain];
 }
 
