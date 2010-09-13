@@ -12,8 +12,8 @@
 
 #import <Foundation/Foundation.h>
 
-#import "NXOAuth2PostBodyStreamMonitorDelegate.h"
 
+@protocol NXOAuth2PostBodyStreamMonitorDelegate;
 
 @interface NXOAuth2PostBodyStream : NSInputStream {
 	NSString		*boundary;

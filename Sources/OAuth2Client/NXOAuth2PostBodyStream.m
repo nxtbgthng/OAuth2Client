@@ -11,6 +11,7 @@
 */
 
 #import "NXOAuth2PostBodyPart.h"
+#import "NXOAuth2PostBodyStreamMonitorDelegate.h"
 
 #import "NXOAuth2PostBodyStream.h"
 
