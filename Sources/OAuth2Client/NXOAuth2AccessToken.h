@@ -35,6 +35,8 @@
 
 #pragma mark Keychain Support
 
+//TODO: Support alternate KeyChain Locations
+
 + (id)tokenFromDefaultKeychainWithServiceProviderName:(NSString *)provider;
 - (void)storeInDefaultKeychainWithServiceProviderName:(NSString *)provider;
 - (void)removeFromDefaultKeychainWithServiceProviderName:(NSString *)provider;
