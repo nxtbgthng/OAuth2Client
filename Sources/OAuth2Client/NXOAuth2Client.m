@@ -17,6 +17,8 @@
 #import "NSURL+NXOAuth2.h"
 #import "NSMutableURLRequest+NXOAuth2.h"
 
+#import "NXOAuth2ClientAuthDelegate.h"
+
 #import "NXOAuth2Client.h"
 
 

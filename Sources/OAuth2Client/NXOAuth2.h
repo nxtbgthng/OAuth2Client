@@ -10,6 +10,7 @@
 //
 
 #import "NXOAuth2Client.h"
+#import "NXOAuth2ClientAuthDelegate.h"
 #import "NXOAuth2AccessToken.h"
 #import "NXOAuth2Connection.h"
 #import "NXOAuth2ConnectionDelegate.h"

@@ -82,15 +82,3 @@
 - (void)abortRetryOfConnection:(NXOAuth2Connection *)retryConnection;
 
 @end
-
-
-@protocol NXOAuth2ClientAuthDelegate
-- (void)oauthClientDidGetAccessToken:(NXOAuth2Client *)client;
-- (void)oauthClientDidLoseAccessToken:(NXOAuth2Client *)client;
-- (void)oauthClient:(NXOAuth2Client *)client didFailToGetAccessTokenWithError:(NSError *)error;
-
-/*!
- * use one of the -autherize* methods
- */
-- (void)oauthClientRequestedAuthorization:(NXOAuth2Client *)client;
-@end
