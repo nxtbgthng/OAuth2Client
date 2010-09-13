@@ -73,6 +73,7 @@
 
 - (NSString *)description;
 {
+    //TODO: nicer :-)
 	return [NSString stringWithFormat:@"NXOAuth2Connection to: %@", request.URL];
 }
 
@@ -81,6 +82,7 @@
 - (void)cancel;
 {
 	[connection cancel];
+    //TODO: Message OAuthClient
 	// maybe unschedule from current runloop now?...
 	[client abortRetryOfConnection:self];
 }
@@ -95,6 +97,7 @@
 
 #pragma mark Private
 
+//TODO: Rename to connectionWithRequest:... und Instanzmethode
 + (NSURLConnection *)startedConnectionWithRequest:(NSURLRequest *)aRequest connectionDelegate:(id)connectionDelegate streamDelegate:(id)streamDelegate client:(NXOAuth2Client *)theClient;
 {
 	NSMutableURLRequest *startRequest = [[aRequest mutableCopy] autorelease];
@@ -119,6 +122,7 @@
 #pragma mark -
 #pragma mark SCPostBodyStream Delegate
 
+//TODO: Umbenennen
 - (void)stream:(NXOAuth2PostBodyStream *)stream hasBytesDelivered:(unsigned long long)deliveredBytes total:(unsigned long long)totalBytes;
 {
 	if ([delegate respondsToSelector:@selector(oauthConnection:didSendBytes:ofTotal:)]){
@@ -132,7 +136,7 @@
 - (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)theResponse;
 {
 	NSAssert(response == nil, @"invalid state");
-	[response release];	// just to be sure
+	[response release];	// just to be sure, should be nil already
 	response = [theResponse retain];
 	
 	if (!data) {
@@ -177,7 +181,9 @@
 			[delegate oauthConnection:self didFinishWithData:data];
 		}
 	} else {
-		NSError *httpError = [NSError errorWithDomain:NSURLErrorDomain
+        //TODO: Better Error handling (no Error in an Error)
+        
+		NSError *httpError = [NSError errorWithDomain:NSURLErrorDomain  //FIXME: Use your own Error Domain
 												 code:self.statusCode
 											 userInfo:[NSDictionary dictionaryWithObjectsAndKeys:
 													   [NSHTTPURLResponse localizedStringForStatusCode:self.statusCode], NSLocalizedDescriptionKey,

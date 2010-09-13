@@ -32,7 +32,7 @@
  *	- NSData
  *	- NXOAuth2FileStreamWrapper
  */
-+ partWithName:(NSString *)name content:(id)content;
++ (id)partWithName:(NSString *)name content:(id)content;
 - (id)initWithName:(NSString *)name content:(id)content;
 
 - (id)initWithHeaders:(NSString *)headers dataContent:(NSData *)data;
