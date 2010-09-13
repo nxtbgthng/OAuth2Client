@@ -14,8 +14,7 @@
 
 #pragma mark Errors
 
-extern NSString * const NXOAuth2ErrorDomain;
+//extern NSString * const NXOAuth2ErrorDomain;
+extern NSString * const NXOAuth2HTTPErrorDomain;
 
-extern NSInteger const NXOAuth2HTTPErrorCode;
-extern NSString * const NXOAuth2HTTPErrorKey;
 extern NSString * const NXOAuth2DidRetryConnectionKey;
