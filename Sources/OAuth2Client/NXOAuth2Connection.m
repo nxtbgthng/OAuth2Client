@@ -181,34 +181,18 @@
 		if ([delegate respondsToSelector:@selector(oauthConnection:didFinishWithData:)]) {
 			[delegate oauthConnection:self didFinishWithData:data];
 		}
-	} else {
-        //TODO: Better Error handling (no Error in an Error)
-        
-		NSError *httpError = [NSError errorWithDomain:NSURLErrorDomain  //FIXME: Use your own Error Domain
+	} else {        
+		NSError *error = [NSError errorWithDomain:NXOAuth2HTTPErrorDomain  //FIXME: Use your own Error Domain
 												 code:self.statusCode
-											 userInfo:[NSDictionary dictionaryWithObjectsAndKeys:
-													   [NSHTTPURLResponse localizedStringForStatusCode:self.statusCode], NSLocalizedDescriptionKey,
-													   nil]];
-		NSMutableDictionary *errorInfo = [NSMutableDictionary dictionaryWithObjectsAndKeys:
-										 httpError, NXOAuth2HTTPErrorKey,
-										 nil];
-		NSError *error = [NSError errorWithDomain:NXOAuth2ErrorDomain
-											 code:NXOAuth2HTTPErrorCode
-										 userInfo:errorInfo];
+											 userInfo:nil];
 		if ([delegate respondsToSelector:@selector(oauthConnection:didFailWithError:)]) {
 			[delegate oauthConnection:self didFailWithError:error];
 		}
 	}
 }
 
-- (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)httpError;
+- (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error;
 {
-	NSDictionary *errorInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-							   httpError, NXOAuth2HTTPErrorKey,
-							   nil];
-	NSError *error = [NSError errorWithDomain:NXOAuth2ErrorDomain
-										 code:NXOAuth2HTTPErrorCode
-									 userInfo:errorInfo];
 	if ([delegate respondsToSelector:@selector(oauthConnection:didFailWithError:)]) {
 		[delegate oauthConnection:self didFailWithError:error];
 	}
