@@ -10,6 +10,7 @@
 //
 
 #import "NXOAuth2PostBodyStream.h"
+#import "NXOAuth2PostBodyStreamMonitorDelegate.h"
 #import "NXOAuth2ConnectionDelegate.h"
 #import "NXOAuth2Client.h"
 #import "NXOAuth2AccessToken.h"
@@ -17,7 +18,7 @@
 #import "NXOAuth2Connection.h"
 
 
-@interface NXOAuth2Connection ()
+@interface NXOAuth2Connection () <NXOAuth2PostBodyStreamMonitorDelegate>
 + (NSURLConnection *)startedConnectionWithRequest:(NSURLRequest *)aRequest connectionDelegate:(id)connectionDelegate streamDelegate:(id)streamDelegate client:(NXOAuth2Client *)theClient;
 @end
 

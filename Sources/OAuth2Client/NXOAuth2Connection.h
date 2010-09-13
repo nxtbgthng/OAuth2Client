@@ -14,7 +14,6 @@
 #import <Foundation/Foundation.h>
 
 #import "NXOAuth2Constants.h"
-#import "NXOAuth2PostBodyStreamMonitorDelegate.h"
 
 @class NXOAuth2Client;
 @protocol NXOAuth2ConnectionDelegate;
@@ -35,7 +34,7 @@
  *	before sending it. If no client is passed in the connection will sent
  *	unsigned requests.
  */
-@interface NXOAuth2Connection : NSObject <NXOAuth2PostBodyStreamMonitorDelegate> {
+@interface NXOAuth2Connection : NSObject {
 @private
 	NSURLConnection		*connection;
 	NSURLRequest		*request;
