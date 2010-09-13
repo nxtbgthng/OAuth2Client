@@ -16,6 +16,8 @@
 
 #pragma mark Lifecycle
 
+//TODO: Disable simple Init!
+
 + (id)wrapperWithStream:(NSInputStream *)theStream contentLength:(unsigned long long)theContentLength;
 {
 	return [[[self alloc] initWithStream:theStream contentLength:theContentLength] autorelease];
