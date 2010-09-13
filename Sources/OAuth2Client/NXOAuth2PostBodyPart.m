@@ -25,7 +25,7 @@
 
 #pragma mark Lifecycle
 
-+ partWithName:(NSString *)name content:(id)content;
++ (id)partWithName:(NSString *)name content:(id)content;
 {
 	return [[[self alloc] initWithName:name content:content] autorelease];
 }
