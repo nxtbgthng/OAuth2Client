@@ -21,7 +21,7 @@
 
 
 @interface NXOAuth2Client ()
-- (void)requestTokenWithAuthGrand:(NSString *)authGrand andRedirectURL:(NSURL *)redirectURL;
+- (void)requestTokenWithAuthGrand:(NSString *)authGrand redirectURL:(NSURL *)redirectURL;
 @end
 
 
@@ -123,7 +123,7 @@
 {
 	NSString *accessGrand = [URL valueForQueryParameterKey:@"code"];
 	if (accessGrand) {
-		[self requestTokenWithAuthGrand:accessGrand andRedirectURL:[URL URLWithoutQueryString]];
+		[self requestTokenWithAuthGrand:accessGrand redirectURL:[URL URLWithoutQueryString]];
 		return YES;
 	}
 	return NO;
@@ -132,7 +132,7 @@
 #pragma mark accessGrand -> accessToken
 
 // Web Server Flow only
-- (void)requestTokenWithAuthGrand:(NSString *)authGrand andRedirectURL:(NSURL *)redirectURL;
+- (void)requestTokenWithAuthGrand:(NSString *)authGrand redirectURL:(NSURL *)redirectURL;
 {
 	NSAssert1(!authConnection, @"authConnection already running with: %@", authConnection);
 	

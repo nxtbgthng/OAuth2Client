@@ -26,6 +26,9 @@
  * - oauth2 draft 10 http://tools.ietf.org/html/draft-ietf-oauth-v2-10
  * - not thread save
  */
+
+//TODO: Link to documentation
+
 @interface NXOAuth2Client : NSObject <NXOAuth2ConnectionDelegate> {
 @private
 	NSString	*clientId;
@@ -90,7 +93,7 @@
 - (void)oauthClient:(NXOAuth2Client *)client didFailToGetAccessTokenWithError:(NSError *)error;
 
 /*!
- * use one of the -autherize* methods
+ * use one of the -authorize* methods
  */
 - (void)oauthClientRequestedAuthorization:(NXOAuth2Client *)client;
 @end
