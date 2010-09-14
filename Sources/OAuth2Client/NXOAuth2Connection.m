@@ -122,8 +122,7 @@
 #pragma mark -
 #pragma mark SCPostBodyStream Delegate
 
-//TODO: Umbenennen
-- (void)stream:(NXOAuth2PostBodyStream *)stream hasBytesDelivered:(unsigned long long)deliveredBytes total:(unsigned long long)totalBytes;
+- (void)stream:(NXOAuth2PostBodyStream *)stream didSendBytes:(unsigned long long)deliveredBytes ofTotal:(unsigned long long)totalBytes;
 {
 	if ([delegate respondsToSelector:@selector(oauthConnection:didSendBytes:ofTotal:)]){
 		[delegate oauthConnection:self didSendBytes:deliveredBytes ofTotal:totalBytes];
@@ -181,7 +180,7 @@
 			[delegate oauthConnection:self didFinishWithData:data];
 		}
 	} else {        
-		NSError *error = [NSError errorWithDomain:NXOAuth2HTTPErrorDomain  //FIXME: Use your own Error Domain
+		NSError *error = [NSError errorWithDomain:NXOAuth2HTTPErrorDomain
 												 code:self.statusCode
 											 userInfo:nil];
 		if ([delegate respondsToSelector:@selector(oauthConnection:didFailWithError:)]) {

@@ -161,8 +161,8 @@
 		}
 	} else {
 		numBytesRead += result;
-		if([monitorDelegate respondsToSelector:@selector(stream:hasBytesDelivered:total:)]) {
-			[monitorDelegate stream:self hasBytesDelivered:numBytesRead total:numBytesTotal];
+		if([monitorDelegate respondsToSelector:@selector(stream:didSendBytes:ofTotal:)]) {
+			[monitorDelegate stream:self didSendBytes:numBytesRead ofTotal:numBytesTotal];
 		}
 	}
     return result;
