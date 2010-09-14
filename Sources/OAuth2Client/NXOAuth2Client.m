@@ -23,7 +23,7 @@
 
 
 @interface NXOAuth2Client ()
-- (void)requestTokenWithAuthGrand:(NSString *)authGrand redirectURL:(NSURL *)redirectURL;
+- (void)requestTokenWithAuthGrant:(NSString *)authGrant redirectURL:(NSURL *)redirectURL;
 - (void)removeConnectionFromWaitingQueue:(NXOAuth2Connection *)aConnection;
 @end
 
@@ -124,9 +124,9 @@
 // Web Server Flow only
 - (BOOL)openRedirectURL:(NSURL *)URL;
 {
-	NSString *accessGrand = [URL valueForQueryParameterKey:@"code"];
-	if (accessGrand) {
-		[self requestTokenWithAuthGrand:accessGrand redirectURL:[URL URLWithoutQueryString]];
+	NSString *accessGrant = [URL valueForQueryParameterKey:@"code"];
+	if (accessGrant) {
+		[self requestTokenWithAuthGrant:accessGrant redirectURL:[URL URLWithoutQueryString]];
 		return YES;
 	}
 	
@@ -147,7 +147,7 @@
 #pragma mark Request Token
 
 // Web Server Flow only
-- (void)requestTokenWithAuthGrand:(NSString *)authGrand redirectURL:(NSURL *)redirectURL;
+- (void)requestTokenWithAuthGrant:(NSString *)authGrant redirectURL:(NSURL *)redirectURL;
 {
 	NSAssert1(!authConnection, @"authConnection already running with: %@", authConnection);
 	
@@ -158,7 +158,7 @@
 								 clientId, @"client_id",
 								 clientSecret, @"client_secret",
 								 [redirectURL absoluteString], @"redirect_uri",
-								 authGrand, @"code",
+								 authGrant, @"code",
 								 nil]];
 	[authConnection cancel]; [authConnection release]; // just to be sure
 	authConnection = [[NXOAuth2Connection alloc] initWithRequest:tokenRequest
