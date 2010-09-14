@@ -128,6 +128,18 @@
 		[self requestTokenWithAuthGrand:accessGrand redirectURL:[URL URLWithoutQueryString]];
 		return YES;
 	}
+	
+	NSString *errorString = [URL valueForQueryParameterKey:@"error"];
+	NSError *error = nil;
+	if ([errorString caseInsensitiveCompare:@"redirect_uri_mismatch"] == NSOrderedSame) {
+		error = [NSError errorWithDomain:NXOAuth2ErrorDomain code:NXOAuth2RedirectURIMismatchErrorCode userInfo:nil];
+	} else if ([errorString caseInsensitiveCompare:@"user_denied"] == NSOrderedSame) {
+		error = [NSError errorWithDomain:NXOAuth2ErrorDomain code:NXOAuth2UserDeniedErrorCode userInfo:nil];
+	}
+	
+	if (error){
+		[delegate oauthClient:self didFailToGetAccessTokenWithError:error];
+	}
 	return NO;
 }
 

@@ -12,9 +12,16 @@
 #import <Foundation/Foundation.h>
 
 
-#pragma mark Errors
+#pragma mark OAuth2 Errors
 
-//extern NSString * const NXOAuth2ErrorDomain;
-extern NSString * const NXOAuth2HTTPErrorDomain;
+extern NSString * const NXOAuth2ErrorDomain;					// domain
 
-extern NSString * const NXOAuth2DidRetryConnectionKey;
+extern NSInteger const NXOAuth2RedirectURIMismatchErrorCode;	// -2001
+extern NSInteger const NXOAuth2UserDeniedErrorCode;				// -2002
+
+
+#pragma mark HTTP Errors
+
+extern NSString * const NXOAuth2HTTPErrorDomain;				// domain
+
+// The error code represents the http status code

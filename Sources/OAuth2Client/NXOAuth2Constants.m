@@ -12,7 +12,16 @@
 #import "NXOAuth2Constants.h"
 
 
-//NSString * const NXOAuth2ErrorDomain = @"NXOAuth2ErrorDomain";
+#pragma mark OAuth2 Errors
+
+NSString * const NXOAuth2ErrorDomain = @"NXOAuth2ErrorDomain";
+
+NSInteger const NXOAuth2RedirectURIMismatchErrorCode = -2001;
+NSInteger const NXOAuth2UserDeniedErrorCode = -2002;
+
+
+#pragma mark HTTP Errors
+
 NSString * const NXOAuth2HTTPErrorDomain = @"NXOAuth2HTTPErrorDomain";
 
-NSString * const NXOAuth2DidRetryConnectionKey = @"NXOAuth2DidRetryConnectionKey";
+// The error code represents the http status code
