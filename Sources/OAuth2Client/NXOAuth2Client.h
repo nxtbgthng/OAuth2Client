@@ -41,7 +41,7 @@
 	// token exchange
 	NXOAuth2Connection	*authConnection;
 	NXOAuth2AccessToken	*accessToken;
-	NSMutableArray	*retryConnectionsAfterTokenExchange;
+	NSMutableArray	*waitingConnections; //for connections that are waiting for successful authorisation
 	
 	// delegates
 	NSObject<NXOAuth2ClientDelegate>*	delegate;	// assigned
@@ -82,6 +82,5 @@
 
 - (void)refreshAccessToken;
 - (void)refreshAccessTokenAndRetryConnection:(NXOAuth2Connection *)retryConnection;
-- (void)abortRetryOfConnection:(NXOAuth2Connection *)retryConnection;
 
 @end

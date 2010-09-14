@@ -24,6 +24,7 @@
 
 @interface NXOAuth2Client ()
 - (void)requestTokenWithAuthGrand:(NSString *)authGrand redirectURL:(NSURL *)redirectURL;
+- (void)removeConnectionFromWaitingQueue:(NXOAuth2Connection *)aConnection;
 @end
 
 
@@ -52,7 +53,7 @@
 
 - (void)dealloc;
 {
-	[retryConnectionsAfterTokenExchange release];
+	[waitingConnections release];
 	[authConnection cancel];
 	[authConnection release];
 	[clientId release];
@@ -197,8 +198,8 @@
 - (void)refreshAccessTokenAndRetryConnection:(NXOAuth2Connection *)retryConnection;
 {
 	if (retryConnection) {
-		if (!retryConnectionsAfterTokenExchange) retryConnectionsAfterTokenExchange = [[NSMutableArray alloc] init];
-		[retryConnectionsAfterTokenExchange addObject:retryConnection];
+		if (!waitingConnections) waitingConnections = [[NSMutableArray alloc] init];
+		[waitingConnections addObject:retryConnection];
 	}
 	if (!authConnection) {
 		NSAssert((accessToken.refreshToken != nil), @"invalid state");
@@ -217,11 +218,10 @@
 	}
 }
 
-- (void)abortRetryOfConnection:(NXOAuth2Connection *)retryConnection;
+- (void)removeConnectionFromWaitingQueue:(NXOAuth2Connection *)aConnection;
 {
-	if (retryConnection) {
-		[retryConnectionsAfterTokenExchange removeObject:retryConnection];
-	}
+	if (!aConnection) return;
+    [waitingConnections removeObject:aConnection];
 }
 
 
@@ -235,10 +235,10 @@
 		NSAssert(newToken != nil, @"invalid response?");
 		self.accessToken = newToken;
 		
-		for (NXOAuth2Connection *retryConnection in retryConnectionsAfterTokenExchange) {
+		for (NXOAuth2Connection *retryConnection in waitingConnections) {
 			[retryConnection retry];
 		}
-		[retryConnectionsAfterTokenExchange removeAllObjects];
+		[waitingConnections removeAllObjects];
 		
 		[authConnection release]; authConnection = nil;
 	}

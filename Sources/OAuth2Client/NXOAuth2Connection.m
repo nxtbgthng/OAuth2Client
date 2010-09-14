@@ -17,6 +17,11 @@
 
 #import "NXOAuth2Connection.h"
 
+@interface NXOAuth2Client (Private)
+- (void)removeConnectionFromWaitingQueue:(NXOAuth2Connection *)connection;
+@end
+
+
 
 @interface NXOAuth2Connection () <NXOAuth2PostBodyStreamMonitorDelegate>
 - (NSURLConnection *)createConnection;
@@ -33,7 +38,7 @@
 {
 	if (self = [super init]) {
 		delegate = aDelegate;	// assign only
-		client = [aClient retain];	// TODO: check if assign is better here
+		client = [aClient retain];
 		
 		request = [aRequest copy];
 		connection = [[self createConnection] retain];
@@ -74,8 +79,7 @@
 
 - (NSString *)description;
 {
-    //TODO: nicer :-)
-	return [NSString stringWithFormat:@"NXOAuth2Connection to: %@", request.URL];
+	return [NSString stringWithFormat:@"NXOAuth2Connection <%@>", request.URL];
 }
 
 #pragma mark Public
@@ -83,9 +87,7 @@
 - (void)cancel;
 {
 	[connection cancel];
-    //TODO: Message OAuthClient
-	// maybe unschedule from current runloop now?...
-	[client abortRetryOfConnection:self];
+	[client removeConnectionFromWaitingQueue:self];
 }
 
 - (void)retry;
