@@ -19,7 +19,7 @@
 
 
 @interface NXOAuth2Connection () <NXOAuth2PostBodyStreamMonitorDelegate>
-+ (NSURLConnection *)startedConnectionWithRequest:(NSURLRequest *)aRequest connectionDelegate:(id)connectionDelegate streamDelegate:(id)streamDelegate client:(NXOAuth2Client *)theClient;
+- (NSURLConnection *)createConnection;
 @end
 
 
@@ -36,7 +36,7 @@
 		client = [aClient retain];	// TODO: check if assign is better here
 		
 		request = [aRequest copy];
-		connection = [[[self class] startedConnectionWithRequest:request connectionDelegate:self streamDelegate:self client:client] retain];
+		connection = [[self createConnection] retain];
 	}
 	return self;
 }
@@ -92,28 +92,27 @@
 {
 	[response release]; response = nil;
 	[connection cancel]; [connection release];
-	connection = [[[self class] startedConnectionWithRequest:request connectionDelegate:self streamDelegate:self client:client] retain];
+	connection = [[self createConnection] retain];
 }
 
 
 #pragma mark Private
 
-//TODO: Rename to connectionWithRequest:... und Instanzmethode
-+ (NSURLConnection *)startedConnectionWithRequest:(NSURLRequest *)aRequest connectionDelegate:(id)connectionDelegate streamDelegate:(id)streamDelegate client:(NXOAuth2Client *)theClient;
+- (NSURLConnection *)createConnection;
 {
-	NSMutableURLRequest *startRequest = [[aRequest mutableCopy] autorelease];
+	NSMutableURLRequest *startRequest = [[request mutableCopy] autorelease];
 	
-	if (theClient.accessToken) {
-		[startRequest setValue:[NSString stringWithFormat:@"OAuth %@", theClient.accessToken.accessToken]
+	if (client.accessToken) {
+		[startRequest setValue:[NSString stringWithFormat:@"OAuth %@", client.accessToken.accessToken]
 			forHTTPHeaderField:@"Authorization"];
 	}
 	
 	NSInputStream *bodyStream = [startRequest HTTPBodyStream];
 	if ([bodyStream isKindOfClass:[NXOAuth2PostBodyStream class]]){
-		[(NXOAuth2PostBodyStream *)bodyStream setMonitorDelegate:streamDelegate];
+		[(NXOAuth2PostBodyStream *)bodyStream setMonitorDelegate:self];
 	}
 	
-	NSURLConnection *aConnection = [[NSURLConnection alloc] initWithRequest:startRequest delegate:connectionDelegate startImmediately:NO];	// don't start yet
+	NSURLConnection *aConnection = [[NSURLConnection alloc] initWithRequest:startRequest delegate:self startImmediately:NO];	// don't start yet
 	[aConnection scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];												// let's first schedule it in the current runloop. (see http://github.com/soundcloud/cocoa-api-wrapper/issues#issue/2 )
 	[aConnection start];	// now start
 	return [aConnection autorelease];
