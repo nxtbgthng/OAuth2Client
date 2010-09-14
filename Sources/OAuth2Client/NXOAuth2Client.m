@@ -131,7 +131,7 @@
 	return NO;
 }
 
-#pragma mark accessGrand -> accessToken
+#pragma mark Request Token
 
 // Web Server Flow only
 - (void)requestTokenWithAuthGrand:(NSString *)authGrand redirectURL:(NSURL *)redirectURL;

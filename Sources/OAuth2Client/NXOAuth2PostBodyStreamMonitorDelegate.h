@@ -13,6 +13,6 @@
 @class NXOAuth2PostBodyStream;
 
 @protocol NXOAuth2PostBodyStreamMonitorDelegate <NSObject>
-- (void)stream:(NXOAuth2PostBodyStream *)stream hasBytesDelivered:(unsigned long long)deliveredBytes total:(unsigned long long)totalBytes;
+- (void)stream:(NXOAuth2PostBodyStream *)stream didSendBytes:(unsigned long long)deliveredBytes ofTotal:(unsigned long long)totalBytes;
 @end
 
