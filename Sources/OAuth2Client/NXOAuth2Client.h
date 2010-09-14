@@ -13,11 +13,11 @@
 
 #import <Foundation/Foundation.h>
 
+#import "NXOAuth2ClientDelegate.h"
 #import "NXOAuth2ConnectionDelegate.h"
 
 
 @class NXOAuth2Connection, NXOAuth2AccessToken;
-@protocol NXOAuth2ClientAuthDelegate;
 
 /*!
  * The OAuth 2.0 client
@@ -44,14 +44,14 @@
 	NSMutableArray	*retryConnectionsAfterTokenExchange;
 	
 	// delegates
-	NSObject<NXOAuth2ClientAuthDelegate>*	authDelegate;	// assigned
+	NSObject<NXOAuth2ClientDelegate>*	delegate;	// assigned
 }
 
 @property (nonatomic, readonly) NSString *clientId;
 @property (nonatomic, readonly) NSString *clientSecret;
 
 @property (nonatomic, retain) NXOAuth2AccessToken	*accessToken;
-@property (nonatomic, assign) NSObject<NXOAuth2ClientAuthDelegate>*	authDelegate;
+@property (nonatomic, assign) NSObject<NXOAuth2ClientDelegate>*	delegate;
 
 /*!
  * Initializes the Client
@@ -60,7 +60,7 @@
 		  clientSecret:(NSString *)clientSecret
 		  authorizeURL:(NSURL *)authorizeURL
 			  tokenURL:(NSURL *)tokenURL
-		  authDelegate:(NSObject<NXOAuth2ClientAuthDelegate> *)authDelegate;
+              delegate:(NSObject<NXOAuth2ClientDelegate> *)delegate;
 
 
 - (BOOL)openRedirectURL:(NSURL *)URL;
