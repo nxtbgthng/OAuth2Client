@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		824D5A6E123F68A8001177D5 /* NXOAuth2ClientDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 824D5A6D123F68A8001177D5 /* NXOAuth2ClientDelegate.h */; };
 		9429B3AA12267A3100D31807 /* NXOAuth2Client.h in Headers */ = {isa = PBXBuildFile; fileRef = 9429B3A812267A3100D31807 /* NXOAuth2Client.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9429B3AB12267A3100D31807 /* NXOAuth2Client.m in Sources */ = {isa = PBXBuildFile; fileRef = 9429B3A912267A3100D31807 /* NXOAuth2Client.m */; };
 		9429B4D91226987D00D31807 /* NXOAuth2AccessToken.h in Headers */ = {isa = PBXBuildFile; fileRef = 9429B4D71226987D00D31807 /* NXOAuth2AccessToken.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -60,6 +61,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		824D5A6D123F68A8001177D5 /* NXOAuth2ClientDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NXOAuth2ClientDelegate.h; sourceTree = "<group>"; };
 		9429B3A812267A3100D31807 /* NXOAuth2Client.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NXOAuth2Client.h; sourceTree = "<group>"; };
 		9429B3A912267A3100D31807 /* NXOAuth2Client.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NXOAuth2Client.m; sourceTree = "<group>"; };
 		9429B4D71226987D00D31807 /* NXOAuth2AccessToken.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NXOAuth2AccessToken.h; sourceTree = "<group>"; };
@@ -82,7 +84,7 @@
 		9429C49A1228023D00D31807 /* NSURL+NXOAuth2.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSURL+NXOAuth2.m"; sourceTree = "<group>"; };
 		9429C49F122802BE00D31807 /* NSMutableURLRequest+NXOAuth2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSMutableURLRequest+NXOAuth2.h"; sourceTree = "<group>"; };
 		9429C4A0122802BE00D31807 /* NSMutableURLRequest+NXOAuth2.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSMutableURLRequest+NXOAuth2.m"; sourceTree = "<group>"; };
-		942FFCD612315E0A00E6C65E /* OAuth2Client Framework.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = "OAuth2Client Framework.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
+		942FFCD612315E0A00E6C65E /* OAuth2Client Framework */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.framework; path = "OAuth2Client Framework"; sourceTree = BUILT_PRODUCTS_DIR; };
 		94E5AC92122C097B00C7021A /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		94E5B276122D457400C7021A /* OAuth2Client.framework-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "OAuth2Client.framework-Info.plist"; sourceTree = "<group>"; };
 		AA747D9E0F9514B9006C5449 /* OAuth2Client_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OAuth2Client_Prefix.pch; sourceTree = "<group>"; };
@@ -116,7 +118,7 @@
 			isa = PBXGroup;
 			children = (
 				D2AAC07E0554694100DB518D /* libOAuth2Client.a */,
-				942FFCD612315E0A00E6C65E /* OAuth2Client Framework.framework */,
+				942FFCD612315E0A00E6C65E /* OAuth2Client Framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -155,6 +157,7 @@
 			isa = PBXGroup;
 			children = (
 				9429B5AB1227C9BD00D31807 /* Connection */,
+				824D5A6D123F68A8001177D5 /* NXOAuth2ClientDelegate.h */,
 				9429B3A812267A3100D31807 /* NXOAuth2Client.h */,
 				9429B3A912267A3100D31807 /* NXOAuth2Client.m */,
 				9429B4D71226987D00D31807 /* NXOAuth2AccessToken.h */,
@@ -243,6 +246,7 @@
 				9429C49B1228023D00D31807 /* NSString+NXOAuth2.h in Headers */,
 				9429C49D1228023D00D31807 /* NSURL+NXOAuth2.h in Headers */,
 				9429C4A5122802BE00D31807 /* NSMutableURLRequest+NXOAuth2.h in Headers */,
+				824D5A6E123F68A8001177D5 /* NXOAuth2ClientDelegate.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -264,7 +268,7 @@
 			);
 			name = "OAuth2Client Framework";
 			productName = "OAuth2Client Framework";
-			productReference = 942FFCD612315E0A00E6C65E /* OAuth2Client Framework.framework */;
+			productReference = 942FFCD612315E0A00E6C65E /* OAuth2Client Framework */;
 			productType = "com.apple.product-type.framework";
 		};
 		D2AAC07D0554694100DB518D /* OAuth2Client */ = {
@@ -407,6 +411,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				OTHER_LDFLAGS = "-ObjC";
 				PREBINDING = NO;
+				SDKROOT = iphoneos4.1;
 			};
 			name = Debug;
 		};
@@ -419,6 +424,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				OTHER_LDFLAGS = "-ObjC";
 				PREBINDING = NO;
+				SDKROOT = iphoneos4.1;
 			};
 			name = Release;
 		};

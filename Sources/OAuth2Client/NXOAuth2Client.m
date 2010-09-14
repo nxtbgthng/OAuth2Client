@@ -34,7 +34,7 @@
 		  clientSecret:(NSString *)aClientSecret
 		  authorizeURL:(NSURL *)anAuthorizeURL
 			  tokenURL:(NSURL *)aTokenURL
-		  authDelegate:(NSObject<NXOAuth2ClientAuthDelegate> *)anAuthDelegate;
+              delegate:(NSObject<NXOAuth2ClientDelegate> *)aDelegate;
 {
 	NSAssert(aTokenURL != nil && anAuthorizeURL != nil, @"No token or no authorize URL");
 	if (self = [super init]) {
@@ -43,7 +43,7 @@
 		authorizeURL = [anAuthorizeURL copy];
 		tokenURL = [aTokenURL copy];
 		
-		self.authDelegate = anAuthDelegate;
+		self.delegate = aDelegate;
 	}
 	return self;
 }
@@ -61,7 +61,7 @@
 
 #pragma mark Accessors
 
-@synthesize clientId, clientSecret, authDelegate;
+@synthesize clientId, clientSecret, delegate;
 
 @dynamic accessToken;
 
@@ -70,7 +70,7 @@
 	if (accessToken) return accessToken;
 	accessToken = [[NXOAuth2AccessToken tokenFromDefaultKeychainWithServiceProviderName:[tokenURL host]] retain];
 	if (accessToken) {
-		[authDelegate oauthClientDidGetAccessToken:self];
+		[delegate oauthClientDidGetAccessToken:self];
 	}
 	return accessToken;
 }
@@ -91,9 +91,9 @@
 	[accessToken storeInDefaultKeychainWithServiceProviderName:[tokenURL host]];
 	if (didGetOrDidLoseToken) {
 		if (accessToken) {
-			[authDelegate oauthClientDidGetAccessToken:self];
+			[delegate oauthClientDidGetAccessToken:self];
 		} else {
-			[authDelegate oauthClientDidLoseAccessToken:self];
+			[delegate oauthClientDidLoseAccessToken:self];
 		}
 	}
 }
@@ -104,7 +104,7 @@
 - (void)requestAccess;
 {
 	if (!self.accessToken) {
-		[authDelegate oauthClientRequestedAuthorization:self];
+		[delegate oauthClientNeedsAuthorization:self];
 	}
 }
 
@@ -233,7 +233,7 @@
 - (void)oauthConnection:(NXOAuth2Connection *)connection didFailWithError:(NSError *)error;
 {
 	if (connection == authConnection) {
-		[authDelegate oauthClient:self didFailToGetAccessTokenWithError:error]; // TODO: create own error domain?
+		[delegate oauthClient:self didFailToGetAccessTokenWithError:error];
 		self.accessToken = nil;
 		
 		[authConnection release]; authConnection = nil;
