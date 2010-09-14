@@ -208,7 +208,7 @@
 	
 	if(hostChanged
 	   || (schemeChanged && !schemeChangedToHTTPS)) {
-		NSMutableURLRequest *mutableRequest = [aRequest mutableCopy];
+		NSMutableURLRequest *mutableRequest = [[aRequest mutableCopy] autorelease];
 		[mutableRequest setValue:nil forHTTPHeaderField:@"Authorization"]; // strip Authorization information
 		return mutableRequest;
 	}
