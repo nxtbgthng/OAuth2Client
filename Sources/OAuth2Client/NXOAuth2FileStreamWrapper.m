@@ -14,13 +14,20 @@
 
 @implementation NXOAuth2FileStreamWrapper
 
-#pragma mark Lifecycle
-
-//TODO: Disable simple Init!
+#pragma mark Class Methods
 
 + (id)wrapperWithStream:(NSInputStream *)theStream contentLength:(unsigned long long)theContentLength;
 {
 	return [[[self alloc] initWithStream:theStream contentLength:theContentLength] autorelease];
+}
+
+
+#pragma mark Lifecycle
+
+- (id)init;
+{
+    NSAssert(NO, @"-init should not be used in the NXOAuth2FileStreamWrapper");
+    return nil;
 }
 
 - (id)initWithStream:(NSInputStream *)theStream contentLength:(unsigned long long)theContentLength;
