@@ -32,6 +32,20 @@
 
 #pragma mark Lifecycle
 
+#if NS_BLOCKS_AVAILABLE
+- (id)initWithRequest:(NSURLRequest *)aRequest
+		  oauthClient:(NXOAuth2Client *)aClient
+               finish:(void (^)(void))finishBlock 
+                 fail:(void (^)(NSError *error))failBlock;
+{
+    if ([self initWithRequest:aRequest oauthClient:aClient delegate:nil]) {
+        finish = Block_copy(finishBlock);
+        fail = Block_copy(failBlock);
+    }
+    return self;
+}
+#endif
+
 - (id)initWithRequest:(NSURLRequest *)aRequest
 		  oauthClient:(NXOAuth2Client *)aClient
 			 delegate:(NSObject<NXOAuth2ConnectionDelegate> *)aDelegate;
@@ -48,6 +62,10 @@
 
 - (void)dealloc;
 {
+#if NS_BLOCKS_AVAILABLE
+    Block_release(fail);
+    Block_release(finish);
+#endif
 	[data release];
 	[client release];
 	[connection cancel];
@@ -181,6 +199,9 @@
 		if ([delegate respondsToSelector:@selector(oauthConnection:didFinishWithData:)]) {
 			[delegate oauthConnection:self didFinishWithData:data];
 		}
+#if NS_BLOCKS_AVAILABLE
+        if (finish) finish();
+#endif
 	} else {        
 		NSError *error = [NSError errorWithDomain:NXOAuth2HTTPErrorDomain
 												 code:self.statusCode
@@ -188,6 +209,9 @@
 		if ([delegate respondsToSelector:@selector(oauthConnection:didFailWithError:)]) {
 			[delegate oauthConnection:self didFailWithError:error];
 		}
+#if NS_BLOCKS_AVAILABLE
+        if (fail) fail(error);
+#endif
 	}
 }
 
@@ -196,6 +220,9 @@
 	if ([delegate respondsToSelector:@selector(oauthConnection:didFailWithError:)]) {
 		[delegate oauthConnection:self didFailWithError:error];
 	}
+#if NS_BLOCKS_AVAILABLE
+    if (fail) fail(error);
+#endif
 }
 
 - (NSURLRequest *)connection:(NSURLConnection *)aConnection willSendRequest:(NSURLRequest *)aRequest redirectResponse:(NSURLResponse *)aRedirectResponse;

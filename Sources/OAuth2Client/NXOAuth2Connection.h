@@ -44,10 +44,15 @@
 	
 	id					context;
 	NSDictionary		*userInfo;
-	
+    	
 	NXOAuth2Client		*client;
 	
 	NSObject<NXOAuth2ConnectionDelegate>	*delegate;	// assigned
+    
+#if NS_BLOCKS_AVAILABLE
+    void (^finish)(void);
+    void (^fail)(NSError *error);
+#endif
 }
 
 @property (readonly) NSData *data;
@@ -55,6 +60,14 @@
 @property (readonly) NSInteger statusCode;
 @property (retain) id context;
 @property (retain) NSDictionary *userInfo;
+
+#if NS_BLOCKS_AVAILABLE
+- (id)initWithRequest:(NSURLRequest *)request
+		  oauthClient:(NXOAuth2Client *)client
+               finish:(void (^)(void))finishBlock 
+                 fail:(void (^)(NSError *error))failBlock;
+#endif
+
 
 - (id)initWithRequest:(NSURLRequest *)request
 		  oauthClient:(NXOAuth2Client *)client
