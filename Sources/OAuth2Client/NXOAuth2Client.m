@@ -107,7 +107,7 @@
 - (void)requestAccess;
 {
 	if (!self.accessToken) {
-		[delegate oauthClientNeedsAuthorization:self];
+		[delegate oauthClientNeedsAuthentication:self];
 	}
 }
 
@@ -168,7 +168,7 @@
 
 
 // User Password Flow Only
-- (void)authorizeWithUsername:(NSString *)username password:(NSString *)password;
+- (void)authenticateWithUsername:(NSString *)username password:(NSString *)password;
 {
 	NSAssert1(!authConnection, @"authConnection already running with: %@", authConnection);
 	

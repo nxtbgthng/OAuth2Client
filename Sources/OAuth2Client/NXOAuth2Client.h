@@ -65,16 +65,23 @@
 
 - (BOOL)openRedirectURL:(NSURL *)URL;
 
+
+#pragma mark Authorisation Methods
+
+/*---------------------------------*
+ * Use ONE of the following flows: *
+ *---------------------------------*/
+
 /*!
+ * Authenticate usind a web URL (Web Server Flow)
  * returns the URL to be opened to get access grant
  */
-- (NSURL *)authorizationURLWithRedirectURL:(NSURL *)redirectURL;	// web server flow
+- (NSURL *)authorizationURLWithRedirectURL:(NSURL *)redirectURL;
 
 /*!
- * authenticate with username & password
+ * Authenticate with username & password (User Credentials Flow)
  */
-- (void)authorizeWithUsername:(NSString *)username password:(NSString *)password;	// user credentials flow
-
+- (void)authenticateWithUsername:(NSString *)username password:(NSString *)password;	
 
 #pragma mark Public
 
