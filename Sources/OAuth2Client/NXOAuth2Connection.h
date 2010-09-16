@@ -55,6 +55,7 @@
 #endif
 }
 
+@property (assign) NSObject<NXOAuth2ConnectionDelegate>	*delegate;
 @property (readonly) NSData *data;
 @property (readonly) long long expectedContentLength;
 @property (readonly) NSInteger statusCode;

@@ -79,6 +79,7 @@
 
 #pragma mark Accessors
 
+@synthesize delegate;
 @synthesize data;
 @synthesize context, userInfo;
 
