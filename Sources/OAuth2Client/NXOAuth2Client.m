@@ -80,7 +80,7 @@
 
 - (void)setAccessToken:(NXOAuth2AccessToken *)value;
 {
-	if (accessToken == value) return;
+	if (self.accessToken == value) return;
 	BOOL didGetOrDidLoseToken = ((accessToken == nil) && (value != nil)		// did get
 								  || (accessToken != nil) && (value == nil));	// did lose
 	if (!value) {
