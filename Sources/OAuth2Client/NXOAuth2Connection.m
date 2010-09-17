@@ -51,6 +51,7 @@
 			 delegate:(NSObject<NXOAuth2ConnectionDelegate> *)aDelegate;
 {
 	if (self = [super init]) {
+		sentConnectionDidEndNotification = NO;
 		delegate = aDelegate;	// assign only
 		client = [aClient retain];
 		
@@ -62,6 +63,9 @@
 
 - (void)dealloc;
 {
+	if (sentConnectionDidEndNotification) [[NSNotificationCenter defaultCenter] postNotificationName:NXOAuth2DidEndConnection object:self];
+	sentConnectionDidEndNotification = NO;
+	
 #if NS_BLOCKS_AVAILABLE
     Block_release(fail);
     Block_release(finish);
@@ -105,6 +109,9 @@
 
 - (void)cancel;
 {
+	if (sentConnectionDidEndNotification) [[NSNotificationCenter defaultCenter] postNotificationName:NXOAuth2DidEndConnection object:self];
+	sentConnectionDidEndNotification = NO;
+	
 	[connection cancel];
 	[client removeConnectionFromWaitingQueue:self];
 }
@@ -134,8 +141,12 @@
 	}
 	
 	NSURLConnection *aConnection = [[NSURLConnection alloc] initWithRequest:startRequest delegate:self startImmediately:NO];	// don't start yet
-	[aConnection scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];												// let's first schedule it in the current runloop. (see http://github.com/soundcloud/cocoa-api-wrapper/issues#issue/2 )
+	[aConnection scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];	// let's first schedule it in the current runloop. (see http://github.com/soundcloud/cocoa-api-wrapper/issues#issue/2 )
 	[aConnection start];	// now start
+	
+	if (!sentConnectionDidEndNotification) [[NSNotificationCenter defaultCenter] postNotificationName:NXOAuth2DidStartConnection object:self];
+	sentConnectionDidEndNotification = YES;
+	
 	return [aConnection autorelease];
 }
 
@@ -196,6 +207,9 @@
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection;
 {
+	if (sentConnectionDidEndNotification) [[NSNotificationCenter defaultCenter] postNotificationName:NXOAuth2DidEndConnection object:self];
+	sentConnectionDidEndNotification = NO;
+	
 	if(self.statusCode < 400) {
 		if ([delegate respondsToSelector:@selector(oauthConnection:didFinishWithData:)]) {
 			[delegate oauthConnection:self didFinishWithData:data];
@@ -218,6 +232,9 @@
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error;
 {
+	if (sentConnectionDidEndNotification) [[NSNotificationCenter defaultCenter] postNotificationName:NXOAuth2DidEndConnection object:self];
+	sentConnectionDidEndNotification = NO;
+	
 	if ([delegate respondsToSelector:@selector(oauthConnection:didFailWithError:)]) {
 		[delegate oauthConnection:self didFailWithError:error];
 	}

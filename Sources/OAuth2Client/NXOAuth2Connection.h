@@ -53,6 +53,8 @@
     void (^finish)(void);
     void (^fail)(NSError *error);
 #endif
+	
+	BOOL				sentConnectionDidEndNotification;
 }
 
 @property (assign) NSObject<NXOAuth2ConnectionDelegate>	*delegate;

@@ -25,3 +25,9 @@ NSInteger const NXOAuth2UserDeniedErrorCode = -2002;
 NSString * const NXOAuth2HTTPErrorDomain = @"NXOAuth2HTTPErrorDomain";
 
 // The error code represents the http status code
+
+
+#pragma mark Notifications
+
+NSString * const NXOAuth2DidStartConnection = @"NXOAuth2DidStartConnection";
+NSString * const NXOAuth2DidEndConnection = @"NXOAuth2DidEndConnection";
