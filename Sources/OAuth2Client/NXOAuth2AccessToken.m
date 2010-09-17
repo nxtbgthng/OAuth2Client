@@ -222,6 +222,7 @@
 
 - (void)storeInDefaultKeychainWithServiceProviderName:(NSString *)provider;
 {
+	[self removeFromDefaultKeychainWithServiceProviderName:provider];
 	NSString *serviceName = [[self class] serviceNameWithProvider:provider];
 	NSData *data = [NSKeyedArchiver archivedDataWithRootObject:self];
 	
@@ -254,7 +255,9 @@
 	if (err == noErr) {
 		err = SecKeychainItemDelete(item);
 	}
-	CFRelease(item);
+	if (item) {
+		CFRelease(item);	
+	}
 	NSAssert1((err == noErr || err == errSecItemNotFound), @"error while deleting token from keychain: %d", err);
 }
 
