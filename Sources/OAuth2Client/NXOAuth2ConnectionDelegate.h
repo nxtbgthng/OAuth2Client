@@ -17,6 +17,14 @@
 @optional
 
 /*!
+ *	The connection did receive a response.
+ *
+ *	This method is not called if the response was a 401 with an expired token & a refresh token.
+ *	If so, then the token is refreshed & the connection will be automagically retried.
+ */
+- (void)oauthConnection:(NXOAuth2Connection *)connection didReceiveResponse:(NSURLResponse *)response;
+
+/*!
  *	The connection did finish and recieved the whole data.
  */
 - (void)oauthConnection:(NXOAuth2Connection *)connection didFinishWithData:(NSData *)data;

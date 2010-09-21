@@ -192,8 +192,13 @@
 		&& [authenticateHeader rangeOfString:@"expired_token"].location != NSNotFound) {
 		[self cancel];
 		[client refreshAccessTokenAndRetryConnection:self];
-	} else if ([delegate respondsToSelector:@selector(oauthConnection:didReceiveData:)]) {
-		[delegate oauthConnection:self didReceiveData:data];	// inform the delegate that we start with empty data
+	} else {
+		if ([delegate respondsToSelector:@selector(oauthConnection:didReceiveData:)]) {
+			[delegate oauthConnection:self didReceiveData:data];	// inform the delegate that we start with empty data
+		}
+		if ([delegate respondsToSelector:@selector(oauthConnection:didReceiveResponse:)]) {
+			[delegate oauthConnection:self didReceiveResponse:theResponse];
+		}
 	}
 }
 
