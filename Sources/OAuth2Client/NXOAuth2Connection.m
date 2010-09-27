@@ -74,6 +74,7 @@
 	[client release];
 	[connection cancel];
 	[connection release];
+	[response release];
 	[request release];
 	[context release];
 	[userInfo release];
