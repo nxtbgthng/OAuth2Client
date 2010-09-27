@@ -126,6 +126,7 @@
 
 - (void)open;
 {
+	NSAssert((contentStreams != nil) && (boundary != nil), @"Stream has been reopened after close");
     [contentStreams makeObjectsPerformSelector:@selector(open)];
     currentStream = nil;
 	streamIndex = 0;
@@ -136,6 +137,8 @@
 - (void)close;
 {
 	[contentStreams makeObjectsPerformSelector:@selector(close)];
+	[contentStreams release]; contentStreams = nil;
+	[boundary release]; boundary = nil;
 	currentStream = nil;
 }
 
