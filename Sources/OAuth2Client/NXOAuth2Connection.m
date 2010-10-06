@@ -223,7 +223,25 @@
 #if NS_BLOCKS_AVAILABLE
         if (finish) finish();
 #endif
-	} else {        
+	} else {
+		if (self.statusCode == 401) {
+			// check if token is still valid
+			NSString *authenticateHeader = nil;
+			if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
+				NSDictionary *headerFields = [(NSHTTPURLResponse *)response allHeaderFields];
+				for (NSString *headerKey in headerFields.allKeys) {
+					if ([[headerKey lowercaseString] isEqualToString:@"www-authenticate"]) {
+						authenticateHeader = [headerFields objectForKey:headerKey];
+						break;
+					}
+				}
+			}
+			if (authenticateHeader
+				&& [authenticateHeader rangeOfString:@"invalid_token"].location != NSNotFound) {
+				client.accessToken = nil;
+			}
+		}
+		
 		NSError *error = [NSError errorWithDomain:NXOAuth2HTTPErrorDomain
 												 code:self.statusCode
 											 userInfo:nil];
