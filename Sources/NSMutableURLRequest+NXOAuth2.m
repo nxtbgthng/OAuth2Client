@@ -19,7 +19,7 @@
 
 @implementation NSMutableURLRequest (NXOAuth2)
 
-- (NSDictionary *)parameters;
+- (NSDictionary *)nxoauth2_parameters;
 {
     NSString *encodedParameters;
 	if ([[self HTTPMethod] isEqualToString:@"POST"] || [[self HTTPMethod] isEqualToString:@"PUT"]) {
@@ -28,19 +28,19 @@
         encodedParameters = [[self URL] query];
     }
 	
-    return [encodedParameters parametersFromEncodedQueryString];
+    return [encodedParameters nxoauth2_parametersFromEncodedQueryString];
 }
 
-- (void)setParameters:(NSDictionary *)parameters 
+- (void)nxoauth2_setParameters:(NSDictionary *)parameters 
 {
 	if ([[self HTTPMethod] isEqualToString:@"POST"] || [[self HTTPMethod] isEqualToString:@"PUT"]) {
-		NSString *parametersString = [NSString stringWithEncodedQueryParameters:parameters];
+		NSString *parametersString = [NSString nxoauth2_stringWithEncodedQueryParameters:parameters];
         NSData *postData = [parametersString dataUsingEncoding:NSASCIIStringEncoding allowLossyConversion:YES];
         [self setHTTPBody:postData];
         [self setValue:[NSString stringWithFormat:@"%d", [postData length]] forHTTPHeaderField:@"Content-Length"];
         [self setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
     } else {
-		[self setURL:[self.URL URLByAddingParameters:parameters]];
+		[self setURL:[self.URL nxoauth2_URLByAddingParameters:parameters]];
 	}
 }
 

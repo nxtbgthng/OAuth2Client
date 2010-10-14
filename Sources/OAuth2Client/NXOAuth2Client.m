@@ -113,7 +113,7 @@
 
 - (NSURL *)authorizationURLWithRedirectURL:(NSURL *)redirectURL;
 {
-	return [authorizeURL URLByAddingParameters:[NSDictionary dictionaryWithObjectsAndKeys:
+	return [authorizeURL nxoauth2_URLByAddingParameters:[NSDictionary dictionaryWithObjectsAndKeys:
 												@"code", @"response_type",
 												clientId, @"client_id",
 												[redirectURL absoluteString], @"redirect_uri",
@@ -124,13 +124,13 @@
 // Web Server Flow only
 - (BOOL)openRedirectURL:(NSURL *)URL;
 {
-	NSString *accessGrant = [URL valueForQueryParameterKey:@"code"];
+	NSString *accessGrant = [URL nxoauth2_valueForQueryParameterKey:@"code"];
 	if (accessGrant) {
-		[self requestTokenWithAuthGrant:accessGrant redirectURL:[URL URLWithoutQueryString]];
+		[self requestTokenWithAuthGrant:accessGrant redirectURL:[URL nxoauth2_URLWithoutQueryString]];
 		return YES;
 	}
 	
-	NSString *errorString = [URL valueForQueryParameterKey:@"error"];
+	NSString *errorString = [URL nxoauth2_valueForQueryParameterKey:@"error"];
 	NSError *error = nil;
 	if ([errorString caseInsensitiveCompare:@"redirect_uri_mismatch"] == NSOrderedSame) {
 		error = [NSError errorWithDomain:NXOAuth2ErrorDomain code:NXOAuth2RedirectURIMismatchErrorCode userInfo:nil];
@@ -153,7 +153,7 @@
 	
 	NSMutableURLRequest *tokenRequest = [NSMutableURLRequest requestWithURL:tokenURL];
 	[tokenRequest setHTTPMethod:@"POST"];
-	[tokenRequest setParameters:[NSDictionary dictionaryWithObjectsAndKeys:
+	[tokenRequest nxoauth2_setParameters:[NSDictionary dictionaryWithObjectsAndKeys:
 								 @"authorization_code", @"grant_type",
 								 clientId, @"client_id",
 								 clientSecret, @"client_secret",
@@ -174,7 +174,7 @@
 	
 	NSMutableURLRequest *tokenRequest = [NSMutableURLRequest requestWithURL:tokenURL];
 	[tokenRequest setHTTPMethod:@"POST"];
-	[tokenRequest setParameters:[NSDictionary dictionaryWithObjectsAndKeys:
+	[tokenRequest nxoauth2_setParameters:[NSDictionary dictionaryWithObjectsAndKeys:
 								 @"password", @"grant_type",
 								 clientId, @"client_id",
 								 clientSecret, @"client_secret",
@@ -205,7 +205,7 @@
 		NSAssert((accessToken.refreshToken != nil), @"invalid state");
 		NSMutableURLRequest *tokenRequest = [NSMutableURLRequest requestWithURL:tokenURL];
 		[tokenRequest setHTTPMethod:@"POST"];
-		[tokenRequest setParameters:[NSDictionary dictionaryWithObjectsAndKeys:
+		[tokenRequest nxoauth2_setParameters:[NSDictionary dictionaryWithObjectsAndKeys:
 									 @"refresh_token", @"grant_type",
 									 clientId, @"client_id",
 									 clientSecret, @"client_secret",

@@ -16,7 +16,7 @@
 
 @interface NSMutableURLRequest (NXOAuth2)
 
-- (NSDictionary *)parameters;
-- (void)setParameters:(NSDictionary *)parameters;
+- (NSDictionary *)nxoauth2_parameters;
+- (void)nxoauth2_setParameters:(NSDictionary *)parameters;
 
 @end

@@ -16,7 +16,7 @@
 
 @implementation NSString (NXOAuth2)
 
-+ (NSString *)stringWithUUID;
++ (NSString *)nxoauth2_stringWithUUID;
 {
 	CFUUIDRef theUUID = CFUUIDCreate(NULL);
     CFStringRef string = CFUUIDCreateString(NULL, theUUID);
@@ -28,18 +28,18 @@
 
 #pragma mark Query String Helpers
 
-+ (NSString *)stringWithEncodedQueryParameters:(NSDictionary *)parameters;
++ (NSString *)nxoauth2_stringWithEncodedQueryParameters:(NSDictionary *)parameters;
 {
 	
 	NSMutableArray *parameterPairs = [NSMutableArray array];
 	for (NSString *key in [parameters allKeys]) {
-		NSString *pair = [NSString stringWithFormat:@"%@=%@", [key URLEncodedString], [[parameters objectForKey:key] URLEncodedString]];
+		NSString *pair = [NSString stringWithFormat:@"%@=%@", [key nxoauth2_URLEncodedString], [[parameters objectForKey:key] nxoauth2_URLEncodedString]];
 		[parameterPairs addObject:pair];
 	}
 	return [parameterPairs componentsJoinedByString:@"&"];
 }
 
-- (NSDictionary *)parametersFromEncodedQueryString;
+- (NSDictionary *)nxoauth2_parametersFromEncodedQueryString;
 {
 	NSArray *encodedParameterPairs = [self componentsSeparatedByString:@"&"];
     NSMutableDictionary *requestParameters = [NSMutableDictionary dictionary];
@@ -47,8 +47,8 @@
     for (NSString *encodedPair in encodedParameterPairs) {
         NSArray *encodedPairElements = [encodedPair componentsSeparatedByString:@"="];
 		if (encodedPairElements.count == 2) {
-			[requestParameters setValue:[[encodedPairElements objectAtIndex:1] URLDecodedString]
-								 forKey:[[encodedPairElements objectAtIndex:0] URLDecodedString]];
+			[requestParameters setValue:[[encodedPairElements objectAtIndex:1] nxoauth2_URLDecodedString]
+								 forKey:[[encodedPairElements objectAtIndex:0] nxoauth2_URLDecodedString]];
 		}
     }
 	return requestParameters;
@@ -57,7 +57,7 @@
 
 #pragma mark URLEncoding
 
-- (NSString *)URLEncodedString 
+- (NSString *)nxoauth2_URLEncodedString 
 {
     NSString *result = (NSString *)CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault,
                                                                            (CFStringRef)self,
@@ -68,7 +68,7 @@
 	return result;
 }
 
-- (NSString*)URLDecodedString
+- (NSString*)nxoauth2_URLDecodedString
 {
 	NSString *result = (NSString *)CFURLCreateStringByReplacingPercentEscapesUsingEncoding(kCFAllocatorDefault,
 																						   (CFStringRef)self,

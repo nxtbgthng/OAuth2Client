@@ -16,12 +16,12 @@
 
 @interface NSString (NXOAuth2)
 
-+ (NSString *)stringWithUUID;
++ (NSString *)nxoauth2_stringWithUUID;
 
-+ (NSString *)stringWithEncodedQueryParameters:(NSDictionary *)parameters;
-- (NSDictionary *)parametersFromEncodedQueryString;
++ (NSString *)nxoauth2_stringWithEncodedQueryParameters:(NSDictionary *)parameters;
+- (NSDictionary *)nxoauth2_parametersFromEncodedQueryString;
 
-- (NSString *)URLEncodedString;
-- (NSString *)URLDecodedString;
+- (NSString *)nxoauth2_URLEncodedString;
+- (NSString *)nxoauth2_URLDecodedString;
 
 @end

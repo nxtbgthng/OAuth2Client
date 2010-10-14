@@ -18,12 +18,12 @@
 
 @implementation NSURL (NXOAuth2)
 
-- (NSURL *)URLByAddingParameters:(NSDictionary *)parameterDictionary {
+- (NSURL *)nxoauth2_URLByAddingParameters:(NSDictionary *)parameterDictionary {
 	if (!parameterDictionary || [parameterDictionary count] == 0) {
 		return self;
 	}
 
-	NSString *newParameterString = [NSString stringWithEncodedQueryParameters:parameterDictionary];
+	NSString *newParameterString = [NSString nxoauth2_stringWithEncodedQueryParameters:parameterDictionary];
 	
 	NSString *absoluteString = [self absoluteString];
 	if ([absoluteString rangeOfString:@"?"].location == NSNotFound) {	// append parameters?
@@ -35,19 +35,19 @@
 	return [NSURL URLWithString:absoluteString];
 }
 
-- (NSString *)valueForQueryParameterKey:(NSString *)key;
+- (NSString *)nxoauth2_valueForQueryParameterKey:(NSString *)key;
 {
 	NSString *queryString = [self query];
-	NSDictionary *parameters = [queryString parametersFromEncodedQueryString];
+	NSDictionary *parameters = [queryString nxoauth2_parametersFromEncodedQueryString];
 	return [parameters objectForKey:key];
 }
 
-- (NSURL *)URLWithoutQueryString;
+- (NSURL *)nxoauth2_URLWithoutQueryString;
 {
-	return [NSURL URLWithString:[self URLStringWithoutQueryString]];
+	return [NSURL URLWithString:[self nxoauth2_URLStringWithoutQueryString]];
 }
 
-- (NSString *)URLStringWithoutQueryString;
+- (NSString *)nxoauth2_URLStringWithoutQueryString;
 {
     NSArray *parts = [[self absoluteString] componentsSeparatedByString:@"?"];
     return [parts objectAtIndex:0];
