@@ -16,9 +16,13 @@
 
 NSString * const NXOAuth2ErrorDomain = @"NXOAuth2ErrorDomain";
 
-NSInteger const NXOAuth2RedirectURIMismatchErrorCode = -2001;
-NSInteger const NXOAuth2UserDeniedErrorCode = -2002;
-
+NSInteger const NXOAuth2InvalidRequestErrorCode			= -1001;
+NSInteger const NXOAuth2InvalidClientErrorCode			= -1002;
+NSInteger const NXOAuth2UnauthorizedClientErrorCode		= -1003;
+NSInteger const NXOAuth2RedirectURIMismatchErrorCode	= -1004;
+NSInteger const NXOAuth2AccessDeniedErrorCode			= -1005;
+NSInteger const NXOAuth2UnsupportedResponseTypeErrorCode = -1006;
+NSInteger const NXOAuth2InvalidScopeErrorCode			= -1007;
 
 #pragma mark HTTP Errors
 
