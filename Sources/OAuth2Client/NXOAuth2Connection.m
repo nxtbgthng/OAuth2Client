@@ -32,7 +32,7 @@
 
 #pragma mark Lifecycle
 
-#if NS_BLOCKS_AVAILABLE
+#if NX_BLOCKS_AVAILABLE && NS_BLOCKS_AVAILABLE
 - (id)initWithRequest:(NSURLRequest *)aRequest
 		  oauthClient:(NXOAuth2Client *)aClient
                finish:(void (^)(void))finishBlock 
@@ -66,7 +66,7 @@
 	if (sentConnectionDidEndNotification) [[NSNotificationCenter defaultCenter] postNotificationName:NXOAuth2DidEndConnection object:self];
 	sentConnectionDidEndNotification = NO;
 	
-#if NS_BLOCKS_AVAILABLE
+#if NX_BLOCKS_AVAILABLE && NS_BLOCKS_AVAILABLE
     Block_release(fail);
     Block_release(finish);
 #endif
@@ -220,7 +220,7 @@
 		if ([delegate respondsToSelector:@selector(oauthConnection:didFinishWithData:)]) {
 			[delegate oauthConnection:self didFinishWithData:data];
 		}
-#if NS_BLOCKS_AVAILABLE
+#if NX_BLOCKS_AVAILABLE && NS_BLOCKS_AVAILABLE
         if (finish) finish();
 #endif
 	} else {
@@ -250,7 +250,7 @@
 		if ([delegate respondsToSelector:@selector(oauthConnection:didFailWithError:)]) {
 			[delegate oauthConnection:self didFailWithError:error];
 		}
-#if NS_BLOCKS_AVAILABLE
+#if NX_BLOCKS_AVAILABLE && NS_BLOCKS_AVAILABLE
         if (fail) fail(error);
 #endif
 	}
@@ -264,7 +264,7 @@
 	if ([delegate respondsToSelector:@selector(oauthConnection:didFailWithError:)]) {
 		[delegate oauthConnection:self didFailWithError:error];
 	}
-#if NS_BLOCKS_AVAILABLE
+#if NX_BLOCKS_AVAILABLE && NS_BLOCKS_AVAILABLE
     if (fail) fail(error);
 #endif
 }

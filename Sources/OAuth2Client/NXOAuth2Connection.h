@@ -49,7 +49,7 @@
 	
 	NSObject<NXOAuth2ConnectionDelegate>	*delegate;	// assigned
     
-#if NS_BLOCKS_AVAILABLE
+#if NX_BLOCKS_AVAILABLE && NS_BLOCKS_AVAILABLE
     void (^finish)(void);
     void (^fail)(NSError *error);
 #endif
@@ -64,7 +64,7 @@
 @property (retain) id context;
 @property (retain) NSDictionary *userInfo;
 
-#if NS_BLOCKS_AVAILABLE
+#if NX_BLOCKS_AVAILABLE && NS_BLOCKS_AVAILABLE
 - (id)initWithRequest:(NSURLRequest *)request
 		  oauthClient:(NXOAuth2Client *)client
                finish:(void (^)(void))finishBlock 
