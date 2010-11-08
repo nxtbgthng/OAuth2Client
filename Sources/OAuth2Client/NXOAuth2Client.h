@@ -34,6 +34,8 @@
 	NSString	*clientId;
 	NSString	*clientSecret;
 	
+	NSString	*userAgent;
+	
 	// server information
 	NSURL		*authorizeURL;
 	NSURL		*tokenURL;
@@ -47,8 +49,10 @@
 	NSObject<NXOAuth2ClientDelegate>*	delegate;	// assigned
 }
 
-@property (nonatomic, readonly) NSString *clientId;
-@property (nonatomic, readonly) NSString *clientSecret;
+@property (nonatomic, copy, readonly) NSString *clientId;
+@property (nonatomic, copy, readonly) NSString *clientSecret;
+
+@property (nonatomic, copy) NSString *userAgent;
 
 @property (nonatomic, retain) NXOAuth2AccessToken	*accessToken;
 @property (nonatomic, assign) NSObject<NXOAuth2ClientDelegate>*	delegate;

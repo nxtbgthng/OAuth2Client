@@ -56,6 +56,7 @@
 	[waitingConnections release];
 	[authConnection cancel];
 	[authConnection release];
+	[userAgent release];
 	[clientId release];
 	[clientSecret release];
 	[super dealloc];
@@ -64,7 +65,7 @@
 
 #pragma mark Accessors
 
-@synthesize clientId, clientSecret, delegate;
+@synthesize clientId, clientSecret, userAgent, delegate;
 
 @dynamic accessToken;
 

@@ -136,6 +136,11 @@
 			forHTTPHeaderField:@"Authorization"];
 	}
 	
+	if (client.userAgent && ![startRequest valueForHTTPHeaderField:@"User-Agent"]) {
+		[startRequest setValue:client.userAgent
+			forHTTPHeaderField:@"User-Agent"];
+	}
+	
 	NSInputStream *bodyStream = [startRequest HTTPBodyStream];
 	if ([bodyStream isKindOfClass:[NXOAuth2PostBodyStream class]]){
 		[(NXOAuth2PostBodyStream *)bodyStream setMonitorDelegate:self];
