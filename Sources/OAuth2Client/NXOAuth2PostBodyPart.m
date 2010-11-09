@@ -49,7 +49,7 @@
 - (id)initWithName:(NSString *)name streamContent:(NSInputStream *)stream streamLength:(unsigned long long)streamLength fileName:(NSString *)fileName;
 {
     NSMutableString *headers = [NSMutableString string];
-	[headers appendFormat:@"Content-Disposition: form-data; name=\"%@\"; filename=\"fileName\"\r\n", name, fileName];
+	[headers appendFormat:@"Content-Disposition: form-data; name=\"%@\"; filename=\"%@\"\r\n", name, fileName];
     [headers appendString:@"Content-Transfer-Encoding: binary\r\n"];
 	[headers appendString:@"Content-Type: application/octet-stream\r\n"];
 	[headers appendString:@"\r\n"];
