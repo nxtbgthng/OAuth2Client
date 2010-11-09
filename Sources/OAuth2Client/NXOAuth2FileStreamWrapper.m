@@ -16,9 +16,14 @@
 
 #pragma mark Class Methods
 
-+ (id)wrapperWithStream:(NSInputStream *)theStream contentLength:(unsigned long long)theContentLength;
++ (id)wrapperWithStream:(NSInputStream *)aStream contentLength:(unsigned long long)aContentLength;
 {
-	return [[[self alloc] initWithStream:theStream contentLength:theContentLength] autorelease];
+	return [self wrapperWithStream:aStream contentLength:aContentLength fileName:nil];
+}
+
++ (id)wrapperWithStream:(NSInputStream *)aStream contentLength:(unsigned long long)aContentLength fileName:(NSString *)aFileName;
+{
+	return [[[self alloc] initWithStream:aStream contentLength:aContentLength fileName:aFileName] autorelease];
 }
 
 
@@ -32,9 +37,17 @@
 
 - (id)initWithStream:(NSInputStream *)theStream contentLength:(unsigned long long)theContentLength;
 {
+	return [self initWithStream:theStream contentLength:theContentLength fileName:nil];
+}
+
+- (id)initWithStream:(NSInputStream *)aStream contentLength:(unsigned long long)aContentLength fileName:(NSString *)aFileName;
+{
+	if (!aFileName) aFileName = @"unknown";
+	
 	if (self = [super init]) {
-		stream = [theStream retain];
-		contentLength = theContentLength;
+		stream = [aStream retain];
+		contentLength = aContentLength;
+		fileName = [aFileName copy];
 	}
 	return self;
 }
@@ -42,13 +55,14 @@
 - (void)dealloc;
 {
 	[stream release];
+	[fileName release];
 	[super dealloc];
 }
 
 
 #pragma mark Accessors
 
-@synthesize stream, contentLength;
+@synthesize stream, contentLength, fileName;
 
 
 @end

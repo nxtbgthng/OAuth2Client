@@ -15,12 +15,17 @@
 @interface NXOAuth2FileStreamWrapper : NSObject {
 	NSInputStream		*stream;
 	unsigned long long	contentLength;
+	NSString			*fileName;
 }
-@property (readonly) NSInputStream *stream;
-@property (readonly) unsigned long long contentLength;
+@property (nonatomic, retain, readonly) NSInputStream *stream;
+@property (nonatomic, assign, readonly) unsigned long long contentLength;
+@property (nonatomic, copy, readonly) NSString *fileName;
 
-+ (id)wrapperWithStream:(NSInputStream *)stream contentLength:(unsigned long long)contentLength;
-- (id)initWithStream:(NSInputStream *)stream contentLength:(unsigned long long)contentLength;
++ (id)wrapperWithStream:(NSInputStream *)stream contentLength:(unsigned long long)contentLength DEPRECATED_ATTRIBUTE;
+- (id)initWithStream:(NSInputStream *)stream contentLength:(unsigned long long)contentLength DEPRECATED_ATTRIBUTE;
+
++ (id)wrapperWithStream:(NSInputStream *)stream contentLength:(unsigned long long)contentLength fileName:(NSString *)fileName;
+- (id)initWithStream:(NSInputStream *)stream contentLength:(unsigned long long)contentLength fileName:(NSString *)fileName;
 
 
 @end
