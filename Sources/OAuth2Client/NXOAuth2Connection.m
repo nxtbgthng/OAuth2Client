@@ -78,6 +78,11 @@
 	[request release];
 	[context release];
 	[userInfo release];
+    
+#if (NXOAuth2ConnectionDebug)
+     [startDate release];
+#endif
+    
 	[super dealloc];
 }
 
@@ -149,6 +154,10 @@
 	NSURLConnection *aConnection = [[NSURLConnection alloc] initWithRequest:startRequest delegate:self startImmediately:NO];	// don't start yet
 	[aConnection scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];	// let's first schedule it in the current runloop. (see http://github.com/soundcloud/cocoa-api-wrapper/issues#issue/2 )
 	[aConnection start];	// now start
+    
+#if (NXOAuth2ConnectionDebug)
+    [startDate release]; startDate = [[NSDate alloc] init];
+#endif
 	
 	if (!sentConnectionDidEndNotification) [[NSNotificationCenter defaultCenter] postNotificationName:NXOAuth2DidStartConnection object:self];
 	sentConnectionDidEndNotification = YES;
@@ -172,6 +181,10 @@
 
 - (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)theResponse;
 {
+#if (NXOAuth2ConnectionDebug)
+    NSLog(@"%.0fms (R) - %@", -[startDate timeIntervalSinceNow]*1000.0, request.URL.absoluteString);
+#endif
+    
 	NSAssert(response == nil, @"invalid state");
 	[response release];	// just to be sure, should be nil already
 	response = [theResponse retain];
@@ -218,6 +231,10 @@
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection;
 {
+#if (NXOAuth2ConnectionDebug)
+    NSLog(@"%.0fms (S) - %@", -[startDate timeIntervalSinceNow]*1000.0, request.URL.absoluteString);
+#endif
+    
 	if (sentConnectionDidEndNotification) [[NSNotificationCenter defaultCenter] postNotificationName:NXOAuth2DidEndConnection object:self];
 	sentConnectionDidEndNotification = NO;
 	
@@ -263,6 +280,10 @@
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error;
 {
+#if (NXOAuth2ConnectionDebug)
+    NSLog(@"%.0fms (F) - %@ (%@ %i)", -[startDate timeIntervalSinceNow]*1000.0, request.URL.absoluteString, [error domain], [error code]);
+#endif
+    
 	if (sentConnectionDidEndNotification) [[NSNotificationCenter defaultCenter] postNotificationName:NXOAuth2DidEndConnection object:self];
 	sentConnectionDidEndNotification = NO;
 	

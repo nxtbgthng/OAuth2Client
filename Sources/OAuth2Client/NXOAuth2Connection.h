@@ -34,6 +34,11 @@
  *	before sending it. If no client is passed in the connection will sent
  *	unsigned requests.
  */
+
+#ifndef NXOAuth2ConnectionDebug
+#define NXOAuth2ConnectionDebug 0
+#endif
+
 @interface NXOAuth2Connection : NSObject {
 @private
 	NSURLConnection		*connection;
@@ -55,6 +60,10 @@
 #endif
 	
 	BOOL				sentConnectionDidEndNotification;
+    
+#if (NXOAuth2ConnectionDebug)
+    NSDate *startDate;
+#endif
 }
 
 @property (assign) NSObject<NXOAuth2ConnectionDelegate>	*delegate;
