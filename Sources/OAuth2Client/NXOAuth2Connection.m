@@ -313,7 +313,7 @@
 	return aRequest;
 }
 
-#if TARGET_OS_IPHONE
+/*#if TARGET_OS_IPHONE
 - (BOOL)connection:(NSURLConnection *)connection canAuthenticateAgainstProtectionSpace:(NSURLProtectionSpace *)protectionSpace;
 {
 	return [protectionSpace.authenticationMethod isEqualToString:NSURLAuthenticationMethodServerTrust];
@@ -328,5 +328,5 @@
 	[challenge.sender continueWithoutCredentialForAuthenticationChallenge:challenge];
 }
 #endif
-
+*/
 @end
