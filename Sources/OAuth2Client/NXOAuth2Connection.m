@@ -25,6 +25,7 @@
 
 @interface NXOAuth2Connection () <NXOAuth2PostBodyStreamMonitorDelegate>
 - (NSURLConnection *)createConnection;
+- (NSString *)descriptionForRequest:(NSURLRequest *)request;
 @end
 
 
@@ -165,6 +166,15 @@
 	return [aConnection autorelease];
 }
 
+- (NSString *)descriptionForRequest:(NSURLRequest *)aRequest;
+{
+	NSString *range = [aRequest valueForHTTPHeaderField:@"Range"];
+	if (!range) {
+		return aRequest.URL.absoluteString;
+	}
+	return [NSString stringWithFormat:@"%@ [%@]", aRequest.URL.absoluteString, range];
+}
+
 
 #pragma mark -
 #pragma mark SCPostBodyStream Delegate
@@ -182,7 +192,7 @@
 - (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)theResponse;
 {
 #if (NXOAuth2ConnectionDebug)
-    NSLog(@"%.0fms (R) - %@", -[startDate timeIntervalSinceNow]*1000.0, request.URL.absoluteString);
+    NSLog(@"%.0fms (RESP) - %@", -[startDate timeIntervalSinceNow]*1000.0, [self descriptionForRequest:request]);
 #endif
     
 	NSAssert(response == nil || response == theResponse, @"invalid state");
@@ -232,7 +242,7 @@
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection;
 {
 #if (NXOAuth2ConnectionDebug)
-    NSLog(@"%.0fms (S) - %@", -[startDate timeIntervalSinceNow]*1000.0, request.URL.absoluteString);
+    NSLog(@"%.0fms (SUCC) - %@", -[startDate timeIntervalSinceNow]*1000.0, [self descriptionForRequest:request]);
 #endif
     
 	if (sentConnectionDidEndNotification) [[NSNotificationCenter defaultCenter] postNotificationName:NXOAuth2DidEndConnection object:self];
@@ -281,7 +291,7 @@
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error;
 {
 #if (NXOAuth2ConnectionDebug)
-    NSLog(@"%.0fms (F) - %@ (%@ %i)", -[startDate timeIntervalSinceNow]*1000.0, request.URL.absoluteString, [error domain], [error code]);
+    NSLog(@"%.0fms (FAIL) - %@ (%@ %i)", -[startDate timeIntervalSinceNow]*1000.0, [self descriptionForRequest:request], [error domain], [error code]);
 #endif
     
 	if (sentConnectionDidEndNotification) [[NSNotificationCenter defaultCenter] postNotificationName:NXOAuth2DidEndConnection object:self];
@@ -297,12 +307,21 @@
 
 - (NSURLRequest *)connection:(NSURLConnection *)aConnection willSendRequest:(NSURLRequest *)aRequest redirectResponse:(NSURLResponse *)aRedirectResponse;
 {
-	if (!aRedirectResponse) return aRequest; // if not redirecting do nothing
+
+	if (!aRedirectResponse) {
+#if (NXOAuth2ConnectionDebug)
+		NSLog(@"%.0fms (WILL) - %@", -[startDate timeIntervalSinceNow]*1000.0, [self descriptionForRequest:aRequest]);
+#endif
+		return aRequest; // if not redirecting do nothing
+	}
 	
+#if (NXOAuth2ConnectionDebug)
+    NSLog(@"%.0fms (REDI) - %@ > %@", -[startDate timeIntervalSinceNow]*1000.0, aRedirectResponse.URL.absoluteString, [self descriptionForRequest:aRequest]);
+#endif
 	BOOL hostChanged = [aRequest.URL.host caseInsensitiveCompare:aRedirectResponse.URL.host] != NSOrderedSame;
 	
 	BOOL schemeChanged = [aRequest.URL.scheme caseInsensitiveCompare:aRedirectResponse.URL.scheme] != NSOrderedSame;
-	BOOL schemeChangedToHTTPS = schemeChanged && ([aRedirectResponse.URL.scheme caseInsensitiveCompare:@"https"] == NSOrderedSame);
+	BOOL schemeChangedToHTTPS = schemeChanged && ([aRequest.URL.scheme caseInsensitiveCompare:@"https"] == NSOrderedSame);
 	
 	if(hostChanged
 	   || (schemeChanged && !schemeChangedToHTTPS)) {
