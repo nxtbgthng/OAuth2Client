@@ -185,7 +185,7 @@
     NSLog(@"%.0fms (R) - %@", -[startDate timeIntervalSinceNow]*1000.0, request.URL.absoluteString);
 #endif
     
-	NSAssert(response == nil, @"invalid state");
+	NSAssert(response == nil || response == theResponse, @"invalid state");
 	[response release];	// just to be sure, should be nil already
 	response = [theResponse retain];
 	
