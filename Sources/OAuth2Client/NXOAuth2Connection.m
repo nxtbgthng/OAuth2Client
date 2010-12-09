@@ -10,7 +10,6 @@
 //
 
 #import "NXOAuth2PostBodyStream.h"
-#import "NXOAuth2PostBodyStreamMonitorDelegate.h"
 #import "NXOAuth2ConnectionDelegate.h"
 #import "NXOAuth2Client.h"
 #import "NXOAuth2AccessToken.h"
@@ -23,7 +22,7 @@
 
 
 
-@interface NXOAuth2Connection () <NXOAuth2PostBodyStreamMonitorDelegate>
+@interface NXOAuth2Connection ()
 - (NSURLConnection *)createConnection;
 - (NSString *)descriptionForRequest:(NSURLRequest *)request;
 @end
@@ -145,11 +144,6 @@
 	if (client.userAgent && ![startRequest valueForHTTPHeaderField:@"User-Agent"]) {
 		[startRequest setValue:client.userAgent
 			forHTTPHeaderField:@"User-Agent"];
-	}
-	
-	NSInputStream *bodyStream = [startRequest HTTPBodyStream];
-	if ([bodyStream isKindOfClass:[NXOAuth2PostBodyStream class]]){
-		[(NXOAuth2PostBodyStream *)bodyStream setMonitorDelegate:self];
 	}
 	
 	NSURLConnection *aConnection = [[NSURLConnection alloc] initWithRequest:startRequest delegate:self startImmediately:NO];	// don't start yet
@@ -338,21 +332,35 @@
 	return mutableRequest;
 }
 
-/*#if TARGET_OS_IPHONE
- - (BOOL)connection:(NSURLConnection *)connection canAuthenticateAgainstProtectionSpace:(NSURLProtectionSpace *)protectionSpace;
- {
- return [protectionSpace.authenticationMethod isEqualToString:NSURLAuthenticationMethodServerTrust];
- }
- 
- - (void)connection:(NSURLConnection *)connection didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge;
- {
- if ([challenge.protectionSpace.authenticationMethod isEqualToString:NSURLAuthenticationMethodServerTrust]) {
- //if ([trustedHosts containsObject:challenge.protectionSpace.host])
- [challenge.sender useCredential:[NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust] forAuthenticationChallenge:challenge];
- }
- [challenge.sender continueWithoutCredentialForAuthenticationChallenge:challenge];
- }
- #endif
- */
+- (void)connection:(NSURLConnection *)connection didSendBodyData:(NSInteger)bytesWritten totalBytesWritten:(NSInteger)totalBytesWritten totalBytesExpectedToWrite:(NSInteger)totalBytesExpectedToWrite;
+{
+	if ([delegate respondsToSelector:@selector(oauthConnection:didSendBytes:ofTotal:)]) {
+		NSUInteger totalBytes = [request HTTPBody].length;
+		NSInputStream *bodyStream = [request HTTPBodyStream];
+		if ([bodyStream isKindOfClass:[NXOAuth2PostBodyStream class]]) {
+			totalBytes = [(NXOAuth2PostBodyStream *)bodyStream length];
+		}
+		[delegate oauthConnection:self didSendBytes:totalBytesWritten ofTotal:totalBytes];
+	}
+}
+
+/*  // uncomment to override SSL certificate checking
+#if TARGET_OS_IPHONE
+- (BOOL)connection:(NSURLConnection *)connection canAuthenticateAgainstProtectionSpace:(NSURLProtectionSpace *)protectionSpace;
+{
+	return [protectionSpace.authenticationMethod isEqualToString:NSURLAuthenticationMethodServerTrust];
+}
+
+- (void)connection:(NSURLConnection *)connection didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge;
+{
+	if ([challenge.protectionSpace.authenticationMethod isEqualToString:NSURLAuthenticationMethodServerTrust]) {
+		//if ([trustedHosts containsObject:challenge.protectionSpace.host])
+		[challenge.sender useCredential:[NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust] forAuthenticationChallenge:challenge];
+	}
+	[challenge.sender continueWithoutCredentialForAuthenticationChallenge:challenge];
+}
+#endif
+*/
+
 
 @end

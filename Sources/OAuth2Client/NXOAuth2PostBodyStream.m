@@ -11,7 +11,6 @@
  */
 
 #import "NXOAuth2PostBodyPart.h"
-#import "NXOAuth2PostBodyStreamMonitorDelegate.h"
 
 #import "NXOAuth2PostBodyStream.h"
 
@@ -31,7 +30,6 @@
 		srandom(time(NULL));
 		boundary = [[NSString alloc] initWithFormat:@"------------nx-oauth2%d", rand()];
 		numBytesTotal = 0;
-		numBytesRead = 0;
 		streamIndex = 0;
 		
 		if (postParameters) {
@@ -53,7 +51,6 @@
 
 #pragma mark Accessors
 
-@synthesize monitorDelegate = monitorDelegate;
 @synthesize length = numBytesTotal;
 @synthesize boundary;
 
@@ -162,11 +159,6 @@
 			result = [self read:buffer maxLength:len];
 		} else {
 			currentStream == nil;
-		}
-	} else {
-		numBytesRead += result;
-		if([monitorDelegate respondsToSelector:@selector(stream:didSendBytes:ofTotal:)]) {
-			[monitorDelegate stream:self didSendBytes:numBytesRead ofTotal:numBytesTotal];
 		}
 	}
     return result;

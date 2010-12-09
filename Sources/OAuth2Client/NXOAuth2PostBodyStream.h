@@ -13,8 +13,6 @@
 #import <Foundation/Foundation.h>
 
 
-@protocol NXOAuth2PostBodyStreamMonitorDelegate;
-
 @interface NXOAuth2PostBodyStream : NSInputStream {
 	NSString		*boundary;
 	
@@ -22,17 +20,13 @@
     NSInputStream	*currentStream;	// assigned (is retained by contentStreams)
     NSUInteger		streamIndex;
 	
-	unsigned long long numBytesRead;
 	unsigned long long numBytesTotal;
-	
-	NSObject<NXOAuth2PostBodyStreamMonitorDelegate> *monitorDelegate;	// assigned
 }
 
 - (id)initWithParameters:(NSDictionary *)postParameters;
 
 @property (readonly) NSString *boundary;
 @property (readonly) unsigned long long length;
-@property (assign) NSObject<NXOAuth2PostBodyStreamMonitorDelegate>* monitorDelegate;
 
 @end
 
