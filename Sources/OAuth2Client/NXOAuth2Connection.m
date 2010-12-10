@@ -314,6 +314,10 @@
 		return aRequest; // if not redirecting do nothing
 	}
 	
+	if ([delegate respondsToSelector:@selector(oauthConnection:didReceiveRedirectToURL:)]) {
+		[delegate oauthConnection:self didReceiveRedirectToURL:aRequest.URL];
+	}
+	
 #if (NXOAuth2ConnectionDebug)
     NSLog(@"%.0fms (REDI) - %@ > %@", -[startDate timeIntervalSinceNow]*1000.0, aRedirectResponse.URL.absoluteString, [self descriptionForRequest:aRequest]);
 #endif
@@ -347,4 +351,5 @@
 }
 #endif
 */
+
 @end
