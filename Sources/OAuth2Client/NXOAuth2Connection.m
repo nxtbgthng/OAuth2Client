@@ -325,14 +325,17 @@
 	
 	BOOL schemeChanged = [aRequest.URL.scheme caseInsensitiveCompare:aRedirectResponse.URL.scheme] != NSOrderedSame;
 	BOOL schemeChangedToHTTPS = schemeChanged && ([aRequest.URL.scheme caseInsensitiveCompare:@"https"] == NSOrderedSame);
+
+	NSMutableURLRequest *mutableRequest = [[aRequest mutableCopy] autorelease];
+	mutableRequest.HTTPMethod = request.HTTPMethod;
 	
 	if(hostChanged
 	   || (schemeChanged && !schemeChangedToHTTPS)) {
-		NSMutableURLRequest *mutableRequest = [[aRequest mutableCopy] autorelease];
+
 		[mutableRequest setValue:nil forHTTPHeaderField:@"Authorization"]; // strip Authorization information
 		return mutableRequest;
 	}
-	return aRequest;
+	return mutableRequest;
 }
 
 /*#if TARGET_OS_IPHONE
