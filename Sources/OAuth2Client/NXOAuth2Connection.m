@@ -81,7 +81,7 @@
 	[userInfo release];
     
 #if (NXOAuth2ConnectionDebug)
-     [startDate release];
+	[startDate release];
 #endif
     
 	[super dealloc];
@@ -215,7 +215,7 @@
 		}
 	}
 	if (/*self.statusCode == 401 // TODO: check for status code once the bug returning 500 is fixed
-		&&*/ client.accessToken.refreshToken != nil
+		 &&*/ client.accessToken.refreshToken != nil
 		&& authenticateHeader
 		&& [authenticateHeader rangeOfString:@"expired_token"].location != NSNotFound) {
 		[self cancel];
@@ -276,8 +276,8 @@
 		NSString *localizedError = [NSString stringWithFormat:NSLocalizedString(@"HTTP Error: %d", @"NXOAuth2HTTPErrorDomain description"), self.statusCode];
 		NSDictionary *errorUserInfo = [NSDictionary dictionaryWithObject:localizedError forKey:NSLocalizedDescriptionKey];
 		NSError *error = [NSError errorWithDomain:NXOAuth2HTTPErrorDomain
-												 code:self.statusCode
-											 userInfo:errorUserInfo];
+											 code:self.statusCode
+										 userInfo:errorUserInfo];
 		if ([delegate respondsToSelector:@selector(oauthConnection:didFailWithError:)]) {
 			[delegate oauthConnection:self didFailWithError:error];
 		}
@@ -306,7 +306,7 @@
 
 - (NSURLRequest *)connection:(NSURLConnection *)aConnection willSendRequest:(NSURLRequest *)aRequest redirectResponse:(NSURLResponse *)aRedirectResponse;
 {
-
+	
 	if (!aRedirectResponse) {
 #if (NXOAuth2ConnectionDebug)
 		NSLog(@"%.0fms (WILL) - %@", -[startDate timeIntervalSinceNow]*1000.0, [self descriptionForRequest:aRequest]);
@@ -325,13 +325,13 @@
 	
 	BOOL schemeChanged = [aRequest.URL.scheme caseInsensitiveCompare:aRedirectResponse.URL.scheme] != NSOrderedSame;
 	BOOL schemeChangedToHTTPS = schemeChanged && ([aRequest.URL.scheme caseInsensitiveCompare:@"https"] == NSOrderedSame);
-
+	
 	NSMutableURLRequest *mutableRequest = [[aRequest mutableCopy] autorelease];
 	mutableRequest.HTTPMethod = request.HTTPMethod;
 	
 	if(hostChanged
 	   || (schemeChanged && !schemeChangedToHTTPS)) {
-
+		
 		[mutableRequest setValue:nil forHTTPHeaderField:@"Authorization"]; // strip Authorization information
 		return mutableRequest;
 	}
@@ -339,20 +339,20 @@
 }
 
 /*#if TARGET_OS_IPHONE
-- (BOOL)connection:(NSURLConnection *)connection canAuthenticateAgainstProtectionSpace:(NSURLProtectionSpace *)protectionSpace;
-{
-	return [protectionSpace.authenticationMethod isEqualToString:NSURLAuthenticationMethodServerTrust];
-}
-
-- (void)connection:(NSURLConnection *)connection didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge;
-{
-	if ([challenge.protectionSpace.authenticationMethod isEqualToString:NSURLAuthenticationMethodServerTrust]) {
-		//if ([trustedHosts containsObject:challenge.protectionSpace.host])
-		[challenge.sender useCredential:[NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust] forAuthenticationChallenge:challenge];
-	}
-	[challenge.sender continueWithoutCredentialForAuthenticationChallenge:challenge];
-}
-#endif
-*/
+ - (BOOL)connection:(NSURLConnection *)connection canAuthenticateAgainstProtectionSpace:(NSURLProtectionSpace *)protectionSpace;
+ {
+ return [protectionSpace.authenticationMethod isEqualToString:NSURLAuthenticationMethodServerTrust];
+ }
+ 
+ - (void)connection:(NSURLConnection *)connection didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge;
+ {
+ if ([challenge.protectionSpace.authenticationMethod isEqualToString:NSURLAuthenticationMethodServerTrust]) {
+ //if ([trustedHosts containsObject:challenge.protectionSpace.host])
+ [challenge.sender useCredential:[NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust] forAuthenticationChallenge:challenge];
+ }
+ [challenge.sender continueWithoutCredentialForAuthenticationChallenge:challenge];
+ }
+ #endif
+ */
 
 @end

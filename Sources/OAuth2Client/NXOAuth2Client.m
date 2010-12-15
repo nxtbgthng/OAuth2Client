@@ -83,7 +83,7 @@
 {
 	if (self.accessToken == value) return;
 	BOOL didGetOrDidLoseToken = ((accessToken == nil) && (value != nil)		// did get
-								  || (accessToken != nil) && (value == nil));	// did lose
+								 || (accessToken != nil) && (value == nil));	// did lose
 	if (!value) {
 		[self.accessToken removeFromDefaultKeychainWithServiceProviderName:[tokenURL host]];
 	}
@@ -115,10 +115,10 @@
 - (NSURL *)authorizationURLWithRedirectURL:(NSURL *)redirectURL;
 {
 	return [authorizeURL nxoauth2_URLByAddingParameters:[NSDictionary dictionaryWithObjectsAndKeys:
-												@"code", @"response_type",
-												clientId, @"client_id",
-												[redirectURL absoluteString], @"redirect_uri",
-												nil]];
+														 @"code", @"response_type",
+														 clientId, @"client_id",
+														 [redirectURL absoluteString], @"redirect_uri",
+														 nil]];
 }
 
 
@@ -185,12 +185,12 @@
 	NSMutableURLRequest *tokenRequest = [NSMutableURLRequest requestWithURL:tokenURL];
 	[tokenRequest setHTTPMethod:@"POST"];
 	[tokenRequest nxoauth2_setParameters:[NSDictionary dictionaryWithObjectsAndKeys:
-								 @"authorization_code", @"grant_type",
-								 clientId, @"client_id",
-								 clientSecret, @"client_secret",
-								 [redirectURL absoluteString], @"redirect_uri",
-								 authGrant, @"code",
-								 nil]];
+										  @"authorization_code", @"grant_type",
+										  clientId, @"client_id",
+										  clientSecret, @"client_secret",
+										  [redirectURL absoluteString], @"redirect_uri",
+										  authGrant, @"code",
+										  nil]];
 	[authConnection cancel]; [authConnection release]; // just to be sure
 	authConnection = [[NXOAuth2Connection alloc] initWithRequest:tokenRequest
 													 oauthClient:self
@@ -206,16 +206,16 @@
 	NSMutableURLRequest *tokenRequest = [NSMutableURLRequest requestWithURL:tokenURL];
 	[tokenRequest setHTTPMethod:@"POST"];
 	[tokenRequest nxoauth2_setParameters:[NSDictionary dictionaryWithObjectsAndKeys:
-								 @"password", @"grant_type",
-								 clientId, @"client_id",
-								 clientSecret, @"client_secret",
-								 username, @"username",
-								 password, @"password",
-								 nil]];
-	 [authConnection cancel]; [authConnection release]; // just to be sure
-	 authConnection = [[NXOAuth2Connection alloc] initWithRequest:tokenRequest
-													  oauthClient:self
-														 delegate:self];
+										  @"password", @"grant_type",
+										  clientId, @"client_id",
+										  clientSecret, @"client_secret",
+										  username, @"username",
+										  password, @"password",
+										  nil]];
+	[authConnection cancel]; [authConnection release]; // just to be sure
+	authConnection = [[NXOAuth2Connection alloc] initWithRequest:tokenRequest
+													 oauthClient:self
+														delegate:self];
 }
 
 
@@ -237,15 +237,15 @@
 		NSMutableURLRequest *tokenRequest = [NSMutableURLRequest requestWithURL:tokenURL];
 		[tokenRequest setHTTPMethod:@"POST"];
 		[tokenRequest nxoauth2_setParameters:[NSDictionary dictionaryWithObjectsAndKeys:
-									 @"refresh_token", @"grant_type",
-									 clientId, @"client_id",
-									 clientSecret, @"client_secret",
-									 accessToken.refreshToken, @"refresh_token",
-									 nil]];
+											  @"refresh_token", @"grant_type",
+											  clientId, @"client_id",
+											  clientSecret, @"client_secret",
+											  accessToken.refreshToken, @"refresh_token",
+											  nil]];
 		[authConnection cancel]; [authConnection release]; // not needed, but looks more clean to me :)
 		authConnection = [[NXOAuth2Connection alloc] initWithRequest:tokenRequest
 														 oauthClient:nil
-															delegate:self];	
+															delegate:self];
 	}
 }
 

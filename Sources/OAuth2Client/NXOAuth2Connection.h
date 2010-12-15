@@ -49,7 +49,7 @@
 	
 	id					context;
 	NSDictionary		*userInfo;
-    	
+	
 	NXOAuth2Client		*client;
 	
 	NSObject<NXOAuth2ConnectionDelegate>	*delegate;	// assigned
