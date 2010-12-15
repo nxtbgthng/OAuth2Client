@@ -59,6 +59,14 @@ extern NSInteger const NXOAuth2UnsupportedResponseTypeErrorCode;// -1006
 extern NSInteger const NXOAuth2InvalidScopeErrorCode;			// -1007
 
 
+// Custom Error codes
+
+/*
+ * The connection failed because the token expired and could not be refreshed
+ */
+extern NSInteger const NXOAuth2CouldNotRefreshTokenErrorCode;	// -2001
+
+
 #pragma mark HTTP Errors
 
 extern NSString * const NXOAuth2HTTPErrorDomain;				// domain

@@ -12,6 +12,7 @@
 //
 
 #import "NXOAuth2Connection.h"
+#import "NXOAuth2ConnectionDelegate.h"
 #import "NXOAuth2AccessToken.h"
 
 #import "NSURL+NXOAuth2.h"
@@ -20,6 +21,10 @@
 #import "NXOAuth2ClientAuthDelegate.h"
 
 #import "NXOAuth2Client.h"
+
+
+NSString * const NXOAuth2ClientConnectionContextTokenRequest = @"tokenRequest";
+NSString * const NXOAuth2ClientConnectionContextTokenRefresh = @"tokenRefresh";
 
 
 @interface NXOAuth2Client ()
@@ -41,6 +46,8 @@
 {
 	NSAssert(aTokenURL != nil && anAuthorizeURL != nil, @"No token or no authorize URL");
 	if (self = [super init]) {
+		refreshConnectionDidRetryCount = 0;
+		
 		clientId = [aClientId copy];
 		clientSecret = [aClientSecret copy];
 		authorizeURL = [anAuthorizeURL copy];
@@ -195,6 +202,7 @@
 	authConnection = [[NXOAuth2Connection alloc] initWithRequest:tokenRequest
 													 oauthClient:self
 														delegate:self];
+	authConnection.context = NXOAuth2ClientConnectionContextTokenRequest;
 }
 
 
@@ -216,6 +224,7 @@
 	authConnection = [[NXOAuth2Connection alloc] initWithRequest:tokenRequest
 													 oauthClient:self
 														delegate:self];
+	authConnection.context = NXOAuth2ClientConnectionContextTokenRequest;
 }
 
 
@@ -246,6 +255,7 @@
 		authConnection = [[NXOAuth2Connection alloc] initWithRequest:tokenRequest
 														 oauthClient:nil
 															delegate:self];
+		authConnection.context = NXOAuth2ClientConnectionContextTokenRefresh;
 	}
 }
 
@@ -272,16 +282,49 @@
 		[waitingConnections removeAllObjects];
 		
 		[authConnection release]; authConnection = nil;
+		
+		refreshConnectionDidRetryCount = 0;	// reset
 	}
 }
 
 - (void)oauthConnection:(NXOAuth2Connection *)connection didFailWithError:(NSError *)error;
 {
 	if (connection == authConnection) {
-		[delegate oauthClient:self didFailToGetAccessTokenWithError:error];
-		self.accessToken = nil;
-		
+		id context = [[connection.context retain] autorelease];
 		[authConnection release]; authConnection = nil;
+		
+		if ([context isEqualToString:NXOAuth2ClientConnectionContextTokenRefresh]
+			&& [[error domain] isEqualToString:NXOAuth2HTTPErrorDomain]
+			&& error.code >= 500 && error.code < 600
+			&& refreshConnectionDidRetryCount < 4) {
+			
+			// no token refresh because of a server issue. don't give up just yet.
+			[self performSelector:@selector(refreshAccessToken) withObject:nil afterDelay:1];
+			refreshConnectionDidRetryCount++;
+			
+		} else {
+			if ([context isEqualToString:NXOAuth2ClientConnectionContextTokenRefresh]) {
+				NSError *retryFailedError = [NSError errorWithDomain:NXOAuth2ErrorDomain
+																code:NXOAuth2CouldNotRefreshTokenErrorCode
+															userInfo:[NSDictionary dictionaryWithObjectsAndKeys:
+																	  NSLocalizedString(@"Access token could not be refreshed", @"NXOAuth2CouldNotRefreshTokenErrorCode description"), NSLocalizedDescriptionKey,
+																	  nil]];
+				for (NXOAuth2Connection *retryConnection in waitingConnections) {
+					id<NXOAuth2ConnectionDelegate> connectionDelegate = retryConnection.delegate;
+					if ([connectionDelegate respondsToSelector:@selector(oauthConnection:didFailWithError:)]) {
+						[connectionDelegate oauthConnection:retryConnection didFailWithError:retryFailedError];
+					}
+				}
+				[waitingConnections removeAllObjects];
+			}
+			
+			if ([[error domain] isEqualToString:NXOAuth2HTTPErrorDomain]
+				&& error.code == 401) {
+				self.accessToken = nil;		// reset the token since it got invalid
+			}
+			
+			[delegate oauthClient:self didFailToGetAccessTokenWithError:error];
+		}
 	}
 }
 

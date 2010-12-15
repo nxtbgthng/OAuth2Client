@@ -13,7 +13,7 @@
 @class NXOAuth2Connection;
 
 
-@protocol NXOAuth2ConnectionDelegate
+@protocol NXOAuth2ConnectionDelegate <NSObject>
 @optional
 
 /*!

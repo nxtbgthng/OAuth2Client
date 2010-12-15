@@ -44,6 +44,7 @@
 	NXOAuth2Connection	*authConnection;
 	NXOAuth2AccessToken	*accessToken;
 	NSMutableArray	*waitingConnections; //for connections that are waiting for successful authorisation
+	NSInteger		refreshConnectionDidRetryCount;
 	
 	// delegates
 	NSObject<NXOAuth2ClientDelegate>*	delegate;	// assigned
