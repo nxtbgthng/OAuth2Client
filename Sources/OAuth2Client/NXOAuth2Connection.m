@@ -13,6 +13,7 @@
 #import "NXOAuth2ConnectionDelegate.h"
 #import "NXOAuth2Client.h"
 #import "NXOAuth2AccessToken.h"
+#import "NXOAuth2URLRequest.h"
 
 #import "NXOAuth2Connection.h"
 
@@ -33,7 +34,7 @@
 #pragma mark Lifecycle
 
 #if NX_BLOCKS_AVAILABLE && NS_BLOCKS_AVAILABLE
-- (id)initWithRequest:(NSURLRequest *)aRequest
+- (id)initWithRequest:(NXOAuth2URLRequest *)aRequest
 		  oauthClient:(NXOAuth2Client *)aClient
                finish:(void (^)(void))finishBlock 
                  fail:(void (^)(NSError *error))failBlock;
@@ -46,7 +47,7 @@
 }
 #endif
 
-- (id)initWithRequest:(NSURLRequest *)aRequest
+- (id)initWithRequest:(NXOAuth2URLRequest *)aRequest
 		  oauthClient:(NXOAuth2Client *)aClient
 			 delegate:(NSObject<NXOAuth2ConnectionDelegate> *)aDelegate;
 {
@@ -344,7 +345,15 @@
 	}
 }
 
+- (NSInputStream *)connection:(NSURLConnection *)connection needNewBodyStream:(NSURLRequest *)aRequest;
+{
+	NSAssert(aRequest == request, @"Request did change");
+	[request resetHTTPBodyStream]; // reset body stream.
+	return [request HTTPBodyStream];
+}
+
 /*  // uncomment to override SSL certificate checking
+
 #if TARGET_OS_IPHONE
 - (BOOL)connection:(NSURLConnection *)connection canAuthenticateAgainstProtectionSpace:(NSURLProtectionSpace *)protectionSpace;
 {

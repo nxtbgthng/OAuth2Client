@@ -17,9 +17,9 @@
 #import "NXOAuth2Constants.h"
 #import "NXOAuth2FileStreamWrapper.h"
 #import "NXOAuth2PostBodyStream.h"
+#import "NXOAuth2URLRequest.h"
 
 #pragma mark Helpers
 
 #import "NSURL+NXOAuth2.h"
 #import "NSString+NXOAuth2.h"
-#import "NSMutableURLRequest+NXOAuth2.h"

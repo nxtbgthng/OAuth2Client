@@ -39,10 +39,12 @@
 #define NXOAuth2ConnectionDebug 0
 #endif
 
+@class NXOAuth2URLRequest;
+
 @interface NXOAuth2Connection : NSObject {
 @private
 	NSURLConnection		*connection;
-	NSURLRequest		*request;
+	NXOAuth2URLRequest	*request;
 	NSURLResponse		*response;
 	
 	NSMutableData		*data;
@@ -74,14 +76,14 @@
 @property (retain) NSDictionary *userInfo;
 
 #if NX_BLOCKS_AVAILABLE && NS_BLOCKS_AVAILABLE
-- (id)initWithRequest:(NSURLRequest *)request
+- (id)initWithRequest:(NXOAuth2URLRequest *)request
 		  oauthClient:(NXOAuth2Client *)client
                finish:(void (^)(void))finishBlock 
                  fail:(void (^)(NSError *error))failBlock;
 #endif
 
 
-- (id)initWithRequest:(NSURLRequest *)request
+- (id)initWithRequest:(NXOAuth2URLRequest *)request
 		  oauthClient:(NXOAuth2Client *)client
 			 delegate:(NSObject<NXOAuth2ConnectionDelegate> *)delegate;
 
