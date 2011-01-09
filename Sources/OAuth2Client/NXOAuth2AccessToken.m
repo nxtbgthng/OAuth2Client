@@ -155,7 +155,7 @@
 						   data, kSecAttrGeneric,
 						   nil];
 	[self removeFromDefaultKeychainWithServiceProviderName:provider];
-	OSStatus err = SecItemAdd((CFDictionaryRef)query, NULL);
+	OSStatus __attribute__((unused)) err = SecItemAdd((CFDictionaryRef)query, NULL);
 	NSAssert1(err == noErr, @"error while adding token to keychain: %d", err);
 }
 
@@ -166,7 +166,7 @@
 						   (NSString *)kSecClassGenericPassword, kSecClass,
 						   serviceName, kSecAttrService,
 						   nil];
-	OSStatus err = SecItemDelete((CFDictionaryRef)query);
+	OSStatus __attribute__((unused)) err = SecItemDelete((CFDictionaryRef)query);
 	NSAssert1((err == noErr || err == errSecItemNotFound), @"error while deleting token from keychain: %d", err);
 }
 
@@ -226,17 +226,16 @@
 	NSString *serviceName = [[self class] serviceNameWithProvider:provider];
 	NSData *data = [NSKeyedArchiver archivedDataWithRootObject:self];
 	
-	OSStatus err = SecKeychainAddGenericPassword(NULL,
-												 strlen([serviceName UTF8String]),
-												 [serviceName UTF8String],
-												 0,
-												 NULL,
-												 [data length],
-												 [data bytes],
-												 NULL);
+	OSStatus __attribute__((unused))err = SecKeychainAddGenericPassword(NULL,
+																		strlen([serviceName UTF8String]),
+																		[serviceName UTF8String],
+																		0,
+																		NULL,
+																		[data length],
+																		[data bytes],
+																		NULL);
 	
 	NSAssert1(err == noErr, @"error while adding token to keychain: %d", err);
-	if (err);	// silences warning about unused variable
 }
 
 - (void)removeFromDefaultKeychainWithServiceProviderName:(NSString *)provider;
