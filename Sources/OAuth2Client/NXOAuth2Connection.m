@@ -136,6 +136,15 @@
 
 - (NSURLConnection *)createConnection;
 {
+	if ([request.HTTPBodyStream isKindOfClass:[NXOAuth2PostBodyStream class]]) {
+		NXOAuth2PostBodyStream *postBodyStream = (NXOAuth2PostBodyStream *)request.HTTPBodyStream;
+		if (postBodyStream.length > (256 * 1024)) {	// if posting > 256k of data
+			[self cancel];
+			[client refreshAccessTokenAndRetryConnection:self];
+			return nil;
+		}
+	}
+	
 	NSMutableURLRequest *startRequest = [[request mutableCopy] autorelease];
 	
 	if (client.accessToken) {
