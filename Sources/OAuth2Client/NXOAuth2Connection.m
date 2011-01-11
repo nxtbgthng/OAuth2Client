@@ -136,13 +136,13 @@
 
 - (NSURLConnection *)createConnection;
 {
-	if ([request.HTTPBodyStream isKindOfClass:[NXOAuth2PostBodyStream class]]) {
-		NXOAuth2PostBodyStream *postBodyStream = (NXOAuth2PostBodyStream *)request.HTTPBodyStream;
-		if (postBodyStream.length > (256 * 1024)) {	// if posting > 256k of data
-			[self cancel];
-			[client refreshAccessTokenAndRetryConnection:self];
-			return nil;
-		}
+	// if token is expired don't bother starting this connection.
+	NSDate *tenSecondsAgo = [NSDate dateWithTimeIntervalSinceNow:(-10)];
+	NSDate *tokenExpiresAt = client.accessToken.expiresAt;
+	if ([tenSecondsAgo earlierDate:tokenExpiresAt] == tokenExpiresAt) {
+		[self cancel];
+		[client refreshAccessTokenAndRetryConnection:self];
+		return nil;
 	}
 	
 	NXOAuth2URLRequest *startRequest = request;
