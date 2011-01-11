@@ -127,6 +127,7 @@
 {
 	[response release]; response = nil;
 	[connection cancel]; [connection release];
+	[request resetHTTPBodyStream];
 	connection = [[self createConnection] retain];
 }
 
