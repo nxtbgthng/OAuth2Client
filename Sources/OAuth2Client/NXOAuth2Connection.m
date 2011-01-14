@@ -56,7 +56,7 @@
 		delegate = aDelegate;	// assign only
 		client = [aClient retain];
 		
-		request = [aRequest retain];
+		request = [aRequest copy];
 		connection = [[self createConnection] retain];
 	}
 	return self;
@@ -145,7 +145,7 @@
 		return nil;
 	}
 	
-	NXOAuth2URLRequest *startRequest = request;
+	NSMutableURLRequest *startRequest = [[request mutableCopy] autorelease];
 	
 	if (client.accessToken) {
 		[startRequest setValue:[NSString stringWithFormat:@"OAuth %@", client.accessToken.accessToken]
@@ -331,16 +331,16 @@
 	BOOL schemeChanged = [aRequest.URL.scheme caseInsensitiveCompare:aRedirectResponse.URL.scheme] != NSOrderedSame;
 	BOOL schemeChangedToHTTPS = schemeChanged && ([aRequest.URL.scheme caseInsensitiveCompare:@"https"] == NSOrderedSame);
 	
-	request.HTTPMethod = request.HTTPMethod;
+	NSMutableURLRequest *mutableRequest = [[aRequest mutableCopy] autorelease];
+	mutableRequest.HTTPMethod = request.HTTPMethod;
 	
 	if(hostChanged
 	   || (schemeChanged && !schemeChangedToHTTPS)) {
-		NSParameterAssert([request isKindOfClass:[NXOAuth2URLRequest class]]);
 		
-		[request setValue:nil forHTTPHeaderField:@"Authorization"]; // strip Authorization information
-		return request;
+		[mutableRequest setValue:nil forHTTPHeaderField:@"Authorization"]; // strip Authorization information
+		return mutableRequest;
 	}
-	return request;
+	return mutableRequest;
 }
 
 - (void)connection:(NSURLConnection *)connection didSendBodyData:(NSInteger)bytesWritten totalBytesWritten:(NSInteger)totalBytesWritten totalBytesExpectedToWrite:(NSInteger)totalBytesExpectedToWrite;
