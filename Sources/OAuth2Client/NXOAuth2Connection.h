@@ -48,6 +48,7 @@
 	NSURLResponse		*response;
 	
 	NSMutableData		*data;
+    BOOL                savesData;
 	
 	id					context;
 	NSDictionary		*userInfo;
@@ -70,6 +71,7 @@
 
 @property (assign) NSObject<NXOAuth2ConnectionDelegate>	*delegate;
 @property (readonly) NSData *data;
+@property (assign) BOOL savesData;
 @property (readonly) long long expectedContentLength;
 @property (readonly) NSInteger statusCode;
 @property (retain) id context;

@@ -58,6 +58,7 @@
 		
 		request = [aRequest copy];
 		connection = [[self createConnection] retain];
+        savesData = YES;
 	}
 	return self;
 }
@@ -93,6 +94,7 @@
 @synthesize delegate;
 @synthesize data;
 @synthesize context, userInfo;
+@synthesize savesData;
 
 - (NSInteger)statusCode;
 {
@@ -203,11 +205,13 @@
 	[response release];
 	response = [theResponse retain];
 	
-	if (!data) {
-		data = [[NSMutableData alloc] init];
-	} else {
-		[data setLength:0];
-	}
+    if (savesData) {
+        if (!data) {
+            data = [[NSMutableData alloc] init];
+        } else {
+            [data setLength:0];
+        }
+    }
 	
 	NSString *authenticateHeader = nil;
 	if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
@@ -237,7 +241,9 @@
 
 - (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)someData;
 {
-	[data appendData:someData];
+    if (savesData) {
+        [data appendData:someData];
+    }
 	if ([delegate respondsToSelector:@selector(oauthConnection:didReceiveData:)]) {
 		[delegate oauthConnection:self didReceiveData:someData];
 	}
