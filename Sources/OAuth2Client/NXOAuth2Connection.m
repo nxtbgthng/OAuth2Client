@@ -9,11 +9,12 @@
 //  the full licence.
 //
 
+#import "NSURL+NXOAuth2.h"
+
 #import "NXOAuth2PostBodyStream.h"
 #import "NXOAuth2ConnectionDelegate.h"
 #import "NXOAuth2Client.h"
 #import "NXOAuth2AccessToken.h"
-#import "NXOAuth2URLRequest.h"
 
 #import "NXOAuth2Connection.h"
 
@@ -26,6 +27,7 @@
 @interface NXOAuth2Connection ()
 - (NSURLConnection *)createConnection;
 - (NSString *)descriptionForRequest:(NSURLRequest *)request;
+- (void)applyParameters:(NSDictionary *)parameters onRequest:(NSMutableURLRequest *)request;
 @end
 
 
@@ -34,12 +36,13 @@
 #pragma mark Lifecycle
 
 #if NX_BLOCKS_AVAILABLE && NS_BLOCKS_AVAILABLE
-- (id)initWithRequest:(NXOAuth2URLRequest *)aRequest
+- (id)initWithRequest:(NSMutableURLRequest *)aRequest
+	requestParameters:(NSDictionary *)someRequestParameters
 		  oauthClient:(NXOAuth2Client *)aClient
                finish:(void (^)(void))finishBlock 
                  fail:(void (^)(NSError *error))failBlock;
 {
-    if ([self initWithRequest:aRequest oauthClient:aClient delegate:nil]) {
+    if ([self initWithRequest:aRequest parameters:someRequestParameters oauthClient:aClient delegate:nil]) {
         finish = Block_copy(finishBlock);
         fail = Block_copy(failBlock);
     }
@@ -47,7 +50,8 @@
 }
 #endif
 
-- (id)initWithRequest:(NXOAuth2URLRequest *)aRequest
+- (id)initWithRequest:(NSMutableURLRequest *)aRequest
+	requestParameters:(NSDictionary *)someRequestParameters
 		  oauthClient:(NXOAuth2Client *)aClient
 			 delegate:(NSObject<NXOAuth2ConnectionDelegate> *)aDelegate;
 {
@@ -57,6 +61,7 @@
 		client = [aClient retain];
 		
 		request = [aRequest copy];
+		requestParameters = [someRequestParameters copy];
 		connection = [[self createConnection] retain];
         savesData = YES;
 	}
@@ -78,6 +83,7 @@
 	[connection release];
 	[response release];
 	[request release];
+	[requestParameters release];
 	[context release];
 	[userInfo release];
     
@@ -129,7 +135,6 @@
 {
 	[response release]; response = nil;
 	[connection cancel]; [connection release];
-	[request resetHTTPBodyStream];
 	connection = [[self createConnection] retain];
 }
 
@@ -148,6 +153,7 @@
 	}
 	
 	NSMutableURLRequest *startRequest = [[request mutableCopy] autorelease];
+	[self applyParameters:requestParameters onRequest:startRequest];
 	
 	if (client.accessToken) {
 		[startRequest setValue:[NSString stringWithFormat:@"OAuth %@", client.accessToken.accessToken]
@@ -180,6 +186,25 @@
 		return aRequest.URL.absoluteString;
 	}
 	return [NSString stringWithFormat:@"%@ [%@]", aRequest.URL.absoluteString, range];
+}
+
+- (void)applyParameters:(NSDictionary *)parameters onRequest:(NSMutableURLRequest *)aRequest;
+{
+	NSString *httpMethod = [aRequest HTTPMethod];
+	if ([httpMethod caseInsensitiveCompare:@"POST"] != NSOrderedSame
+		&& [httpMethod caseInsensitiveCompare:@"PUT"] != NSOrderedSame) {
+		aRequest.URL = [aRequest.URL nxoauth2_URLByAddingParameters:parameters];
+	} else {
+		NSInputStream *postBodyStream = [[NXOAuth2PostBodyStream alloc] initWithParameters:parameters];
+		
+		NSString *contentType = [NSString stringWithFormat:@"multipart/form-data; boundary=%@", [(NXOAuth2PostBodyStream *)postBodyStream boundary]];
+		NSString *contentLength = [NSString stringWithFormat:@"%d", [(NXOAuth2PostBodyStream *)postBodyStream length]];
+		[aRequest setValue:contentType forHTTPHeaderField:@"Content-Type"];
+		[aRequest setValue:contentLength forHTTPHeaderField:@"Content-Length"];
+		
+		[aRequest setHTTPBodyStream:postBodyStream];
+		[postBodyStream release];
+	}
 }
 
 
@@ -363,9 +388,7 @@
 
 - (NSInputStream *)connection:(NSURLConnection *)connection needNewBodyStream:(NSURLRequest *)aRequest;
 {
-	NSAssert(aRequest == request, @"Request did change");
-	[request resetHTTPBodyStream]; // reset body stream.
-	return [request HTTPBodyStream];
+	return [[[NXOAuth2PostBodyStream alloc] initWithParameters:requestParameters] autorelease];
 }
 
 /*  // uncomment to override SSL certificate checking

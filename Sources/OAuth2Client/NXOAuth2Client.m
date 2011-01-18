@@ -14,7 +14,6 @@
 #import "NXOAuth2Connection.h"
 #import "NXOAuth2ConnectionDelegate.h"
 #import "NXOAuth2AccessToken.h"
-#import "NXOAuth2URLRequest.h"
 
 #import "NSURL+NXOAuth2.h"
 
@@ -189,17 +188,17 @@ NSString * const NXOAuth2ClientConnectionContextTokenRefresh = @"tokenRefresh";
 {
 	NSAssert1(!authConnection, @"authConnection already running with: %@", authConnection);
 	
-	NXOAuth2URLRequest *tokenRequest = [NXOAuth2URLRequest requestWithURL:tokenURL];
+	NSMutableURLRequest *tokenRequest = [NSMutableURLRequest requestWithURL:tokenURL];
 	[tokenRequest setHTTPMethod:@"POST"];
-	[tokenRequest setParameters:[NSDictionary dictionaryWithObjectsAndKeys:
-								 @"authorization_code", @"grant_type",
-								 clientId, @"client_id",
-								 clientSecret, @"client_secret",
-								 [redirectURL absoluteString], @"redirect_uri",
-								 authGrant, @"code",
-								 nil]];
 	[authConnection cancel]; [authConnection release]; // just to be sure
 	authConnection = [[NXOAuth2Connection alloc] initWithRequest:tokenRequest
+											   requestParameters:[NSDictionary dictionaryWithObjectsAndKeys:
+																  @"authorization_code", @"grant_type",
+																  clientId, @"client_id",
+																  clientSecret, @"client_secret",
+																  [redirectURL absoluteString], @"redirect_uri",
+																  authGrant, @"code",
+																  nil]
 													 oauthClient:self
 														delegate:self];
 	authConnection.context = NXOAuth2ClientConnectionContextTokenRequest;
@@ -211,19 +210,19 @@ NSString * const NXOAuth2ClientConnectionContextTokenRefresh = @"tokenRefresh";
 {
 	NSAssert1(!authConnection, @"authConnection already running with: %@", authConnection);
 	
-	NXOAuth2URLRequest *tokenRequest = [NXOAuth2URLRequest requestWithURL:tokenURL];
+	NSMutableURLRequest *tokenRequest = [NSMutableURLRequest requestWithURL:tokenURL];
 	[tokenRequest setHTTPMethod:@"POST"];
-	[tokenRequest setParameters:[NSDictionary dictionaryWithObjectsAndKeys:
-								 @"password", @"grant_type",
-								 clientId, @"client_id",
-								 clientSecret, @"client_secret",
-								 username, @"username",
-								 password, @"password",
-								 nil]];
-	 [authConnection cancel]; [authConnection release]; // just to be sure
-	 authConnection = [[NXOAuth2Connection alloc] initWithRequest:tokenRequest
-													  oauthClient:self
-														 delegate:self];
+	[authConnection cancel]; [authConnection release]; // just to be sure
+	authConnection = [[NXOAuth2Connection alloc] initWithRequest:tokenRequest
+											   requestParameters:[NSDictionary dictionaryWithObjectsAndKeys:
+																  @"password", @"grant_type",
+																  clientId, @"client_id",
+																  clientSecret, @"client_secret",
+																  username, @"username",
+																  password, @"password",
+																  nil]
+													 oauthClient:self
+														delegate:self];
 	authConnection.context = NXOAuth2ClientConnectionContextTokenRequest;
 }
 
@@ -243,16 +242,16 @@ NSString * const NXOAuth2ClientConnectionContextTokenRefresh = @"tokenRefresh";
 	}
 	if (!authConnection) {
 		NSAssert((accessToken.refreshToken != nil), @"invalid state");
-		NXOAuth2URLRequest *tokenRequest = [NXOAuth2URLRequest requestWithURL:tokenURL];
+		NSMutableURLRequest *tokenRequest = [NSMutableURLRequest requestWithURL:tokenURL];
 		[tokenRequest setHTTPMethod:@"POST"];
-		[tokenRequest setParameters:[NSDictionary dictionaryWithObjectsAndKeys:
-									 @"refresh_token", @"grant_type",
-									 clientId, @"client_id",
-									 clientSecret, @"client_secret",
-									 accessToken.refreshToken, @"refresh_token",
-									 nil]];
 		[authConnection cancel]; [authConnection release]; // not needed, but looks more clean to me :)
 		authConnection = [[NXOAuth2Connection alloc] initWithRequest:tokenRequest
+												   requestParameters:[NSDictionary dictionaryWithObjectsAndKeys:
+																	  @"refresh_token", @"grant_type",
+																	  clientId, @"client_id",
+																	  clientSecret, @"client_secret",
+																	  accessToken.refreshToken, @"refresh_token",
+																	  nil]
 														 oauthClient:nil
 															delegate:self];
 		authConnection.context = NXOAuth2ClientConnectionContextTokenRefresh;

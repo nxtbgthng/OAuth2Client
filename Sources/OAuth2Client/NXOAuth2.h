@@ -17,7 +17,6 @@
 #import "NXOAuth2Constants.h"
 #import "NXOAuth2FileStreamWrapper.h"
 #import "NXOAuth2PostBodyStream.h"
-#import "NXOAuth2URLRequest.h"
 
 #pragma mark Helpers
 
