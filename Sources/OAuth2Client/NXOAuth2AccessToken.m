@@ -30,7 +30,11 @@
 	for (NSString *keyValuePair in [responseBody componentsSeparatedByString:@","]) {
 		NSArray *keyAndValue = [keyValuePair componentsSeparatedByString:@":"];
 		if (keyAndValue.count == 2) {
-			[jsonDict setObject:[keyAndValue objectAtIndex:1] forKey:[keyAndValue objectAtIndex:0]];
+			NSString *key = [keyAndValue objectAtIndex:0];
+			NSString *value = [keyAndValue objectAtIndex:1];
+			key = [key stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+			value = [value stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+		    [jsonDict setObject:[keyAndValue objectAtIndex:1] forKey:key];
 		}
 	}
 	NSString *expiresIn = [jsonDict objectForKey:@"expires_in"];
