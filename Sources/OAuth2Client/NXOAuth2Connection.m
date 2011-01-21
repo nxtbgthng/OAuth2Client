@@ -190,6 +190,8 @@
 
 - (void)applyParameters:(NSDictionary *)parameters onRequest:(NSMutableURLRequest *)aRequest;
 {
+	if (!parameters) return;
+	
 	NSString *httpMethod = [aRequest HTTPMethod];
 	if ([httpMethod caseInsensitiveCompare:@"POST"] != NSOrderedSame
 		&& [httpMethod caseInsensitiveCompare:@"PUT"] != NSOrderedSame) {
