@@ -42,7 +42,7 @@
                finish:(void (^)(void))finishBlock 
                  fail:(void (^)(NSError *error))failBlock;
 {
-    if ([self initWithRequest:aRequest parameters:someRequestParameters oauthClient:aClient delegate:nil]) {
+    if ([self initWithRequest:aRequest requestParameters:someRequestParameters oauthClient:aClient delegate:nil]) {
         finish = Block_copy(finishBlock);
         fail = Block_copy(failBlock);
     }
