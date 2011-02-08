@@ -379,12 +379,7 @@
 - (void)connection:(NSURLConnection *)connection didSendBodyData:(NSInteger)bytesWritten totalBytesWritten:(NSInteger)totalBytesWritten totalBytesExpectedToWrite:(NSInteger)totalBytesExpectedToWrite;
 {
 	if ([delegate respondsToSelector:@selector(oauthConnection:didSendBytes:ofTotal:)]) {
-		NSUInteger totalBytes = [request HTTPBody].length;
-		NSInputStream *bodyStream = [request HTTPBodyStream];
-		if ([bodyStream isKindOfClass:[NXOAuth2PostBodyStream class]]) {
-			totalBytes = [(NXOAuth2PostBodyStream *)bodyStream length];
-		}
-		[delegate oauthConnection:self didSendBytes:totalBytesWritten ofTotal:totalBytes];
+		[delegate oauthConnection:self didSendBytes:totalBytesWritten ofTotal:totalBytesExpectedToWrite];
 	}
 }
 
