@@ -79,7 +79,7 @@
 		9429C4981228023D00D31807 /* NSString+NXOAuth2.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+NXOAuth2.m"; sourceTree = "<group>"; };
 		9429C4991228023D00D31807 /* NSURL+NXOAuth2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSURL+NXOAuth2.h"; sourceTree = "<group>"; };
 		9429C49A1228023D00D31807 /* NSURL+NXOAuth2.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSURL+NXOAuth2.m"; sourceTree = "<group>"; };
-		942FFCD612315E0A00E6C65E /* OAuth2Client */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.framework; path = OAuth2Client; sourceTree = BUILT_PRODUCTS_DIR; };
+		942FFCD612315E0A00E6C65E /* OAuth2Client.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = OAuth2Client.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		94E5AC92122C097B00C7021A /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		94E5B276122D457400C7021A /* OAuth2Client.framework-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "OAuth2Client.framework-Info.plist"; sourceTree = "<group>"; };
 		AA747D9E0F9514B9006C5449 /* OAuth2Client_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OAuth2Client_Prefix.pch; sourceTree = "<group>"; };
@@ -113,7 +113,7 @@
 			isa = PBXGroup;
 			children = (
 				D2AAC07E0554694100DB518D /* libOAuth2Client.a */,
-				942FFCD612315E0A00E6C65E /* OAuth2Client */,
+				942FFCD612315E0A00E6C65E /* OAuth2Client.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -260,7 +260,7 @@
 			);
 			name = OAuth2Client.framework;
 			productName = "OAuth2Client Framework";
-			productReference = 942FFCD612315E0A00E6C65E /* OAuth2Client */;
+			productReference = 942FFCD612315E0A00E6C65E /* OAuth2Client.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 		D2AAC07D0554694100DB518D /* OAuth2Client */ = {
@@ -359,6 +359,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				COPY_PHASE_STRIP = NO;
 				DEPLOYMENT_LOCATION = YES;
 				DSTROOT = /tmp/OAuth2Client.dst;
@@ -379,6 +380,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				DEPLOYMENT_LOCATION = YES;
 				DSTROOT = /tmp/OAuth2Client.dst;
 				GCC_MODEL_TUNING = G5;
