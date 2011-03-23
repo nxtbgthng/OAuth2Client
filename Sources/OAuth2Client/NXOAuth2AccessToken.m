@@ -34,7 +34,7 @@
 			NSString *value = [keyAndValue objectAtIndex:1];
 			key = [key stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
 			value = [value stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
-		    [jsonDict setObject:[keyAndValue objectAtIndex:1] forKey:key];
+		    [jsonDict setObject:value forKey:key];
 		}
 	}
 	NSString *expiresIn = [jsonDict objectForKey:@"expires_in"];
