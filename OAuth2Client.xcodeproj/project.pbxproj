@@ -435,6 +435,7 @@
 				GCC_PREFIX_HEADER = Sources/OAuth2Client_Prefix.pch;
 				INFOPLIST_FILE = "OAuth2Client.framework-Info.plist";
 				INSTALL_PATH = "@executable_path/../Frameworks";
+				OTHER_CFLAGS = "-DNX_BLOCKS_AVAILABLE=1";
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
@@ -459,6 +460,10 @@
 				GCC_PREFIX_HEADER = Sources/OAuth2Client_Prefix.pch;
 				INFOPLIST_FILE = "OAuth2Client.framework-Info.plist";
 				INSTALL_PATH = "@executable_path/../Frameworks";
+				OTHER_CFLAGS = (
+					"-DNX_BLOCKS_AVAILABLE=1",
+					"-DNS_BLOCK_ASSERTIONS=1",
+				);
 				OTHER_LDFLAGS = (
 					"-framework",
 					Foundation,
