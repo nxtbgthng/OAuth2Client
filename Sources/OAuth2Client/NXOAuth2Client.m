@@ -72,18 +72,38 @@ NSString * const NXOAuth2ClientConnectionContextTokenRefresh = @"tokenRefresh";
 
 #pragma mark Accessors
 
-@synthesize clientId, clientSecret, userAgent, delegate;
+@synthesize clientId, clientSecret, userAgent, delegate, persistent, accessToken;
 
-@dynamic accessToken;
+- (void) setPersistent:(BOOL)shouldPersist;
+{
+	if (persistent == shouldPersist) return;
+	
+	if (shouldPersist && accessToken) {
+		[self.accessToken storeInDefaultKeychainWithServiceProviderName:[tokenURL host]];
+	}
+	
+	if (!shouldPersist) {
+		[self.accessToken removeFromDefaultKeychainWithServiceProviderName:[tokenURL host]];
+	}
+	
+	[self willChangeValueForKey:@"persistent"];
+	persistent = shouldPersist;
+	[self didChangeValueForKey:@"persistent"];
+}
 
 - (NXOAuth2AccessToken *)accessToken;
 {
 	if (accessToken) return accessToken;
-	accessToken = [[NXOAuth2AccessToken tokenFromDefaultKeychainWithServiceProviderName:[tokenURL host]] retain];
-	if (accessToken) {
-		[delegate oauthClientDidGetAccessToken:self];
+	
+	if (persistent) {
+		accessToken = [[NXOAuth2AccessToken tokenFromDefaultKeychainWithServiceProviderName:[tokenURL host]] retain];
+		if (accessToken) {
+			[delegate oauthClientDidGetAccessToken:self];
+		}
+		return accessToken;
+	} else {
+		return nil;
 	}
-	return accessToken;
 }
 
 - (void)setAccessToken:(NXOAuth2AccessToken *)value;
