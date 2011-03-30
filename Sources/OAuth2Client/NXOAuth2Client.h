@@ -16,6 +16,8 @@
 #import "NXOAuth2ClientDelegate.h"
 #import "NXOAuth2ConnectionDelegate.h"
 
+extern NSString * const NXOAuth2ClientConnectionContextTokenRequest;
+extern NSString * const NXOAuth2ClientConnectionContextTokenRefresh;
 
 @class NXOAuth2Connection, NXOAuth2AccessToken;
 
@@ -30,7 +32,9 @@
 //TODO: Link to documentation
 
 @interface NXOAuth2Client : NSObject <NXOAuth2ConnectionDelegate> {
-@private
+@protected
+	BOOL persistent;
+
 	NSString	*clientId;
 	NSString	*clientSecret;
 	
@@ -57,6 +61,11 @@
 
 @property (nonatomic, retain) NXOAuth2AccessToken	*accessToken;
 @property (nonatomic, assign) NSObject<NXOAuth2ClientDelegate>*	delegate;
+
+/*!
+ * If set to NO, the access token is not stored any keychain, will be removed if it was.
+ */
+@property (nonatomic, assign, readwrite, getter=isPersistent) BOOL persistent;
 
 /*!
  * Initializes the Client
