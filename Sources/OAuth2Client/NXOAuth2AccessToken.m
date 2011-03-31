@@ -57,7 +57,8 @@
 
 - (id)initWithAccessToken:(NSString *)anAccessToken refreshToken:(NSString *)aRefreshToken expiresAt:(NSDate *)anExpiryDate;
 {
-	if (self = [super init]) {
+	self = [super init];
+	if (self) {
 		accessToken = [anAccessToken copy];
 		refreshToken = [aRefreshToken copy];
 		expiresAt = [anExpiryDate copy];

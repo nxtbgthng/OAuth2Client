@@ -103,7 +103,8 @@
 
 - (id)initWithHeaders:(NSString *)headers streamContent:(NSInputStream *)stream length:(unsigned long long)length;
 {
-    if(self = [super init]){
+	self = [super init];
+    if(self) {
 		contentHeaders = [headers retain];
 		contentStream = [stream retain];
 		contentLength  = length;

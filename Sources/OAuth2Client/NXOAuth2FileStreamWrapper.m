@@ -44,7 +44,8 @@
 {
 	if (!aFileName) aFileName = @"unknown";
 	
-	if (self = [super init]) {
+	self = [super init];
+	if (self) {
 		stream = [aStream retain];
 		contentLength = aContentLength;
 		fileName = [aFileName copy];

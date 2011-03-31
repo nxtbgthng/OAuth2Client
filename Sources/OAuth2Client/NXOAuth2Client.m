@@ -44,7 +44,8 @@ NSString * const NXOAuth2ClientConnectionContextTokenRefresh = @"tokenRefresh";
               delegate:(NSObject<NXOAuth2ClientDelegate> *)aDelegate;
 {
 	NSAssert(aTokenURL != nil && anAuthorizeURL != nil, @"No token or no authorize URL");
-	if (self = [super init]) {
+	self = [super init];
+	if (self) {
 		refreshConnectionDidRetryCount = 0;
 		
 		clientId = [aClientId copy];

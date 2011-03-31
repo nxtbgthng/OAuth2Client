@@ -55,7 +55,8 @@
 		  oauthClient:(NXOAuth2Client *)aClient
 			 delegate:(NSObject<NXOAuth2ConnectionDelegate> *)aDelegate;
 {
-	if (self = [super init]) {
+	self = [super init];
+	if (self) {
 		sentConnectionDidEndNotification = NO;
 		delegate = aDelegate;	// assign only
 		client = [aClient retain];

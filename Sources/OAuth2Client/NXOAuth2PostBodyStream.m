@@ -26,7 +26,8 @@
 
 - (id)initWithParameters:(NSDictionary *)postParameters;
 {
-	if (self = [self init]) {
+	self = [self init];
+	if (self) {
 		srandom(time(NULL));
 		boundary = [[NSString alloc] initWithFormat:@"------------nx-oauth2%d", rand()];
 		numBytesTotal = 0;
