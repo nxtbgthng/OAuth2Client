@@ -159,7 +159,7 @@
 			currentStream = [contentStreams objectAtIndex:streamIndex];
 			result = [self read:buffer maxLength:len];
 		} else {
-			currentStream == nil;
+			currentStream = nil;
 		}
 	}
     return result;
