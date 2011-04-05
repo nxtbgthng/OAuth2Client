@@ -47,6 +47,7 @@ NSString * const NXOAuth2ClientConnectionContextTokenRefresh = @"tokenRefresh";
 	self = [super init];
 	if (self) {
 		refreshConnectionDidRetryCount = 0;
+        persistent = YES;
 		
 		clientId = [aClientId copy];
 		clientSecret = [aClientSecret copy];
@@ -119,7 +120,9 @@ NSString * const NXOAuth2ClientConnectionContextTokenRefresh = @"tokenRefresh";
 	[value retain];	[accessToken release]; accessToken = value;
 	[self didChangeValueForKey:@"accessToken"];
 	
-	[accessToken storeInDefaultKeychainWithServiceProviderName:[tokenURL host]];
+    if (persistent) {
+        [accessToken storeInDefaultKeychainWithServiceProviderName:[tokenURL host]];
+    }
 	if (didGetOrDidLoseToken) {
 		if (accessToken) {
 			[delegate oauthClientDidGetAccessToken:self];

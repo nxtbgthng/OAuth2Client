@@ -64,6 +64,7 @@ extern NSString * const NXOAuth2ClientConnectionContextTokenRefresh;
 
 /*!
  * If set to NO, the access token is not stored any keychain, will be removed if it was.
+ * Defaults to YES
  */
 @property (nonatomic, assign, readwrite, getter=isPersistent) BOOL persistent;
 
