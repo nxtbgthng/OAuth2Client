@@ -20,17 +20,20 @@
 	NSString *accessToken;
 	NSString *refreshToken;
 	NSDate *expiresAt;
+	NSSet *scope;
 }
 @property (nonatomic, readonly) NSString *accessToken;
 @property (nonatomic, readonly) NSString *refreshToken;
 @property (nonatomic, readonly) NSDate *expiresAt;
 @property (nonatomic, readonly) BOOL doesExpire;
 @property (nonatomic, readonly) BOOL hasExpired;
+@property (nonatomic, readonly) NSSet *scope;
 
 + (id)tokenWithResponseBody:(NSString *)responseBody;
 
 - (id)initWithAccessToken:(NSString *)accessToken;
-- (id)initWithAccessToken:(NSString *)accessToken refreshToken:(NSString *)refreshToken expiresAt:(NSDate *)expiryDate;	// designated
+- (id)initWithAccessToken:(NSString *)accessToken refreshToken:(NSString *)refreshToken expiresAt:(NSDate *)expiryDate;
+- (id)initWithAccessToken:(NSString *)accessToken refreshToken:(NSString *)refreshToken expiresAt:(NSDate *)expiryDate scope:(NSSet *)scope;	// designated
 
 
 #pragma mark Keychain Support

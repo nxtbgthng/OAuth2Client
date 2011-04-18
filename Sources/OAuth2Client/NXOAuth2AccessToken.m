@@ -37,17 +37,24 @@
 		    [jsonDict setObject:value forKey:key];
 		}
 	}
-	NSString *expiresIn = [jsonDict objectForKey:@"expires_in"];
+	NSString *expiresIn     = [jsonDict objectForKey:@"expires_in"];
 	NSString *anAccessToken = [jsonDict objectForKey:@"access_token"];
 	NSString *aRefreshToken = [jsonDict objectForKey:@"refresh_token"];
-	
+	NSString *scopeString   = [jsonDict objectForKey:@"scope"];
+
+	NSSet *scope = nil;
+	if (scopeString) {
+		scope = [NSSet setWithArray:[scopeString componentsSeparatedByCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]]];
+	}
+
 	NSDate *expiryDate = nil;
 	if (expiresIn) {
 		expiryDate = [NSDate dateWithTimeIntervalSinceNow:[expiresIn integerValue]];
 	}
 	return [[[[self class] alloc] initWithAccessToken:anAccessToken
-										 refreshToken:aRefreshToken
-											expiresAt:expiryDate] autorelease];
+																			 refreshToken:aRefreshToken
+																					expiresAt:expiryDate
+																							scope:scope] autorelease];
 }
 
 - (id)initWithAccessToken:(NSString *)anAccessToken;
@@ -57,11 +64,20 @@
 
 - (id)initWithAccessToken:(NSString *)anAccessToken refreshToken:(NSString *)aRefreshToken expiresAt:(NSDate *)anExpiryDate;
 {
+	return [[[[self class] alloc] initWithAccessToken:anAccessToken
+																			 refreshToken:aRefreshToken
+																					expiresAt:anExpiryDate
+																							scope:nil] autorelease];
+}
+
+- (id)initWithAccessToken:(NSString *)anAccessToken refreshToken:(NSString *)aRefreshToken expiresAt:(NSDate *)anExpiryDate scope:(NSSet *)aScope;
+{
 	self = [super init];
 	if (self) {
-		accessToken = [anAccessToken copy];
+		accessToken  = [anAccessToken copy];
 		refreshToken = [aRefreshToken copy];
-		expiresAt = [anExpiryDate copy];
+		expiresAt    = [anExpiryDate copy];
+		scope        = aScope ? [aScope copy] : [[NSSet alloc] init];
 	}
 	return self;
 }
@@ -71,6 +87,7 @@
 	[accessToken release];
 	[refreshToken release];
 	[expiresAt release];
+	[scope release];
 	[super dealloc];
 }
 
@@ -80,6 +97,7 @@
 @synthesize accessToken;
 @synthesize refreshToken;
 @synthesize expiresAt;
+@synthesize scope;
 
 - (BOOL)doesExpire;
 {
