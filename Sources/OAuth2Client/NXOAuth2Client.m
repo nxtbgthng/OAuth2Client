@@ -83,10 +83,10 @@ NSString * const NXOAuth2ClientConnectionContextTokenRefresh = @"tokenRefresh";
 		[self.accessToken storeInDefaultKeychainWithServiceProviderName:[tokenURL host]];
 	}
 	
-	if (!shouldPersist) {
-		[self.accessToken removeFromDefaultKeychainWithServiceProviderName:[tokenURL host]];
+	if (persistent && !shouldPersist) {
+		[accessToken removeFromDefaultKeychainWithServiceProviderName:[tokenURL host]];
 	}
-	
+
 	[self willChangeValueForKey:@"persistent"];
 	persistent = shouldPersist;
 	[self didChangeValueForKey:@"persistent"];
