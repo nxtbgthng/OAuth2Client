@@ -37,11 +37,11 @@
 		    [jsonDict setObject:value forKey:key];
 		}
 	}
-	NSString *expiresIn     = [jsonDict objectForKey:@"expires_in"];
+	NSString *expiresIn = [jsonDict objectForKey:@"expires_in"];
 	NSString *anAccessToken = [jsonDict objectForKey:@"access_token"];
 	NSString *aRefreshToken = [jsonDict objectForKey:@"refresh_token"];
-	NSString *scopeString   = [jsonDict objectForKey:@"scope"];
-
+	NSString *scopeString = [jsonDict objectForKey:@"scope"];
+	
 	NSSet *scope = nil;
 	if (scopeString) {
 		scope = [NSSet setWithArray:[scopeString componentsSeparatedByCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]]];
@@ -52,9 +52,9 @@
 		expiryDate = [NSDate dateWithTimeIntervalSinceNow:[expiresIn integerValue]];
 	}
 	return [[[[self class] alloc] initWithAccessToken:anAccessToken
-																			 refreshToken:aRefreshToken
-																					expiresAt:expiryDate
-																							scope:scope] autorelease];
+										 refreshToken:aRefreshToken
+											expiresAt:expiryDate
+												scope:scope] autorelease];
 }
 
 - (id)initWithAccessToken:(NSString *)anAccessToken;
@@ -65,9 +65,9 @@
 - (id)initWithAccessToken:(NSString *)anAccessToken refreshToken:(NSString *)aRefreshToken expiresAt:(NSDate *)anExpiryDate;
 {
 	return [[[[self class] alloc] initWithAccessToken:anAccessToken
-																			 refreshToken:aRefreshToken
-																					expiresAt:anExpiryDate
-																							scope:nil] autorelease];
+										 refreshToken:aRefreshToken
+											expiresAt:anExpiryDate
+												scope:nil] autorelease];
 }
 
 - (id)initWithAccessToken:(NSString *)anAccessToken refreshToken:(NSString *)aRefreshToken expiresAt:(NSDate *)anExpiryDate scope:(NSSet *)aScope;
