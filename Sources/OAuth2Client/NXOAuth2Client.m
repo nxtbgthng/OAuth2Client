@@ -99,7 +99,9 @@ NSString * const NXOAuth2ClientConnectionContextTokenRefresh = @"tokenRefresh";
 	if (persistent) {
 		accessToken = [[NXOAuth2AccessToken tokenFromDefaultKeychainWithServiceProviderName:[tokenURL host]] retain];
 		if (accessToken) {
-			[delegate oauthClientDidGetAccessToken:self];
+            if ([delegate respondsToSelector:@selector(oauthClientDidGetAccessToken:)]) {
+                [delegate oauthClientDidGetAccessToken:self];
+            }
 		}
 		return accessToken;
 	} else {
@@ -110,9 +112,9 @@ NSString * const NXOAuth2ClientConnectionContextTokenRefresh = @"tokenRefresh";
 - (void)setAccessToken:(NXOAuth2AccessToken *)value;
 {
 	if (self.accessToken == value) return;
-	BOOL didGetOrDidLoseToken = ((accessToken == nil) && (value != nil)		// did get
-								 || (accessToken != nil) && (value == nil));	// did lose
-	if (!value) {
+	BOOL authorisationStatusChanged = ((accessToken == nil)	|| (value == nil)); //They can't both be nil, see one line above. So they have to have changed from or to nil.
+	
+    if (!value) {
 		[self.accessToken removeFromDefaultKeychainWithServiceProviderName:[tokenURL host]];
 	}
 	
@@ -123,13 +125,18 @@ NSString * const NXOAuth2ClientConnectionContextTokenRefresh = @"tokenRefresh";
     if (persistent) {
         [accessToken storeInDefaultKeychainWithServiceProviderName:[tokenURL host]];
     }
-	if (didGetOrDidLoseToken) {
-		if (accessToken) {
-			[delegate oauthClientDidGetAccessToken:self];
-		} else {
-			[delegate oauthClientDidLoseAccessToken:self];
-		}
-	}
+    
+    if (authorisationStatusChanged) {
+        if (accessToken) {
+            if ([delegate respondsToSelector:@selector(oauthClientDidGetAccessToken:)]) {
+                [delegate oauthClientDidGetAccessToken:self];
+            }
+        } else {
+            if ([delegate respondsToSelector:@selector(oauthClientDidLoseAccessToken:)]) {
+                [delegate oauthClientDidLoseAccessToken:self];
+            }
+        }
+    }
 }
 
 
@@ -200,9 +207,11 @@ NSString * const NXOAuth2ClientConnectionContextTokenRefresh = @"tokenRefresh";
 			if (localizedError) {
 				userInfo = [NSDictionary dictionaryWithObject:localizedError forKey:NSLocalizedDescriptionKey];
 			}
-			[delegate oauthClient:self didFailToGetAccessTokenWithError:[NSError errorWithDomain:NXOAuth2ErrorDomain
-																							code:errorCode
-																						userInfo:userInfo]];
+            if ([delegate respondsToSelector:@selector(oauthClient:didFailToGetAccessTokenWithError:)]) {
+                [delegate oauthClient:self didFailToGetAccessTokenWithError:[NSError errorWithDomain:NXOAuth2ErrorDomain
+                                                                                                code:errorCode
+                                                                                            userInfo:userInfo]];
+            }
 		}
 	}
 	return NO;
@@ -349,7 +358,9 @@ NSString * const NXOAuth2ClientConnectionContextTokenRefresh = @"tokenRefresh";
 				self.accessToken = nil;		// reset the token since it got invalid
 			}
 			
-			[delegate oauthClient:self didFailToGetAccessTokenWithError:error];
+            if ([delegate respondsToSelector:@selector(oauthClient:didFailToGetAccessTokenWithError:)]) {
+                [delegate oauthClient:self didFailToGetAccessTokenWithError:error];
+            }
 		}
 	}
 }
