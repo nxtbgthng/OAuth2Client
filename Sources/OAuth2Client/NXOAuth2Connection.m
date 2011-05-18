@@ -78,10 +78,10 @@
     Block_release(fail);
     Block_release(finish);
 #endif
-	[data release];
-	[client release];
 	[connection cancel];
 	[connection release];
+	[data release];
+	[client release];
 	[response release];
 	[request release];
 	[requestParameters release];
