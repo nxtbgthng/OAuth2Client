@@ -58,11 +58,11 @@
 /*!
  * Specifies Trust mode for the specific hostname. See NXOAuth2Constants.h for constants
  */
-- (NXOAuth2TrustMode)connection:(NXOAuth2Connection *)connection trustModeForHostname:(NSString *)hostname;
+- (NXOAuth2TrustMode)oauthConnection:(NXOAuth2Connection *)connection trustModeForHostname:(NSString *)hostname;
 
 /*!
  * The received a redirect response
  */
-- (NSData *)connection:(NXOAuth2Connection *)connection trustedCertificateDERDataForHostname:(NSString *)hostname;
+- (NSData *)oauthConnection:(NXOAuth2Connection *)connection trustedCertificateDERDataForHostname:(NSString *)hostname;
 
 @end

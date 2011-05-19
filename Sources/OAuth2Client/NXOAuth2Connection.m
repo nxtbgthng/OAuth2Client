@@ -247,9 +247,9 @@
 	
 	
 	if (trustMode & NXOAuth2TrustModeSpecificCertificate) {
-		NSAssert([delegate respondsToSelector:@selector(connection:trustedCertificateDERDataForHostname:)],
-				 @"For NXURLConnectionSpecificCertTrustMode the delegate needs to implement connection:trustedCertificateDERDataForHostname:");
-		NSData *trustedCert = [delegate connection:self trustedCertificateDERDataForHostname:hostname];
+		NSAssert([delegate respondsToSelector:@selector(oauthConnection:trustedCertificateDERDataForHostname:)],
+				 @"For NXOAuth2TrustModeSpecificCertificate the delegate needs to implement oauthConnection:trustedCertificateDERDataForHostname:");
+		NSData *trustedCert = [delegate oauthConnection:self trustedCertificateDERDataForHostname:hostname];
 		
 		if ([self isServerCertificateForAuthenticationChallenge:challenge
 													andHostname:hostname
@@ -530,8 +530,8 @@
 		NSString *hostname = challenge.protectionSpace.host;
 		
 		NXOAuth2TrustMode effectiveTrustMode = NXOAuth2TrustModeSystem;
-		if ([delegate respondsToSelector:@selector(connection:trustModeForHostname:)]) {
-			effectiveTrustMode = [delegate connection:self trustModeForHostname:hostname];
+		if ([delegate respondsToSelector:@selector(oauthConnection:trustModeForHostname:)]) {
+			effectiveTrustMode = [delegate oauthConnection:self trustModeForHostname:hostname];
 		}
 		BOOL shouldTrustCerificate = [self trustsAuthenticationChallenge:challenge
 															 forHostname:hostname
