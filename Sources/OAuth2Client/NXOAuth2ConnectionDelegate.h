@@ -9,6 +9,7 @@
 //  the full licence.
 //
 
+#import "NXOAuth2Constants.h"
 
 @class NXOAuth2Connection;
 
@@ -53,5 +54,15 @@
  * The received a redirect response
  */
 - (void)oauthConnection:(NXOAuth2Connection *)connection didReceiveRedirectToURL:(NSURL *)redirectURL;
+
+/*!
+ * Specifies Trust mode for the specific hostname. See NXOAuth2Constants.h for constants
+ */
+- (NXOAuth2TrustMode)connection:(NXOAuth2Connection *)connection trustModeForHostname:(NSString *)hostname;
+
+/*!
+ * The received a redirect response
+ */
+- (NSData *)connection:(NXOAuth2Connection *)connection trustedCertificateDERDataForHostname:(NSString *)hostname;
 
 @end

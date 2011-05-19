@@ -78,3 +78,31 @@ extern NSString * const NXOAuth2HTTPErrorDomain;				// domain
 
 extern NSString * const NXOAuth2DidStartConnection;
 extern NSString * const NXOAuth2DidEndConnection;
+
+#pragma mark TLS Trust Modes
+
+/*
+ * Implement the connection:trustModeForHostname: method from the
+ * NXOAuth2ConnectionDelegate protocol to specify how certificates provided by
+ * TLS/SSL secured hosts should be trusted.
+ * If connection:trustModeForHostname: is not implemented the default
+ * NXOAuth2TrustModeSystem is assumed.
+ * 
+ * Note that you can return multiple flags. If you to a match on any trust mode
+ * will be interpreted as trusting the server (basically the are ORed)
+ * 
+ * If you specify NXOAuth2TrustModeSpecificCertificate you need to also
+ * implement connection:trustedCertificateDERDataForHostname: and provide the
+ * trusted certificate as DER-encoded NSData. NXOAuth2TrustModeSpecificCertificate
+ * just ensures that any certificate in the chain is equal to the provided one.
+ * 
+ * See SecCertificateCreateWithData and SecCertificateCopyData from the
+ * Security Framework for further reference.
+ */
+
+typedef enum  {
+	NXOAuth2TrustModeAnyCertificate      = 1 << 0,
+	NXOAuth2TrustModeSystem              = 1 << 1,
+	NXOAuth2TrustModeSpecificCertificate = 1 << 2
+} NXOAuth2TrustMode;
+

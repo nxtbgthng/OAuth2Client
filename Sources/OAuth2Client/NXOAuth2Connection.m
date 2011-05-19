@@ -10,6 +10,7 @@
 //
 
 #import "NSURL+NXOAuth2.h"
+#import "NSData+NXOAuth2.h"
 
 #import "NXOAuth2PostBodyStream.h"
 #import "NXOAuth2ConnectionDelegate.h"
@@ -28,6 +29,12 @@
 - (NSURLConnection *)createConnection;
 - (NSString *)descriptionForRequest:(NSURLRequest *)request;
 - (void)applyParameters:(NSDictionary *)parameters onRequest:(NSMutableURLRequest *)request;
+- (BOOL)trustsAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
+						  forHostname:(NSString *)hostname
+						withTrustMode:(NXOAuth2TrustMode)trustMode;
+- (BOOL)isServerCertificateForAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
+										  andHostname:(NSString *)hostname
+								  matchingCertificate:(NSData *)derCertData;
 @end
 
 
@@ -211,6 +218,129 @@
 }
 
 
+- (BOOL)trustsAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
+						  forHostname:(NSString *)hostname
+						withTrustMode:(NXOAuth2TrustMode)trustMode;
+{
+	if (trustMode & NXOAuth2TrustModeAnyCertificate) {
+		return YES;
+	}
+	
+	if (trustMode & NXOAuth2TrustModeSystem) {
+		SecTrustResultType trustEvalResult = kSecTrustResultInvalid;
+		OSStatus ossTrust = SecTrustEvaluate(challenge.protectionSpace.serverTrust, &trustEvalResult);
+		
+		if (ossTrust != errSecSuccess) {
+			NSLog(@"Trust evaluation failed for domain %@. Rejecting cert.", hostname);
+			return NO;
+		}
+		
+		// TODO: The result might also be kSecTrustResultConfirm
+		// But to be safe we ignore this for now
+		// if it is kSecTrustResultConfirm, there could be another delegate
+		// method that allows to show a delegate UI
+		if (trustEvalResult == kSecTrustResultProceed ||
+			trustEvalResult == kSecTrustResultUnspecified) {
+			return YES;
+		}
+	}
+	
+	
+	if (trustMode & NXOAuth2TrustModeSpecificCertificate) {
+		NSAssert([delegate respondsToSelector:@selector(connection:trustedCertificateDERDataForHostname:)],
+				 @"For NXURLConnectionSpecificCertTrustMode the delegate needs to implement connection:trustedCertificateDERDataForHostname:");
+		NSData *trustedCert = [delegate connection:self trustedCertificateDERDataForHostname:hostname];
+		
+		if ([self isServerCertificateForAuthenticationChallenge:challenge
+													andHostname:hostname
+											matchingCertificate:trustedCert]) {
+			return YES;
+		}
+	}
+	
+	return NO;
+}
+
+
+- (BOOL)isServerCertificateForAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
+										  andHostname:(NSString *)hostname
+								  matchingCertificate:(NSData *)derCertData;
+{
+	if (derCertData == nil) {
+		return NO;
+	}
+	
+	SecTrustRef serverTrust = [[challenge protectionSpace] serverTrust];
+	SecCertificateRef anchorCert = SecCertificateCreateWithData(NULL,(CFDataRef)derCertData);
+	
+	if(anchorCert == nil) {
+		return NO;
+	}
+	
+	CFArrayRef allTrustedCert = (CFArrayRef)[NSArray arrayWithObject:(id)anchorCert];
+	
+	CFRelease(anchorCert);
+	
+	SecTrustSetAnchorCertificates(serverTrust, allTrustedCert);
+	SecTrustSetAnchorCertificatesOnly(serverTrust, YES);
+	
+	SecTrustResultType checkResult;
+	OSStatus ossTrust = SecTrustEvaluate(serverTrust, &checkResult);
+	
+	if (ossTrust != errSecSuccess) {
+		return NO;
+	}
+	
+	if (checkResult == kSecTrustResultProceed || checkResult == kSecTrustResultUnspecified) {
+		return YES;
+	} else if (checkResult == kSecTrustResultRecoverableTrustFailure) {
+		// In this case me check if any of the certs is our trusted cert.
+		
+		OSStatus errGetTrustResult = noErr;
+		CFArrayRef certificates = (CFArrayRef)[NSMutableArray array];
+		
+#if TARGET_OS_IPHONE
+		
+		// The iOS way of getting the certs.
+		for (CFIndex index = 0; index < SecTrustGetCertificateCount(serverTrust); index++) {
+			SecCertificateRef certificate = SecTrustGetCertificateAtIndex(serverTrust, index);
+			[(NSMutableArray *)certificates addObject:(id)certificate];
+		}
+		
+#else
+		
+		// OS X way of getting to the certs.
+		CSSM_TP_APPLE_EVIDENCE_INFO *statusChain;
+		errGetTrustResult = SecTrustGetResult(serverTrust, &checkResult, &certificates, &statusChain);
+		
+#endif
+		if (errGetTrustResult == noErr) {
+			// find if any cert in the chain matches the provided cert.
+			for (CFIndex index = 0; index < CFArrayGetCount(certificates); index++) {
+				SecCertificateRef certificate = (SecCertificateRef)CFArrayGetValueAtIndex(certificates, index);
+				CFDataRef certData = SecCertificateCopyData(certificate);
+				NSData *certificateData = [NSData dataWithData:(NSData *)certData];
+				CFRelease(certData);
+				
+				NSString *certificateChecksum = [(NSData *)certificateData nx_SHA1Hexdigest];
+				NSString *anchorCertChecksum = [derCertData nx_SHA1Hexdigest];
+				
+				if ([anchorCertChecksum isEqualToString:certificateChecksum]) {
+					return YES;
+				}
+				
+			}
+			
+			return NO;
+		} else {
+			return NO;
+		}
+	}
+	
+	return NO;
+}
+
+
 #pragma mark -
 #pragma mark SCPostBodyStream Delegate
 
@@ -389,9 +519,6 @@
 	return [[[NXOAuth2PostBodyStream alloc] initWithParameters:requestParameters] autorelease];
 }
 
-/*  // uncomment to override SSL certificate checking
-
-#if TARGET_OS_IPHONE
 - (BOOL)connection:(NSURLConnection *)connection canAuthenticateAgainstProtectionSpace:(NSURLProtectionSpace *)protectionSpace;
 {
 	return [protectionSpace.authenticationMethod isEqualToString:NSURLAuthenticationMethodServerTrust];
@@ -400,13 +527,31 @@
 - (void)connection:(NSURLConnection *)connection didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge;
 {
 	if ([challenge.protectionSpace.authenticationMethod isEqualToString:NSURLAuthenticationMethodServerTrust]) {
-		//if ([trustedHosts containsObject:challenge.protectionSpace.host])
-		[challenge.sender useCredential:[NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust] forAuthenticationChallenge:challenge];
+		NSString *hostname = challenge.protectionSpace.host;
+		
+		NXOAuth2TrustMode effectiveTrustMode = NXOAuth2TrustModeSystem;
+		if ([delegate respondsToSelector:@selector(connection:trustModeForHostname:)]) {
+			effectiveTrustMode = [delegate connection:self trustModeForHostname:hostname];
+		}
+		BOOL shouldTrustCerificate = [self trustsAuthenticationChallenge:challenge
+															 forHostname:hostname
+														   withTrustMode:effectiveTrustMode];
+		
+		if (shouldTrustCerificate) {
+			[challenge.sender useCredential:[NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust]
+				 forAuthenticationChallenge:challenge];
+		} else {
+			[challenge.sender cancelAuthenticationChallenge:challenge];
+		}
+		
+	} else {
+		
+        if ( [challenge previousFailureCount] == 0 ) {
+            [[challenge sender] continueWithoutCredentialForAuthenticationChallenge:challenge];
+        } else {
+            [[challenge sender] cancelAuthenticationChallenge:challenge];
+        }
 	}
-	[challenge.sender continueWithoutCredentialForAuthenticationChallenge:challenge];
 }
-#endif
-*/
-
 
 @end

@@ -26,6 +26,7 @@ NSInteger const NXOAuth2InvalidScopeErrorCode			= -1007;
 
 NSInteger const NXOAuth2CouldNotRefreshTokenErrorCode	= -2001;
 
+
 #pragma mark HTTP Errors
 
 NSString * const NXOAuth2HTTPErrorDomain = @"NXOAuth2HTTPErrorDomain";
