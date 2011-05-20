@@ -17,8 +17,6 @@
 
 #import "NSURL+NXOAuth2.h"
 
-#import "NXOAuth2ClientAuthDelegate.h"
-
 #import "NXOAuth2Client.h"
 
 
@@ -365,5 +363,20 @@ NSString * const NXOAuth2ClientConnectionContextTokenRefresh = @"tokenRefresh";
 	}
 }
 
+- (NXOAuth2TrustMode)oauthConnection:(NXOAuth2Connection *)connection trustModeForHostname:(NSString *)hostname;
+{
+    if ([delegate respondsToSelector:@selector(oauthClient:trustModeForTokenRequestOnHostname:)]) {
+        return [delegate oauthClient:self trustModeForTokenRequestOnHostname:hostname];
+    }
+    return NXOAuth2TrustModeSystem;
+}
+
+- (NSData *)oauthConnection:(NXOAuth2Connection *)connection trustedCertificateDERDataForHostname:(NSString *)hostname;
+{
+    if ([delegate respondsToSelector:@selector(oauthClient:trustedCertificateDERDataForTokenRequestOnHostname:)]) {
+        return [delegate oauthClient:self trustedCertificateDERDataForTokenRequestOnHostname:hostname];
+    }
+    return nil;
+}
 
 @end

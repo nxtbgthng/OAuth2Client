@@ -51,7 +51,7 @@
 - (void)oauthConnection:(NXOAuth2Connection *)connection didSendBytes:(unsigned long long)bytesSend ofTotal:(unsigned long long)bytesTotal;
 
 /*!
- * The received a redirect response
+ * The connection received a redirect response
  */
 - (void)oauthConnection:(NXOAuth2Connection *)connection didReceiveRedirectToURL:(NSURL *)redirectURL;
 
