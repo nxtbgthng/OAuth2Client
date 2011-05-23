@@ -249,13 +249,15 @@
 	if (trustMode & NXOAuth2TrustModeSpecificCertificate) {
 		NSAssert([delegate respondsToSelector:@selector(oauthConnection:trustedCertificateDERDataForHostname:)],
 				 @"For NXOAuth2TrustModeSpecificCertificate the delegate needs to implement oauthConnection:trustedCertificateDERDataForHostname:");
-		NSData *trustedCert = [delegate oauthConnection:self trustedCertificateDERDataForHostname:hostname];
+		NSArray *trustedCerts = [delegate oauthConnection:self trustedCertificatesDERDataForHostname:hostname];
 		
-		if ([self isServerCertificateForAuthenticationChallenge:challenge
-													andHostname:hostname
-											matchingCertificate:trustedCert]) {
-			return YES;
-		}
+        for (NSData* trustedCert in trustedCerts) {
+            if ([self isServerCertificateForAuthenticationChallenge:challenge
+                                                        andHostname:hostname
+                                                matchingCertificate:trustedCert]) {
+                return YES;
+            }
+        }
 	}
 	
 	return NO;

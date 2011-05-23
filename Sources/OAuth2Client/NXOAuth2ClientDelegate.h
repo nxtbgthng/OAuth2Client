@@ -31,8 +31,8 @@
 - (NXOAuth2TrustMode)oauthClient:(NXOAuth2Client *)client trustModeForTokenRequestOnHostname:(NSString *)hostname;
 
 /*!
- * Return the trusted certificate in its DER representation
+ * Return the trusted certificates in their DER representation as NSData objects.
  */
-- (NSData *)oauthClient:(NXOAuth2Client *)client trustedCertificateDERDataForTokenRequestOnHostname:(NSString *)hostname;
+- (NSArray *)oauthClient:(NXOAuth2Client *)client trustedCertificatesDERDataForTokenRequestOnHostname:(NSString *)hostname;
 
 @end

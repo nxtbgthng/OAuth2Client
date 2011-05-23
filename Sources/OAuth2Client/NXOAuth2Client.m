@@ -371,10 +371,10 @@ NSString * const NXOAuth2ClientConnectionContextTokenRefresh = @"tokenRefresh";
     return NXOAuth2TrustModeSystem;
 }
 
-- (NSData *)oauthConnection:(NXOAuth2Connection *)connection trustedCertificateDERDataForHostname:(NSString *)hostname;
+- (NSArray *)oauthConnection:(NXOAuth2Connection *)connection trustedCertificatesDERDataForHostname:(NSString *)hostname;
 {
     if ([delegate respondsToSelector:@selector(oauthClient:trustedCertificateDERDataForTokenRequestOnHostname:)]) {
-        return [delegate oauthClient:self trustedCertificateDERDataForTokenRequestOnHostname:hostname];
+        return [delegate oauthClient:self trustedCertificatesDERDataForTokenRequestOnHostname:hostname];
     }
     return nil;
 }

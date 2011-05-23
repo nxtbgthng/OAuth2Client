@@ -61,8 +61,8 @@
 - (NXOAuth2TrustMode)oauthConnection:(NXOAuth2Connection *)connection trustModeForHostname:(NSString *)hostname;
 
 /*!
- * The received a redirect response
+ * Array of NSData objects that contains the trusted certificates for the hostname.
  */
-- (NSData *)oauthConnection:(NXOAuth2Connection *)connection trustedCertificateDERDataForHostname:(NSString *)hostname;
+- (NSArray *)oauthConnection:(NXOAuth2Connection *)connection trustedCertificatesDERDataForHostname:(NSString *)hostname;
 
 @end
