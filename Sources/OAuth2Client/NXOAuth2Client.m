@@ -373,7 +373,7 @@ NSString * const NXOAuth2ClientConnectionContextTokenRefresh = @"tokenRefresh";
 
 - (NSArray *)oauthConnection:(NXOAuth2Connection *)connection trustedCertificatesDERDataForHostname:(NSString *)hostname;
 {
-    if ([delegate respondsToSelector:@selector(oauthClient:trustedCertificateDERDataForTokenRequestOnHostname:)]) {
+    if ([delegate respondsToSelector:@selector(oauthClient:trustedCertificatesDERDataForTokenRequestOnHostname:)]) {
         return [delegate oauthClient:self trustedCertificatesDERDataForTokenRequestOnHostname:hostname];
     }
     return nil;

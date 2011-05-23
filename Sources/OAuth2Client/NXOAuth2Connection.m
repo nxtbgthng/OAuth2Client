@@ -247,8 +247,8 @@
 	
 	
 	if (trustMode & NXOAuth2TrustModeSpecificCertificate) {
-		NSAssert([delegate respondsToSelector:@selector(oauthConnection:trustedCertificateDERDataForHostname:)],
-				 @"For NXOAuth2TrustModeSpecificCertificate the delegate needs to implement oauthConnection:trustedCertificateDERDataForHostname:");
+		NSAssert([delegate respondsToSelector:@selector(oauthConnection:trustedCertificatesDERDataForHostname:)],
+				 @"For NXOAuth2TrustModeSpecificCertificate the delegate needs to implement oauthConnection:trustedCertificatesDERDataForHostname:");
 		NSArray *trustedCerts = [delegate oauthConnection:self trustedCertificatesDERDataForHostname:hostname];
 		
         for (NSData* trustedCert in trustedCerts) {

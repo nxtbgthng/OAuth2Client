@@ -92,7 +92,7 @@ extern NSString * const NXOAuth2DidEndConnection;
  * will be interpreted as trusting the server (basically the are ORed)
  * 
  * If you specify NXOAuth2TrustModeSpecificCertificate you need to also
- * implement connection:trustedCertificateDERDataForHostname: and provide the
+ * implement connection:trustedCertificatesDERDataForHostname: and provide the
  * trusted certificate as DER-encoded NSData. NXOAuth2TrustModeSpecificCertificate
  * just ensures that any certificate in the chain is equal to the provided one.
  * 
