@@ -363,20 +363,4 @@ NSString * const NXOAuth2ClientConnectionContextTokenRefresh = @"tokenRefresh";
 	}
 }
 
-- (NXOAuth2TrustMode)oauthConnection:(NXOAuth2Connection *)connection trustModeForHostname:(NSString *)hostname;
-{
-    if ([delegate respondsToSelector:@selector(oauthClient:trustModeForTokenRequestOnHostname:)]) {
-        return [delegate oauthClient:self trustModeForTokenRequestOnHostname:hostname];
-    }
-    return NXOAuth2TrustModeSystem;
-}
-
-- (NSArray *)oauthConnection:(NXOAuth2Connection *)connection trustedCertificatesDERDataForHostname:(NSString *)hostname;
-{
-    if ([delegate respondsToSelector:@selector(oauthClient:trustedCertificatesDERDataForTokenRequestOnHostname:)]) {
-        return [delegate oauthClient:self trustedCertificatesDERDataForTokenRequestOnHostname:hostname];
-    }
-    return nil;
-}
-
 @end

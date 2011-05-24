@@ -14,6 +14,7 @@
 #import "NXOAuth2AccessToken.h"
 #import "NXOAuth2Connection.h"
 #import "NXOAuth2ConnectionDelegate.h"
+#import "NXOAuth2TrustDelegate.h"
 #import "NXOAuth2Constants.h"
 #import "NXOAuth2FileStreamWrapper.h"
 #import "NXOAuth2PostBodyStream.h"

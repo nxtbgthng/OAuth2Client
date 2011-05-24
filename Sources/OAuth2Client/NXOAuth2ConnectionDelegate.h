@@ -10,11 +10,12 @@
 //
 
 #import "NXOAuth2Constants.h"
+#import "NXOAuth2TrustDelegate.h"
 
 @class NXOAuth2Connection;
 
 
-@protocol NXOAuth2ConnectionDelegate <NSObject>
+@protocol NXOAuth2ConnectionDelegate <NSObject, NXOAuth2TrustDelegate>
 @optional
 
 /*!
@@ -55,14 +56,5 @@
  */
 - (void)oauthConnection:(NXOAuth2Connection *)connection didReceiveRedirectToURL:(NSURL *)redirectURL;
 
-/*!
- * Specifies Trust mode for the specific hostname. See NXOAuth2Constants.h for constants
- */
-- (NXOAuth2TrustMode)oauthConnection:(NXOAuth2Connection *)connection trustModeForHostname:(NSString *)hostname;
-
-/*!
- * Array of NSData objects that contains the trusted certificates for the hostname.
- */
-- (NSArray *)oauthConnection:(NXOAuth2Connection *)connection trustedCertificatesDERDataForHostname:(NSString *)hostname;
 
 @end

@@ -35,6 +35,9 @@
 - (BOOL)isServerCertificateForAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
 										  andHostname:(NSString *)hostname
 								  matchingCertificate:(NSData *)derCertData;
+@property (nonatomic, retain, readonly) id<NXOAuth2TrustDelegate> trustDelegate;
+
+
 @end
 
 
@@ -109,6 +112,20 @@
 @synthesize data;
 @synthesize context, userInfo;
 @synthesize savesData;
+
+
+- (id<NXOAuth2TrustDelegate>)trustDelegate;
+{
+    // if a client is set and implemnts the trustModeForHostname: it is preferred
+    // in making trust desicions. 
+    // The second choice 
+    if (client && [client.delegate conformsToProtocol:@protocol(NXOAuth2TrustDelegate)]) {
+    	return (id<NXOAuth2TrustDelegate>)client.delegate; 
+    } else if ([delegate conformsToProtocol:@protocol(NXOAuth2TrustDelegate)]) {
+		return (id<NXOAuth2TrustDelegate>)delegate;  
+    }
+	return nil;
+}
 
 - (NSInteger)statusCode;
 {
@@ -247,9 +264,9 @@
 	
 	
 	if (trustMode & NXOAuth2TrustModeSpecificCertificate) {
-		NSAssert([delegate respondsToSelector:@selector(oauthConnection:trustedCertificatesDERDataForHostname:)],
+		NSAssert([self.trustDelegate respondsToSelector:@selector(connection:trustedCertificatesForHostname:)],
 				 @"For NXOAuth2TrustModeSpecificCertificate the delegate needs to implement oauthConnection:trustedCertificatesDERDataForHostname:");
-		NSArray *trustedCerts = [delegate oauthConnection:self trustedCertificatesDERDataForHostname:hostname];
+		NSArray *trustedCerts = [self.trustDelegate connection:self trustedCertificatesForHostname:hostname];
 		
         for (NSData* trustedCert in trustedCerts) {
             if ([self isServerCertificateForAuthenticationChallenge:challenge
@@ -532,8 +549,8 @@
 		NSString *hostname = challenge.protectionSpace.host;
 		
 		NXOAuth2TrustMode effectiveTrustMode = NXOAuth2TrustModeSystem;
-		if ([delegate respondsToSelector:@selector(oauthConnection:trustModeForHostname:)]) {
-			effectiveTrustMode = [delegate oauthConnection:self trustModeForHostname:hostname];
+		if (self.trustDelegate) {
+			effectiveTrustMode = [self.trustDelegate connection:self trustModeForHostname:hostname];
 		}
 		BOOL shouldTrustCerificate = [self trustsAuthenticationChallenge:challenge
 															 forHostname:hostname

@@ -8,10 +8,11 @@
 
 
 #import "NXOAuth2Constants.h"
+#import "NXOAuth2TrustDelegate.h"
 
 @class NXOAuth2Client;
 
-@protocol NXOAuth2ClientDelegate
+@protocol NXOAuth2ClientDelegate <NXOAuth2TrustDelegate>
 
 @required
 /*!
@@ -23,16 +24,5 @@
 - (void)oauthClientDidGetAccessToken:(NXOAuth2Client *)client;
 - (void)oauthClientDidLoseAccessToken:(NXOAuth2Client *)client;
 - (void)oauthClient:(NXOAuth2Client *)client didFailToGetAccessTokenWithError:(NSError *)error;
-
-
-/*!
- * Specifies Trust mode for the specific hostname. See NXOAuth2Constants.h for constants
- */
-- (NXOAuth2TrustMode)oauthClient:(NXOAuth2Client *)client trustModeForTokenRequestOnHostname:(NSString *)hostname;
-
-/*!
- * Return the trusted certificates in their DER representation as NSData objects.
- */
-- (NSArray *)oauthClient:(NXOAuth2Client *)client trustedCertificatesDERDataForTokenRequestOnHostname:(NSString *)hostname;
 
 @end
