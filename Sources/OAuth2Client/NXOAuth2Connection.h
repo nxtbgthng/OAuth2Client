@@ -61,7 +61,7 @@
     void (^fail)(NSError *error);
 #endif
 	
-	BOOL				sentConnectionDidEndNotification;
+	BOOL				sendConnectionDidEndNotification;
     
 #if (NXOAuth2ConnectionDebug)
     NSDate *startDate;

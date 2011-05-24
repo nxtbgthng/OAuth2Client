@@ -67,7 +67,7 @@
 {
 	self = [super init];
 	if (self) {
-		sentConnectionDidEndNotification = NO;
+		sendConnectionDidEndNotification = NO;
 		delegate = aDelegate;	// assign only
 		client = [aClient retain];
 		
@@ -81,8 +81,8 @@
 
 - (void)dealloc;
 {
-	if (sentConnectionDidEndNotification) [[NSNotificationCenter defaultCenter] postNotificationName:NXOAuth2DidEndConnection object:self];
-	sentConnectionDidEndNotification = NO;
+	if (sendConnectionDidEndNotification) [[NSNotificationCenter defaultCenter] postNotificationName:NXOAuth2DidEndConnection object:self];
+	sendConnectionDidEndNotification = NO;
 	
 #if NX_BLOCKS_AVAILABLE && NS_BLOCKS_AVAILABLE
     Block_release(fail);
@@ -149,8 +149,8 @@
 
 - (void)cancel;
 {
-	if (sentConnectionDidEndNotification) [[NSNotificationCenter defaultCenter] postNotificationName:NXOAuth2DidEndConnection object:self];
-	sentConnectionDidEndNotification = NO;
+	if (sendConnectionDidEndNotification) [[NSNotificationCenter defaultCenter] postNotificationName:NXOAuth2DidEndConnection object:self];
+	sendConnectionDidEndNotification = NO;
 	
 	[connection cancel];
 	[client removeConnectionFromWaitingQueue:self];
@@ -198,8 +198,8 @@
     [startDate release]; startDate = [[NSDate alloc] init];
 #endif
 	
-	if (!sentConnectionDidEndNotification) [[NSNotificationCenter defaultCenter] postNotificationName:NXOAuth2DidStartConnection object:self];
-	sentConnectionDidEndNotification = YES;
+	if (!sendConnectionDidEndNotification) [[NSNotificationCenter defaultCenter] postNotificationName:NXOAuth2DidStartConnection object:self];
+	sendConnectionDidEndNotification = YES;
 	
 	return [aConnection autorelease];
 }
@@ -432,8 +432,8 @@
     NSLog(@"%.0fms (SUCC) - %@", -[startDate timeIntervalSinceNow]*1000.0, [self descriptionForRequest:request]);
 #endif
     
-	if (sentConnectionDidEndNotification) [[NSNotificationCenter defaultCenter] postNotificationName:NXOAuth2DidEndConnection object:self];
-	sentConnectionDidEndNotification = NO;
+	if (sendConnectionDidEndNotification) [[NSNotificationCenter defaultCenter] postNotificationName:NXOAuth2DidEndConnection object:self];
+	sendConnectionDidEndNotification = NO;
 	
 	if(self.statusCode < 400) {
 		if ([delegate respondsToSelector:@selector(oauthConnection:didFinishWithData:)]) {
@@ -481,8 +481,8 @@
     NSLog(@"%.0fms (FAIL) - %@ (%@ %i)", -[startDate timeIntervalSinceNow]*1000.0, [self descriptionForRequest:request], [error domain], [error code]);
 #endif
     
-	if (sentConnectionDidEndNotification) [[NSNotificationCenter defaultCenter] postNotificationName:NXOAuth2DidEndConnection object:self];
-	sentConnectionDidEndNotification = NO;
+	if (sendConnectionDidEndNotification) [[NSNotificationCenter defaultCenter] postNotificationName:NXOAuth2DidEndConnection object:self];
+	sendConnectionDidEndNotification = NO;
 	
 	if ([delegate respondsToSelector:@selector(oauthConnection:didFailWithError:)]) {
 		[delegate oauthConnection:self didFailWithError:error];
