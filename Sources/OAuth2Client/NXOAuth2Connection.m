@@ -168,26 +168,32 @@
 
 - (NSURLConnection *)createConnection;
 {
-	// if token is expired don't bother starting this connection.
-	NSDate *tenSecondsAgo = [NSDate dateWithTimeIntervalSinceNow:(-10)];
-	NSDate *tokenExpiresAt = client.accessToken.expiresAt;
-	if ([tenSecondsAgo earlierDate:tokenExpiresAt] == tokenExpiresAt) {
-		[self cancel];
-		[client refreshAccessTokenAndRetryConnection:self];
-		return nil;
+	// if the request is a token refresh request don't sign it and don't check for the expiration of the token (we know that already)
+	NSString *oauthAuthorizationHeader = nil;
+	if (client.accessToken &&
+		![[requestParameters objectForKey:@"grant_type"] isEqualToString:@"refresh_token"]) {
+		
+		// if token is expired don't bother starting this connection.
+		NSDate *tenSecondsAgo = [NSDate dateWithTimeIntervalSinceNow:(-10)];
+		NSDate *tokenExpiresAt = client.accessToken.expiresAt;
+		if ([tenSecondsAgo earlierDate:tokenExpiresAt] == tokenExpiresAt) {
+			[self cancel];
+			[client refreshAccessTokenAndRetryConnection:self];
+			return nil;
+		}
+		
+		oauthAuthorizationHeader = [NSString stringWithFormat:@"OAuth %@", client.accessToken.accessToken];
 	}
 	
 	NSMutableURLRequest *startRequest = [[request mutableCopy] autorelease];
 	[self applyParameters:requestParameters onRequest:startRequest];
 	
-	if (client.accessToken) {
-		[startRequest setValue:[NSString stringWithFormat:@"OAuth %@", client.accessToken.accessToken]
-			forHTTPHeaderField:@"Authorization"];
+	if (oauthAuthorizationHeader) {
+		[startRequest setValue:oauthAuthorizationHeader forHTTPHeaderField:@"Authorization"];
 	}
 	
 	if (client.userAgent && ![startRequest valueForHTTPHeaderField:@"User-Agent"]) {
-		[startRequest setValue:client.userAgent
-			forHTTPHeaderField:@"User-Agent"];
+		[startRequest setValue:client.userAgent forHTTPHeaderField:@"User-Agent"];
 	}
 	
 	NSURLConnection *aConnection = [[NSURLConnection alloc] initWithRequest:startRequest delegate:self startImmediately:NO];	// don't start yet

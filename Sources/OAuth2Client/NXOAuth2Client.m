@@ -286,7 +286,7 @@ NSString * const NXOAuth2ClientConnectionContextTokenRefresh = @"tokenRefresh";
 																	  clientSecret, @"client_secret",
 																	  accessToken.refreshToken, @"refresh_token",
 																	  nil]
-														 oauthClient:nil
+														 oauthClient:self
 															delegate:self];
 		authConnection.context = NXOAuth2ClientConnectionContextTokenRefresh;
 	}
