@@ -555,7 +555,7 @@
 		NSString *hostname = challenge.protectionSpace.host;
 		
 		NXOAuth2TrustMode effectiveTrustMode = NXOAuth2TrustModeSystem;
-		if (self.trustDelegate) {
+		if ([self.trustDelegate respondsToSelector:@selector(connection:trustModeForHostname:)]) {
 			effectiveTrustMode = [self.trustDelegate connection:self trustModeForHostname:hostname];
 		}
 		BOOL shouldTrustCerificate = [self trustsAuthenticationChallenge:challenge
