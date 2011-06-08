@@ -452,7 +452,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Sources/OAuth2Client_Prefix.pch;
 				INFOPLIST_FILE = "OAuth2Client.framework-Info.plist";
-				INSTALL_PATH = "@executable_path/../Frameworks";
+				LD_DYLIB_INSTALL_NAME = "@executable_path/../Frameworks/$(EXECUTABLE_PATH)";
 				OTHER_CFLAGS = "-DNX_BLOCKS_AVAILABLE=1";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -477,7 +477,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Sources/OAuth2Client_Prefix.pch;
 				INFOPLIST_FILE = "OAuth2Client.framework-Info.plist";
-				INSTALL_PATH = "@executable_path/../Frameworks";
+				LD_DYLIB_INSTALL_NAME = "@executable_path/../Frameworks/$(EXECUTABLE_PATH)";
 				OTHER_CFLAGS = (
 					"-DNX_BLOCKS_AVAILABLE=1",
 					"-DNS_BLOCK_ASSERTIONS=1",
