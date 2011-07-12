@@ -64,10 +64,10 @@
 
 - (id)initWithAccessToken:(NSString *)anAccessToken refreshToken:(NSString *)aRefreshToken expiresAt:(NSDate *)anExpiryDate;
 {
-	return [[[[self class] alloc] initWithAccessToken:anAccessToken
-										 refreshToken:aRefreshToken
-											expiresAt:anExpiryDate
-												scope:nil] autorelease];
+	return [[[self class] alloc] initWithAccessToken:anAccessToken
+                                        refreshToken:aRefreshToken
+                                           expiresAt:anExpiryDate
+                                               scope:nil];
 }
 
 - (id)initWithAccessToken:(NSString *)anAccessToken refreshToken:(NSString *)aRefreshToken expiresAt:(NSDate *)anExpiryDate scope:(NSSet *)aScope;
