@@ -20,6 +20,7 @@
 #import "NXOAuth2PostBodyStream.h"
 #import "NXOAuth2AccountStore.h"
 #import "NXOAuth2Account.h"
+#import "NXOAuth2Request.h"
 
 #pragma mark Helpers
 

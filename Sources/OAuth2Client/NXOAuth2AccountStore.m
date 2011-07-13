@@ -89,7 +89,33 @@
     [self.accountsDict removeObjectForKey:account.identifier];
 }
 
+#pragma mark Configuration
+
+- (void)setConfiguration:(NSDictionary *)configuration
+          forAccountType:(NSString *)accountType;
+{
+}
+
+
+#pragma Trust Mode Handler
+
+- (void)setTrustModeHandlerForAccountType:(NSString *)accountType
+                                    block:(NXOAuth2TrustModeHandler)handler;
+{
+}
+
+- (void)setTrustedCertificatesHandlerForAccountType:(NSString *)accountType
+                                              block:(NXOAuth2TrustedCertificatesHandler)handler;
+{
+}
+
+
 #pragma mark Handle OAuth Redirects
+
+- (BOOL)handleRedirectURL:(NSURL *)URL;
+{
+    return NO;
+}
 
 - (BOOL)handleRedirectURL:(NSURL *)url forAccountWithType:(NSString *)accountType;
 {
@@ -99,6 +125,7 @@
     }
     return [client openRedirectURL:url];
 }
+
 
 #pragma mark OAuthClient to AccountType Relation
 
@@ -138,7 +165,7 @@
 {  
     id<NXOAuth2AccountStoreDelegate> appDelegate = (id<NXOAuth2AccountStoreDelegate>)[[UIApplication sharedApplication] delegate];
     NSURL *redirectURL = [appDelegate redirectURLForAccountsWithType:[self accountTypeOfOAuthClient:client]];
-    [[UIApplication sharedApplication] openURL: [client authorizationURLWithRedirectURL:redirectURL]];
+    [[UIApplication sharedApplication] openURL:[client authorizationURLWithRedirectURL:redirectURL]];
 }
 
 - (void)oauthClientDidGetAccessToken:(NXOAuth2Client *)client;

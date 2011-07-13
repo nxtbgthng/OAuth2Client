@@ -8,6 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
+#import "NXOAuth2ClientDelegate.h"
+
 @class NXOAuth2Client;
 
 @interface NXOAuth2Account : NSObject <NXOAuth2ClientDelegate>
