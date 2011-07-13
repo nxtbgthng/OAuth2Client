@@ -18,6 +18,8 @@
 #import "NXOAuth2Constants.h"
 #import "NXOAuth2FileStreamWrapper.h"
 #import "NXOAuth2PostBodyStream.h"
+#import "NXOAuth2AccountStore.h"
+#import "NXOAuth2Account.h"
 
 #pragma mark Helpers
 

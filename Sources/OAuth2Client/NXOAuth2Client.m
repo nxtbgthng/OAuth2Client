@@ -73,7 +73,7 @@ NSString * const NXOAuth2ClientConnectionContextTokenRefresh = @"tokenRefresh";
 
 @synthesize clientId, clientSecret, userAgent, delegate, persistent, accessToken;
 
-- (void) setPersistent:(BOOL)shouldPersist;
+- (void)setPersistent:(BOOL)shouldPersist;
 {
 	if (persistent == shouldPersist) return;
 	

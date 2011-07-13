@@ -38,3 +38,4 @@ NSString * const NXOAuth2HTTPErrorDomain = @"NXOAuth2HTTPErrorDomain";
 
 NSString * const NXOAuth2DidStartConnection = @"NXOAuth2DidStartConnection";
 NSString * const NXOAuth2DidEndConnection = @"NXOAuth2DidEndConnection";
+NSString * const NXOAuth2AccountCreated = @"NXOAuth2AccountCreated";

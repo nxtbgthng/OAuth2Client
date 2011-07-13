@@ -78,6 +78,7 @@ extern NSString * const NXOAuth2HTTPErrorDomain;				// domain
 
 extern NSString * const NXOAuth2DidStartConnection;
 extern NSString * const NXOAuth2DidEndConnection;
+extern NSString * const NXOAuth2AccountCreated;
 
 #pragma mark TLS Trust Modes
 

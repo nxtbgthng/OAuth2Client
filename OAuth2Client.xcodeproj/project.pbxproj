@@ -61,6 +61,18 @@
 		99F08DEB138BE8CE002A5401 /* NXOAuth2TrustDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 99F08DE9138BE8CE002A5401 /* NXOAuth2TrustDelegate.h */; };
 		AA747D9F0F9514B9006C5449 /* OAuth2Client_Prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = AA747D9E0F9514B9006C5449 /* OAuth2Client_Prefix.pch */; };
 		AACBBE4A0F95108600F1A2B1 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AACBBE490F95108600F1A2B1 /* Foundation.framework */; };
+		F65713CE13CC87FD00C8A33A /* NXOAuth2AccountStore.h in Headers */ = {isa = PBXBuildFile; fileRef = F65713CC13CC87FD00C8A33A /* NXOAuth2AccountStore.h */; };
+		F65713CF13CC87FD00C8A33A /* NXOAuth2AccountStore.h in Headers */ = {isa = PBXBuildFile; fileRef = F65713CC13CC87FD00C8A33A /* NXOAuth2AccountStore.h */; };
+		F65713D013CC87FD00C8A33A /* NXOAuth2AccountStore.m in Sources */ = {isa = PBXBuildFile; fileRef = F65713CD13CC87FD00C8A33A /* NXOAuth2AccountStore.m */; };
+		F65713D113CC87FD00C8A33A /* NXOAuth2AccountStore.m in Sources */ = {isa = PBXBuildFile; fileRef = F65713CD13CC87FD00C8A33A /* NXOAuth2AccountStore.m */; };
+		F6B39C7013CC8A3200B43FE0 /* NXOAuth2Account.h in Headers */ = {isa = PBXBuildFile; fileRef = F6B39C6E13CC8A3200B43FE0 /* NXOAuth2Account.h */; };
+		F6B39C7113CC8A3200B43FE0 /* NXOAuth2Account.h in Headers */ = {isa = PBXBuildFile; fileRef = F6B39C6E13CC8A3200B43FE0 /* NXOAuth2Account.h */; };
+		F6B39C7213CC8A3200B43FE0 /* NXOAuth2Account.m in Sources */ = {isa = PBXBuildFile; fileRef = F6B39C6F13CC8A3200B43FE0 /* NXOAuth2Account.m */; };
+		F6B39C7313CC8A3200B43FE0 /* NXOAuth2Account.m in Sources */ = {isa = PBXBuildFile; fileRef = F6B39C6F13CC8A3200B43FE0 /* NXOAuth2Account.m */; };
+		F6B39C7513CC8BDC00B43FE0 /* NXOAuth2AccountStoreDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = F6B39C7413CC8BDC00B43FE0 /* NXOAuth2AccountStoreDelegate.h */; };
+		F6B39C7613CC8BDC00B43FE0 /* NXOAuth2AccountStoreDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = F6B39C7413CC8BDC00B43FE0 /* NXOAuth2AccountStoreDelegate.h */; };
+		F6B39C7813CC980500B43FE0 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6B39C7713CC980500B43FE0 /* UIKit.framework */; };
+		F6B39C7A13CC981400B43FE0 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6B39C7913CC981400B43FE0 /* Cocoa.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -94,6 +106,13 @@
 		AA747D9E0F9514B9006C5449 /* OAuth2Client_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OAuth2Client_Prefix.pch; sourceTree = "<group>"; };
 		AACBBE490F95108600F1A2B1 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		D2AAC07E0554694100DB518D /* libOAuth2Client.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libOAuth2Client.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		F65713CC13CC87FD00C8A33A /* NXOAuth2AccountStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NXOAuth2AccountStore.h; sourceTree = "<group>"; };
+		F65713CD13CC87FD00C8A33A /* NXOAuth2AccountStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NXOAuth2AccountStore.m; sourceTree = "<group>"; };
+		F6B39C6E13CC8A3200B43FE0 /* NXOAuth2Account.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NXOAuth2Account.h; sourceTree = "<group>"; };
+		F6B39C6F13CC8A3200B43FE0 /* NXOAuth2Account.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NXOAuth2Account.m; sourceTree = "<group>"; };
+		F6B39C7413CC8BDC00B43FE0 /* NXOAuth2AccountStoreDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NXOAuth2AccountStoreDelegate.h; sourceTree = "<group>"; };
+		F6B39C7713CC980500B43FE0 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS5.0.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
+		F6B39C7913CC981400B43FE0 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = ../../../../../../../System/Library/Frameworks/Cocoa.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -101,6 +120,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F6B39C7A13CC981400B43FE0 /* Cocoa.framework in Frameworks */,
 				942FFD7E12315EFF00E6C65E /* Security.framework in Frameworks */,
 				942FFCFE12315EFC00E6C65E /* Foundation.framework in Frameworks */,
 			);
@@ -110,6 +130,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F6B39C7813CC980500B43FE0 /* UIKit.framework in Frameworks */,
 				AACBBE4A0F95108600F1A2B1 /* Foundation.framework in Frameworks */,
 				94E5AC93122C097B00C7021A /* Security.framework in Frameworks */,
 			);
@@ -130,6 +151,8 @@
 		0867D691FE84028FC02AAC07 /* OAuth2Client */ = {
 			isa = PBXGroup;
 			children = (
+				F6B39C7913CC981400B43FE0 /* Cocoa.framework */,
+				F6B39C7713CC980500B43FE0 /* UIKit.framework */,
 				08FB77AEFE84172EC02AAC07 /* Sources */,
 				0867D69AFE84028FC02AAC07 /* Frameworks */,
 				034768DFFF38A50411DB9C8B /* Products */,
@@ -169,6 +192,11 @@
 				9429B4D81226987D00D31807 /* NXOAuth2AccessToken.m */,
 				9429B5321226D7A600D31807 /* NXOAuth2Constants.h */,
 				9429B5331226D7A600D31807 /* NXOAuth2Constants.m */,
+				F6B39C7413CC8BDC00B43FE0 /* NXOAuth2AccountStoreDelegate.h */,
+				F65713CC13CC87FD00C8A33A /* NXOAuth2AccountStore.h */,
+				F65713CD13CC87FD00C8A33A /* NXOAuth2AccountStore.m */,
+				F6B39C6E13CC8A3200B43FE0 /* NXOAuth2Account.h */,
+				F6B39C6F13CC8A3200B43FE0 /* NXOAuth2Account.m */,
 			);
 			path = OAuth2Client;
 			sourceTree = "<group>";
@@ -233,6 +261,9 @@
 				942FFCF312315EED00E6C65E /* OAuth2Client_Prefix.pch in Headers */,
 				9404FAC2123E3A6900397DD1 /* NXOAuth2.h in Headers */,
 				99D8A7F913852C6E00E3073C /* NSData+NXOAuth2.h in Headers */,
+				F65713CE13CC87FD00C8A33A /* NXOAuth2AccountStore.h in Headers */,
+				F6B39C7013CC8A3200B43FE0 /* NXOAuth2Account.h in Headers */,
+				F6B39C7513CC8BDC00B43FE0 /* NXOAuth2AccountStoreDelegate.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -255,6 +286,9 @@
 				824D5A6E123F68A8001177D5 /* NXOAuth2ClientDelegate.h in Headers */,
 				99D8A7FA13852C6E00E3073C /* NSData+NXOAuth2.h in Headers */,
 				99F08DEB138BE8CE002A5401 /* NXOAuth2TrustDelegate.h in Headers */,
+				F65713CF13CC87FD00C8A33A /* NXOAuth2AccountStore.h in Headers */,
+				F6B39C7113CC8A3200B43FE0 /* NXOAuth2Account.h in Headers */,
+				F6B39C7613CC8BDC00B43FE0 /* NXOAuth2AccountStoreDelegate.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -351,6 +385,8 @@
 				942FFCFC12315EF500E6C65E /* NXOAuth2PostBodyPart.m in Sources */,
 				942FFCFD12315EF500E6C65E /* NXOAuth2PostBodyStream.m in Sources */,
 				99D8A7FF13852D3600E3073C /* NSData+NXOAuth2.m in Sources */,
+				F65713D013CC87FD00C8A33A /* NXOAuth2AccountStore.m in Sources */,
+				F6B39C7213CC8A3200B43FE0 /* NXOAuth2Account.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -368,6 +404,8 @@
 				9429C49C1228023D00D31807 /* NSString+NXOAuth2.m in Sources */,
 				9429C49E1228023D00D31807 /* NSURL+NXOAuth2.m in Sources */,
 				99D8A80013852D3600E3073C /* NSData+NXOAuth2.m in Sources */,
+				F65713D113CC87FD00C8A33A /* NXOAuth2AccountStore.m in Sources */,
+				F6B39C7313CC8A3200B43FE0 /* NXOAuth2Account.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
