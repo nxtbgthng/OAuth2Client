@@ -21,7 +21,7 @@ typedef void(^NXOAuth2RequestHandler)(NSData *responseData, NSError *error);
     NXOAuth2Account *account;
     NXOAuth2Connection *connection;
     NXOAuth2RequestHandler handler;
-    BOOL should_release;
+    NXOAuth2Request *me;
 }
 
 #pragma mark Lifecycle

@@ -15,7 +15,7 @@
 @interface NXOAuth2Request () <NXOAuth2ConnectionDelegate>
 @property (nonatomic, retain) NXOAuth2Connection *connection;
 @property (nonatomic, retain) NXOAuth2RequestHandler handler;
-- (void)setShouldRelease:(BOOL)r;
+@property (nonatomic, retain) NXOAuth2Request *me;
 @end
 
 
@@ -25,10 +25,7 @@
 
 + (id)requestWithURL:(NSURL *)url parameters:(NSDictionary *)parameters requestMethod:(NSString *)requestMethod;
 {
-    NXOAuth2Request *request = [[NXOAuth2Request alloc] initWithURL:url parameters:parameters requestMethod:requestMethod];
-    [request retain];
-    [request setShouldRelease:YES];
-    return request;
+    return [[[NXOAuth2Request alloc] initWithURL:url parameters:parameters requestMethod:requestMethod] autorelease];
 }
 
 - (id)initWithURL:(NSURL *)aURL parameters:(NSDictionary *)someParameters requestMethod:(NSString *)aRequestMethod;
@@ -53,6 +50,7 @@
     [super dealloc];
 }
 
+
 #pragma mark Accessors
 
 @synthesize parameters;
@@ -61,17 +59,15 @@
 @synthesize account;
 @synthesize connection;
 @synthesize handler;
+@synthesize me;
 
-
-- (void)setShouldRelease:(BOOL)r;
-{
-    should_release = YES;
-}
 
 #pragma mark Perform Request
 
 - (void)performRequestWithHandler:(NXOAuth2RequestHandler)aHandler;
 {
+    NSAssert(self.me == nil, @"This object an only perform one request at the same time.");
+    
     self.handler = [[aHandler copy] autorelease];
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:self.URL];
     [request setHTTPMethod:self.requestMethod];
@@ -79,6 +75,9 @@
                                                  requestParameters:self.parameters
                                                        oauthClient:self.account.oauthClient
                                                           delegate:self] autorelease];
+    
+    // Keep request object alive during the request is performing.
+    self.me = self;
 }
 
 
@@ -89,11 +88,8 @@
     self.handler(data, nil);
     self.handler = nil;
     self.connection = nil;
-    
-    if (should_release) {
-        [self release];
-        should_release = NO;
-    }
+
+    self.me = nil;
 }
 
 - (void)oauthConnection:(NXOAuth2Connection *)connection didFailWithError:(NSError *)error;
@@ -102,10 +98,7 @@
     self.handler = nil;
     self.connection = nil;
     
-    if (should_release) {
-        [self release];
-        should_release = NO;
-    }
+    self.me = nil;
 }
 
 @end
