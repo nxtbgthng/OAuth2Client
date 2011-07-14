@@ -272,7 +272,7 @@
 #if TARGET_OS_IPHONE
     [[UIApplication sharedApplication] openURL:[client authorizationURLWithRedirectURL:redirectURL]];
 #else
-    [[NSWorkspace sharedWorkspace] openURL:redirectURL];
+    [[NSWorkspace sharedWorkspace] openURL:[client authorizationURLWithRedirectURL:redirectURL]];
 #endif
 }
 
