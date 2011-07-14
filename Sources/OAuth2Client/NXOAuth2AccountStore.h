@@ -8,13 +8,16 @@
 
 #import <Foundation/Foundation.h>
 
+@class NXOAuth2Account;
+@class NXOAuth2Connection;
+
+
 typedef NXOAuth2TrustMode(^NXOAuth2TrustModeHandler)(NXOAuth2Connection *connection, NSString *hostname);
 typedef NSArray *(^NXOAuth2TrustedCertificatesHandler)(NSString *hostname);
 
 
-@class NXOAuth2Account;
 
-@interface NXOAuth2AccountStore : NSObject <NXOAuth2ClientDelegate>
+@interface NXOAuth2AccountStore : NSObject
 
 + (id)sharedStore;
 
@@ -45,6 +48,5 @@ typedef NSArray *(^NXOAuth2TrustedCertificatesHandler)(NSString *hostname);
 #pragma mark Handle OAuth Redirects
 
 - (BOOL)handleRedirectURL:(NSURL *)URL;
-- (BOOL)handleRedirectURL:(NSURL *)URL forAccountWithType:(NSString *)accountType;
 
 @end

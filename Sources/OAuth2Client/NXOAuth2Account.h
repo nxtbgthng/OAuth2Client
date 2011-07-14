@@ -8,18 +8,20 @@
 
 #import <Foundation/Foundation.h>
 
-#import "NXOAuth2ClientDelegate.h"
-
 @class NXOAuth2Client;
+@class NXOAuth2AccessToken;
 
-@interface NXOAuth2Account : NSObject <NXOAuth2ClientDelegate>
+@interface NXOAuth2Account : NSObject 
+
+- (id)initAccountWithOAuthClient:(NXOAuth2Client *)oauthClient accountType:(NSString *)accountType;
+
+#pragma mark Accessors
 
 @property (nonatomic, readonly) NSString *accountType;
 @property (nonatomic, readonly) NSString *identifier;
-@property (nonatomic, copy) NSDictionary *userData;
+@property (nonatomic, copy) id <NSObject, NSCoding, NSCopying> userData;
 
 @property (nonatomic, readonly) NXOAuth2Client *oauthClient;
-
-- (id)initAccountWithOAuthClient:(NXOAuth2Client *)oauthClient accountType:(NSString *)accountType;
+@property (nonatomic, readonly) NXOAuth2AccessToken *accessToken;
 
 @end

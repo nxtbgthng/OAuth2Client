@@ -8,41 +8,33 @@
 
 #import <Foundation/Foundation.h>
 
-#import "NXOAuth2ConnectionDelegate.h"
-
-enum NXOAuth2RequestMethod {
-    NXOAuth2RequestMethodGET,
-    NXOAuth2RequestMethodPOST,
-    NXOAuth2RequestMethodDELETE
-};
-typedef enum NXOAuth2RequestMethod NXOAuth2RequestMethod;
-
 typedef void(^NXOAuth2RequestHandler)(NSData *responseData, NSError *error);
 
 @class NXOAuth2Account;
+@class NXOAuth2Connection;
 
-@interface NXOAuth2Request : NSObject <NXOAuth2ConnectionDelegate> {
+@interface NXOAuth2Request : NSObject {
+@private    
     NSDictionary *parameters;
-    NXOAuth2RequestMethod requestMethod;
     NSURL *URL;
-    
+    NSString * requestMethod;
     NXOAuth2Account *account;
     NXOAuth2Connection *connection;
-    
     NXOAuth2RequestHandler handler;
+    BOOL should_release;
 }
-
 
 #pragma mark Lifecycle
 
-- (id)initWithURL:(NSURL *)url parameters:(NSDictionary *)parameters requestMethod:(NXOAuth2RequestMethod)requestMethod;
++ (id)requestWithURL:(NSURL *)url parameters:(NSDictionary *)parameters requestMethod:(NSString *)requestMethod;
+- (id)initWithURL:(NSURL *)url parameters:(NSDictionary *)parameters requestMethod:(NSString *)requestMethod;
 
 
 #pragma mark Accessors
 
 @property(nonatomic, readwrite, retain) NXOAuth2Account *account;
 @property(nonatomic, readonly) NSDictionary *parameters;
-@property(nonatomic, readonly) NXOAuth2RequestMethod requestMethod;
+@property(nonatomic, readonly) NSString *requestMethod;
 @property(nonatomic, readonly) NSURL *URL;
 
 

@@ -78,7 +78,17 @@ extern NSString * const NXOAuth2HTTPErrorDomain;				// domain
 
 extern NSString * const NXOAuth2DidStartConnection;
 extern NSString * const NXOAuth2DidEndConnection;
+
 extern NSString * const NXOAuth2AccountCreated;
+extern NSString * const NXOAuth2AccountRemoved;
+
+extern NSString * const NXOAuth2AccountStoreFailToGetAccessToken;
+
+extern NSString * const NXOAuth2AccountDidChangeUserData;
+extern NSString * const NXOAuth2AccountDidChangeAccessToken;
+extern NSString * const NXOAuth2AccountDidFailToGetAccessToken;
+
+
 
 #pragma mark TLS Trust Modes
 
@@ -106,4 +116,16 @@ typedef enum  {
 	NXOAuth2TrustModeSystem              = 1 << 1,
 	NXOAuth2TrustModeSpecificCertificate = 1 << 2
 } NXOAuth2TrustMode;
+
+
+#pragma mark OAuth2 Configuration
+
+extern NSString * const kNXOAuth2AccountStoreConfigurationClientID;
+extern NSString * const kNXOAuth2AccountStoreConfigurationSecret;
+extern NSString * const kNXOAuth2AccountStoreConfigurationAuthorizeURL;
+extern NSString * const kNXOAuth2AccountStoreConfigurationTokenURL;
+extern NSString * const kNXOAuth2AccountStoreConfigurationRedirectURL;
+
+extern NSString * const kNXOAuth2AccountStoreAccountType;
+extern NSString * const kNXOAuth2AccountStoreError;
 
