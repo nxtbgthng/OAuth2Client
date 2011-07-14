@@ -33,6 +33,15 @@
 @property (nonatomic, assign) id accountUserDataObserver;
 @property (nonatomic, assign) id accountAccessTokenObserver;
 @property (nonatomic, assign) id accountFailToGetAccessTokenObserver;
+
+
+#pragma mark Keychain Support
+
++ (NSString *)keychainServiceName;
++ (NSDictionary *)accountsFromDefaultKeychain;
++ (void)storeAccountsInDefaultKeychain:(NSDictionary *)accounts;
++ (void)removeFromDefaultKeychain;
+
 @end
 
 
@@ -55,28 +64,31 @@
     self = [super init];
     if (self) {
         self.pendingOAuthClients = [NSMutableDictionary dictionary];
-        self.accountsDict = [NSMutableDictionary dictionary];
+        self.accountsDict = [NSMutableDictionary dictionaryWithDictionary:[NXOAuth2AccountStore accountsFromDefaultKeychain]];
         self.configurations = [NSMutableDictionary dictionary];
         
         self.accountUserDataObserver = [[NSNotificationCenter defaultCenter] addObserverForName:NXOAuth2AccountDidChangeUserData
                                                                                  object:nil
                                                                                   queue:nil
                                                                              usingBlock:^(NSNotification *notification){
-                                                                                 NSLog(@"Account %@ did change user data.", notification.object);
+//                                                                                 NSLog(@"Account %@ did change user data.", notification.object);
+                                                                                 @synchronized (self.accountsDict) {
+                                                                                     [NXOAuth2AccountStore storeAccountsInDefaultKeychain:self.accountsDict];
+                                                                                 }
                                                                              }];
         
         self.accountAccessTokenObserver = [[NSNotificationCenter defaultCenter] addObserverForName:NXOAuth2AccountDidChangeAccessToken
                                                                                          object:nil
                                                                                           queue:nil
                                                                                      usingBlock:^(NSNotification *notification){
-                                                                                         NSLog(@"Account %@ did change access token.", notification.object);
+//                                                                                         NSLog(@"Account %@ did change access token.", notification.object);
                                                                                      }];
         
         self.accountFailToGetAccessTokenObserver = [[NSNotificationCenter defaultCenter] addObserverForName:NXOAuth2AccountDidFailToGetAccessToken
                                                                                          object:nil
                                                                                           queue:nil
                                                                                      usingBlock:^(NSNotification *notification){
-                                                                                         NSLog(@"Account %@ did fail to get access token.", notification.object);
+//                                                                                         NSLog(@"Account %@ did fail to get access token.", notification.object);
                                                                                      }];
     }
     return self;
@@ -159,6 +171,15 @@
     @synchronized (self.configurations) {
         [self.configurations setObject:configuration forKey:accountType];
     }
+}
+
+- (NSDictionary *)configurationForAccountType:(NSString *)accountType;
+{
+    NSDictionary *result = nil;
+    @synchronized (self.configurations) {
+       result = [self.configurations objectForKey:accountType];
+    }
+    return result;
 }
 
 
@@ -287,6 +308,7 @@
     NXOAuth2Account *account = [[[NXOAuth2Account alloc] initAccountWithOAuthClient:client accountType:accountType] autorelease];
     @synchronized (self.accountsDict) {
         [self.accountsDict setValue:account forKey:account.identifier];
+        [NXOAuth2AccountStore storeAccountsInDefaultKeychain:self.accountsDict];
     }
     
     [[NSNotificationCenter defaultCenter] postNotificationName:NXOAuth2AccountCreated object:account];
@@ -322,6 +344,111 @@
                                                         object:self
                                                       userInfo:userInfo];
 }
+
+#pragma mark Keychain Support
+
++ (NSString *)keychainServiceName;
+{
+    NSString *appName = [[NSBundle mainBundle] bundleIdentifier];
+	return [NSString stringWithFormat:@"%@::NXOAuth2AccountStore", appName];
+}
+
+#if TARGET_OS_IPHONE
+
+#else
+
++ (NSDictionary *)accountsFromDefaultKeychain;
+{
+    NSString *serviceName = [self keychainServiceName];
+    
+	SecKeychainItemRef item = nil;
+	OSStatus err = SecKeychainFindGenericPassword(NULL,
+												  strlen([serviceName UTF8String]),
+												  [serviceName UTF8String],
+												  0,
+												  NULL,
+												  NULL,
+												  NULL,
+												  &item);
+	if (err != noErr) {
+		NSAssert1(err == errSecItemNotFound, @"Unexpected error while fetching accounts from keychain: %d", err);
+		return nil;
+	}
+    
+    // from Advanced Mac OS X Programming, ch. 16
+    UInt32 length;
+    char *password;
+	NSData *result = nil;
+    SecKeychainAttribute attributes[8];
+    SecKeychainAttributeList list;
+	
+    attributes[0].tag = kSecAccountItemAttr;
+    attributes[1].tag = kSecDescriptionItemAttr;
+    attributes[2].tag = kSecLabelItemAttr;
+    attributes[3].tag = kSecModDateItemAttr;
+    
+    list.count = 4;
+    list.attr = attributes;
+    
+    err = SecKeychainItemCopyContent(item, NULL, &list, &length, (void **)&password);
+    if (err == noErr) {
+        if (password != NULL) {
+			result = [NSData dataWithBytes:password length:length];
+        }
+        SecKeychainItemFreeContent(&list, password);
+    } else {
+		// TODO find out why this always works in i386 and always fails on ppc
+		NSLog(@"Error from SecKeychainItemCopyContent: %d", err);
+        return nil;
+    }
+    CFRelease(item);
+	return [NSKeyedUnarchiver unarchiveObjectWithData:result];
+}
+
++ (void)storeAccountsInDefaultKeychain:(NSDictionary *)accounts;
+{
+    [self removeFromDefaultKeychain];
+ 
+    NSString *serviceName = [self keychainServiceName];
+    
+	NSData *data = [NSKeyedArchiver archivedDataWithRootObject:accounts];
+	
+	OSStatus __attribute__((unused))err = SecKeychainAddGenericPassword(NULL,
+																		strlen([serviceName UTF8String]),
+																		[serviceName UTF8String],
+																		0,
+																		NULL,
+																		[data length],
+																		[data bytes],
+																		NULL);
+    
+	NSAssert1(err == noErr, @"Error while storing accounts in keychain: %d", err);
+}
+
++ (void)removeFromDefaultKeychain;
+{
+    NSString *serviceName = [self keychainServiceName];
+	
+    SecKeychainItemRef item = nil;
+	OSStatus err = SecKeychainFindGenericPassword(NULL,
+												  strlen([serviceName UTF8String]),
+												  [serviceName UTF8String],
+												  0,
+												  NULL,
+												  NULL,
+												  NULL,
+												  &item);
+	NSAssert1((err == noErr || err == errSecItemNotFound), @"Error while deleting accounts from keychain: %d", err);
+	if (err == noErr) {
+		err = SecKeychainItemDelete(item);
+	}
+	if (item) {
+		CFRelease(item);	
+	}
+	NSAssert1((err == noErr || err == errSecItemNotFound), @"Error while deleting accounts from keychain: %d", err);
+}
+
+#endif
 
 @end
 

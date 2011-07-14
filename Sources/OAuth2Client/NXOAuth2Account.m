@@ -10,6 +10,7 @@
 
 #import "NXOAuth2Client.h"
 #import "NXOAuth2ClientDelegate.h"
+#import "NXOAuth2AccountStore.h"
 
 #import "NXOAuth2Account.h"
 
@@ -58,6 +59,21 @@
     @synchronized (oauthClient) {
         if (oauthClient == nil) {
         // TODO: Create an oauth client with the marshaled token.
+            
+            NSDictionary *configuration = [[NXOAuth2AccountStore sharedStore] configurationForAccountType:self.accountType];
+            
+            NSString *clientID = [configuration objectForKey:kNXOAuth2AccountStoreConfigurationClientID];
+            NSString *clientSecret = [configuration objectForKey:kNXOAuth2AccountStoreConfigurationSecret];
+            NSURL *authorizeURL = [configuration objectForKey:kNXOAuth2AccountStoreConfigurationAuthorizeURL];
+            NSURL *tokenURL = [configuration objectForKey:kNXOAuth2AccountStoreConfigurationTokenURL];
+            
+            oauthClient = [[NXOAuth2Client alloc] initWithClientID:clientID
+                                                      clientSecret:clientSecret
+                                                      authorizeURL:authorizeURL
+                                                          tokenURL:tokenURL
+                                                          delegate:self];
+            oauthClient.persistent = NO;
+            oauthClient.accessToken = self.accessToken;
         }
     }
     return oauthClient;
@@ -113,6 +129,27 @@
     [[NSNotificationCenter defaultCenter] postNotificationName:NXOAuth2AccountDidFailToGetAccessToken
                                                         object:self
                                                       userInfo:userInfo];
+}
+
+#pragma mark NSCoding
+
+- (void)encodeWithCoder:(NSCoder *)aCoder
+{
+	[aCoder encodeObject:identifier forKey:@"identifier"];
+	[aCoder encodeObject:accessToken forKey:@"accessToken"];
+	[aCoder encodeObject:accountType forKey:@"accountType"];
+    [aCoder encodeObject:userData forKey:@"userData"];
+}
+
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+	if (self = [super init]) {
+		identifier = [[aDecoder decodeObjectForKey:@"identifier"] copy];
+		accessToken = [[aDecoder decodeObjectForKey:@"accessToken"] retain];
+		accountType = [[aDecoder decodeObjectForKey:@"accountType"] copy];
+        userData = [[aDecoder decodeObjectForKey:@"userData"] copy];
+	}
+	return self;
 }
 
 @end

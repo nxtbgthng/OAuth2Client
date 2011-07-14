@@ -41,7 +41,7 @@ typedef NSArray *(^NXOAuth2TrustedCertificatesHandler)(NSString *hostname);
 #pragma mark Configuration
 
 - (void)setConfiguration:(NSDictionary *)configuration forAccountType:(NSString *)accountType;
-
+- (NSDictionary *)configurationForAccountType:(NSString *)accountType;
 
 #pragma Trust Mode Handler
 
