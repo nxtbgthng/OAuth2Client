@@ -6,7 +6,12 @@
 //  Copyright 2011 nxtbgthng. All rights reserved.
 //
 
+#if TARGET_OS_IPHONE
 #import <UIKit/UIKit.h>
+#else
+#import <Cocoa/Cocoa.h>
+#endif
+
 
 #import "NXOAuth2Client.h"
 #import "NXOAuth2Account.h"
@@ -100,9 +105,11 @@
 
 - (NSArray *)accounts;
 {
+    NSArray *result = nil;
     @synchronized (self.accountsDict) {
-        return [self.accountsDict allValues];
+        result = [self.accountsDict allValues];
     }
+    return result;
 }
 
 - (NSArray *)accountsWithAccountType:(NSString *)accountType;
@@ -118,9 +125,11 @@
 
 - (NXOAuth2Account *)accountWithIdentifier:(NSString *)identifier;
 {
+    NXOAuth2Account *result = nil;
     @synchronized (self.accountsDict) {
-        return [self.accountsDict objectForKey:identifier];
+        result = [self.accountsDict objectForKey:identifier];
     }
+    return result;
 }
 
 
@@ -202,8 +211,9 @@
 
 - (NXOAuth2Client *)pendingOAuthClientForAccountType:(NSString *)accountType;
 {
+    NXOAuth2Client *client = nil;
     @synchronized (self.pendingOAuthClients) {
-        NXOAuth2Client *client = [self.pendingOAuthClients objectForKey:accountType];
+        client = [self.pendingOAuthClients objectForKey:accountType];
         
         if (!client) {
             NSDictionary *configuration;
@@ -225,12 +235,13 @@
             
             [self.pendingOAuthClients setObject:client forKey:accountType];
         }
-        return client;    
     }
+    return client; 
 }
 
 - (NSString *)accountTypeOfPendingOAuthClient:(NXOAuth2Client *)oauthClient;
 {
+    NSString *result = nil;
     @synchronized (self.pendingOAuthClients) {
         NSSet *accountTypes = [self.pendingOAuthClients keysOfEntriesPassingTest:^(id key, id obj, BOOL *stop){
             if ([obj isEqual:oauthClient]) {
@@ -239,8 +250,9 @@
             }
             return NO;
         }];
-        return [accountTypes anyObject];
+        result = [accountTypes anyObject];
     }
+    return result;
 }
 
 #pragma mark NXOAuth2ClientDelegate
@@ -257,7 +269,11 @@
     NSURL *redirectURL = [configuration objectForKey:kNXOAuth2AccountStoreConfigurationRedirectURL];
     
     // TODO: Should the URL be opend via a method provided by the user?
+#if TARGET_OS_IPHONE
     [[UIApplication sharedApplication] openURL:[client authorizationURLWithRedirectURL:redirectURL]];
+#else
+    [[NSWorkspace sharedWorkspace] openURL:redirectURL];
+#endif
 }
 
 - (void)oauthClientDidGetAccessToken:(NXOAuth2Client *)client;

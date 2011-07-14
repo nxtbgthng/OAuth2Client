@@ -11,7 +11,14 @@
 @class NXOAuth2Client;
 @class NXOAuth2AccessToken;
 
-@interface NXOAuth2Account : NSObject 
+@interface NXOAuth2Account : NSObject {
+@private
+    NSString *accountType;
+    NSString *identifier;
+    id <NSObject, NSCoding, NSCopying> userData;
+    NXOAuth2Client *oauthClient;
+    NXOAuth2AccessToken *accessToken;
+}
 
 - (id)initAccountWithOAuthClient:(NXOAuth2Client *)oauthClient accountType:(NSString *)accountType;
 

@@ -17,7 +17,17 @@ typedef NSArray *(^NXOAuth2TrustedCertificatesHandler)(NSString *hostname);
 
 
 
-@interface NXOAuth2AccountStore : NSObject
+@interface NXOAuth2AccountStore : NSObject {
+@private
+    NSMutableDictionary *pendingOAuthClients;
+    NSMutableDictionary *accountsDict;
+    NSMutableDictionary *configurations;
+    NSMutableDictionary *trustModeHandler;
+    NSMutableDictionary *trustedCertificatesHandler;
+    id accountUserDataObserver;
+    id accountAccessTokenObserver;
+    id accountFailToGetAccessTokenObserver;
+}
 
 + (id)sharedStore;
 
