@@ -8,10 +8,12 @@
 
 #import <Foundation/Foundation.h>
 
+#import "NXOAuth2TrustDelegate.h"
+
 @class NXOAuth2Client;
 @class NXOAuth2AccessToken;
 
-@interface NXOAuth2Account : NSObject {
+@interface NXOAuth2Account : NSObject <NXOAuth2TrustDelegate> {
 @private
     NSString *accountType;
     NSString *identifier;

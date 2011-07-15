@@ -75,6 +75,7 @@
 @property (readonly) NSInteger statusCode;
 @property (retain) id context;
 @property (retain) NSDictionary *userInfo;
+@property (readonly) NXOAuth2Client *client;
 
 #if NX_BLOCKS_AVAILABLE && NS_BLOCKS_AVAILABLE
 - (id)initWithRequest:(NSMutableURLRequest *)request

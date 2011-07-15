@@ -131,6 +131,26 @@
                                                       userInfo:userInfo];
 }
 
+
+#pragma mark NXOAuth2TrustDelegate
+
+-(NXOAuth2TrustMode)connection:(NXOAuth2Connection *)connection trustModeForHostname:(NSString *)hostname;
+{
+    NXOAuth2TrustModeHandler handler = [[NXOAuth2AccountStore sharedStore] trustModeHandlerForAccountType:self.accountType];
+    if (handler) {
+        return handler(connection, hostname);
+    } else {
+        return NXOAuth2TrustModeSystem;
+    }
+}
+
+-(NSArray *)connection:(NXOAuth2Connection *)connection trustedCertificatesForHostname:(NSString *)hostname;
+{
+    NXOAuth2TrustedCertificatesHandler handler = [[NXOAuth2AccountStore sharedStore] trustedCertificatesHandlerForAccountType:self.accountType];
+    return handler(hostname);
+}
+
+
 #pragma mark NSCoding
 
 - (void)encodeWithCoder:(NSCoder *)aCoder

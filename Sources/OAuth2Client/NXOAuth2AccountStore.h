@@ -8,6 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
+#import "NXOAuth2TrustDelegate.h"
+
 @class NXOAuth2Account;
 @class NXOAuth2Connection;
 
@@ -17,7 +19,7 @@ typedef NSArray *(^NXOAuth2TrustedCertificatesHandler)(NSString *hostname);
 
 
 
-@interface NXOAuth2AccountStore : NSObject {
+@interface NXOAuth2AccountStore : NSObject <NXOAuth2TrustDelegate> {
 @private
     NSMutableDictionary *pendingOAuthClients;
     NSMutableDictionary *accountsDict;
@@ -43,10 +45,14 @@ typedef NSArray *(^NXOAuth2TrustedCertificatesHandler)(NSString *hostname);
 - (void)setConfiguration:(NSDictionary *)configuration forAccountType:(NSString *)accountType;
 - (NSDictionary *)configurationForAccountType:(NSString *)accountType;
 
+
 #pragma Trust Mode Handler
 
 - (void)setTrustModeHandlerForAccountType:(NSString *)accountType block:(NXOAuth2TrustModeHandler)handler;
+- (NXOAuth2TrustModeHandler)trustModeHandlerForAccountType:(NSString *)accountType;
+
 - (void)setTrustedCertificatesHandlerForAccountType:(NSString *)accountType block:(NXOAuth2TrustedCertificatesHandler)handler;
+- (NXOAuth2TrustedCertificatesHandler)trustedCertificatesHandlerForAccountType:(NSString *)accountType;
 
 
 #pragma mark Manage Accounts

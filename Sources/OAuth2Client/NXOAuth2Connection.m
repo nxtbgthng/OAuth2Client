@@ -112,6 +112,7 @@
 @synthesize data;
 @synthesize context, userInfo;
 @synthesize savesData;
+@synthesize client;
 
 
 - (id<NXOAuth2TrustDelegate>)trustDelegate;

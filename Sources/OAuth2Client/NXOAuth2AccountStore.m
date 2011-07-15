@@ -14,6 +14,7 @@
 
 
 #import "NXOAuth2Client.h"
+#import "NXOAuth2Connection.h"
 #import "NXOAuth2Account.h"
 
 #import "NXOAuth2AccountStore.h"
@@ -66,12 +67,13 @@
         self.pendingOAuthClients = [NSMutableDictionary dictionary];
         self.accountsDict = [NSMutableDictionary dictionaryWithDictionary:[NXOAuth2AccountStore accountsFromDefaultKeychain]];
         self.configurations = [NSMutableDictionary dictionary];
+        self.trustModeHandler = [NSMutableDictionary dictionary];
+        self.trustedCertificatesHandler = [NSMutableDictionary dictionary];
         
         self.accountUserDataObserver = [[NSNotificationCenter defaultCenter] addObserverForName:NXOAuth2AccountDidChangeUserData
                                                                                  object:nil
                                                                                   queue:nil
                                                                              usingBlock:^(NSNotification *notification){
-//                                                                                 NSLog(@"Account %@ did change user data.", notification.object);
                                                                                  @synchronized (self.accountsDict) {
                                                                                      [NXOAuth2AccountStore storeAccountsInDefaultKeychain:self.accountsDict];
                                                                                  }
@@ -81,7 +83,6 @@
                                                                                          object:nil
                                                                                           queue:nil
                                                                                      usingBlock:^(NSNotification *notification){
-//                                                                                         NSLog(@"Account %@ did change access token.", notification.object);
                                                                                          @synchronized (self.accountsDict) {
                                                                                              [NXOAuth2AccountStore storeAccountsInDefaultKeychain:self.accountsDict];
                                                                                          }
@@ -91,7 +92,6 @@
                                                                                          object:nil
                                                                                           queue:nil
                                                                                      usingBlock:^(NSNotification *notification){
-//                                                                                         NSLog(@"Account %@ did fail to get access token.", notification.object);
                                                                                      }];
     }
     return self;
@@ -205,6 +205,18 @@
     }
 }
 
+- (NXOAuth2TrustModeHandler)trustModeHandlerForAccountType:(NSString *)accountType;
+{
+    return [self.trustModeHandler objectForKey:accountType];
+}
+
+- (NXOAuth2TrustedCertificatesHandler)trustedCertificatesHandlerForAccountType:(NSString *)accountType;
+{
+    NXOAuth2TrustedCertificatesHandler handler = [self.trustedCertificatesHandler objectForKey:accountType];
+    NSAssert(handler, @"You need to provied a NXOAuth2TrustedCertificatesHandler for account type '%@' because you are using 'NXOAuth2TrustModeSpecificCertificate' as trust mode for that account type.");
+    return handler;
+}
+
 
 #pragma mark Handle OAuth Redirects
 
@@ -231,6 +243,7 @@
     }
     return NO;
 }
+
 
 #pragma mark OAuthClient to AccountType Relation
 
@@ -279,6 +292,7 @@
     }
     return result;
 }
+
 
 #pragma mark NXOAuth2ClientDelegate
 
@@ -348,6 +362,28 @@
                                                         object:self
                                                       userInfo:userInfo];
 }
+
+
+#pragma mark NXOAuth2TrustDelegate
+
+-(NXOAuth2TrustMode)connection:(NXOAuth2Connection *)connection trustModeForHostname:(NSString *)hostname;
+{
+    NSString *accountType = [self accountTypeOfPendingOAuthClient:connection.client];
+    NXOAuth2TrustModeHandler handler = [self trustModeHandlerForAccountType:accountType];
+    if (handler) {
+        return handler(connection, hostname);
+    } else {
+        return NXOAuth2TrustModeSystem;
+    }
+}
+
+-(NSArray *)connection:(NXOAuth2Connection *)connection trustedCertificatesForHostname:(NSString *)hostname;
+{
+    NSString *accountType = [self accountTypeOfPendingOAuthClient:connection.client];
+    NXOAuth2TrustedCertificatesHandler handler = [self trustedCertificatesHandlerForAccountType:accountType];
+    return handler(hostname);
+}
+
 
 #pragma mark Keychain Support
 
