@@ -14,7 +14,8 @@
 
 @interface NXOAuth2Request () <NXOAuth2ConnectionDelegate>
 @property (nonatomic, retain) NXOAuth2Connection *connection;
-@property (nonatomic, retain) NXOAuth2RequestHandler handler;
+@property (nonatomic, retain) NXOAuth2RequestResponseHandler handler;
+@property (nonatomic, retain) NXOAuth2RequestProgressHandler progresHandler;
 @property (nonatomic, retain) NXOAuth2Request *me;
 @end
 
@@ -59,16 +60,34 @@
 @synthesize account;
 @synthesize connection;
 @synthesize handler;
+@synthesize progresHandler;
 @synthesize me;
 
 
 #pragma mark Perform Request
 
-- (void)performRequestWithHandler:(NXOAuth2RequestHandler)aHandler;
+- (void)performRequestWithResponseHandler:(NXOAuth2RequestResponseHandler)aHandler;
 {
     NSAssert(self.me == nil, @"This object an only perform one request at the same time.");
     
     self.handler = [[aHandler copy] autorelease];
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:self.URL];
+    [request setHTTPMethod:self.requestMethod];
+    self.connection = [[[NXOAuth2Connection alloc] initWithRequest:request
+                                                 requestParameters:self.parameters
+                                                       oauthClient:self.account.oauthClient
+                                                          delegate:self] autorelease];
+    
+    // Keep request object alive during the request is performing.
+    self.me = self;
+}
+
+- (void)performRequestWithResponseHandler:(NXOAuth2RequestResponseHandler)aResponseHandler progressHandler:(NXOAuth2RequestProgressHandler)aProgresHandler;
+{
+    NSAssert(self.me == nil, @"This object an only perform one request at the same time.");
+    
+    self.handler = [[aResponseHandler copy] autorelease];
+    self.progresHandler = [[aProgresHandler copy] autorelease];
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:self.URL];
     [request setHTTPMethod:self.requestMethod];
     self.connection = [[[NXOAuth2Connection alloc] initWithRequest:request
@@ -87,6 +106,7 @@
 {
     self.handler(data, nil);
     self.handler = nil;
+    self.progresHandler = nil;
     self.connection = nil;
 
     self.me = nil;
@@ -96,9 +116,15 @@
 {
     self.handler(nil, error);
     self.handler = nil;
+    self.progresHandler = nil;
     self.connection = nil;
     
     self.me = nil;
+}
+
+- (void)oauthConnection:(NXOAuth2Connection *)connection didSendBytes:(unsigned long long)bytesSend ofTotal:(unsigned long long)bytesTotal;
+{
+    self.progresHandler(((float)bytesSend)/bytesTotal);
 }
 
 @end

@@ -8,7 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
-typedef void(^NXOAuth2RequestHandler)(NSData *responseData, NSError *error);
+typedef void(^NXOAuth2RequestResponseHandler)(NSData *responseData, NSError *error);
+typedef void(^NXOAuth2RequestProgressHandler)(float progres);
 
 @class NXOAuth2Account;
 @class NXOAuth2Connection;
@@ -20,7 +21,8 @@ typedef void(^NXOAuth2RequestHandler)(NSData *responseData, NSError *error);
     NSString * requestMethod;
     NXOAuth2Account *account;
     NXOAuth2Connection *connection;
-    NXOAuth2RequestHandler handler;
+    NXOAuth2RequestResponseHandler handler;
+    NXOAuth2RequestProgressHandler progressHandler;
     NXOAuth2Request *me;
 }
 
@@ -28,7 +30,6 @@ typedef void(^NXOAuth2RequestHandler)(NSData *responseData, NSError *error);
 
 + (id)requestWithURL:(NSURL *)url parameters:(NSDictionary *)parameters requestMethod:(NSString *)requestMethod;
 - (id)initWithURL:(NSURL *)url parameters:(NSDictionary *)parameters requestMethod:(NSString *)requestMethod;
-
 
 #pragma mark Accessors
 
@@ -40,6 +41,7 @@ typedef void(^NXOAuth2RequestHandler)(NSData *responseData, NSError *error);
 
 #pragma mark Perform Request
 
-- (void)performRequestWithHandler:(NXOAuth2RequestHandler)handler;
+- (void)performRequestWithResponseHandler:(NXOAuth2RequestResponseHandler)handler;
+- (void)performRequestWithResponseHandler:(NXOAuth2RequestResponseHandler)handler progressHandler:(NXOAuth2RequestProgressHandler)progresHandler;
 
 @end
