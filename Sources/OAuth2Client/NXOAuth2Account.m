@@ -27,6 +27,7 @@
 @synthesize oauthClient;
 @synthesize accessToken;
 
+
 #pragma mark Lifecycle
 
 - (id)initAccountWithOAuthClient:(NXOAuth2Client *)anOAuthClient accountType:(NSString *)anAccountType;
@@ -52,6 +53,7 @@
     [super dealloc];
 }
 
+
 #pragma mark Accessors
 
 - (NXOAuth2Client *)oauthClient;
@@ -71,9 +73,9 @@
                                                       clientSecret:clientSecret
                                                       authorizeURL:authorizeURL
                                                           tokenURL:tokenURL
+                                                       accessToken:self.accessToken
+                                                        persistent:NO
                                                           delegate:self];
-            oauthClient.persistent = NO;
-            oauthClient.accessToken = self.accessToken;
         }
     }
     return oauthClient;

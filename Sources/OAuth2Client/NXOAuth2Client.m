@@ -41,17 +41,35 @@ NSString * const NXOAuth2ClientConnectionContextTokenRefresh = @"tokenRefresh";
 			  tokenURL:(NSURL *)aTokenURL
               delegate:(NSObject<NXOAuth2ClientDelegate> *)aDelegate;
 {
-	NSAssert(aTokenURL != nil && anAuthorizeURL != nil, @"No token or no authorize URL");
+	return [self initWithClientID:aClientId
+                     clientSecret:aClientSecret
+                     authorizeURL:anAuthorizeURL
+                         tokenURL:aTokenURL
+                      accessToken:nil
+                       persistent:YES
+                         delegate:aDelegate];
+}
+
+- (id)initWithClientID:(NSString *)aClientId
+		  clientSecret:(NSString *)aClientSecret
+		  authorizeURL:(NSURL *)anAuthorizeURL
+			  tokenURL:(NSURL *)aTokenURL
+           accessToken:(NXOAuth2AccessToken *)anAccessToken
+            persistent:(BOOL)shouldPersist
+              delegate:(NSObject<NXOAuth2ClientDelegate> *)aDelegate;
+{
+    NSAssert(aTokenURL != nil && anAuthorizeURL != nil, @"No token or no authorize URL");
 	self = [super init];
 	if (self) {
 		refreshConnectionDidRetryCount = 0;
-        persistent = YES;
 		
 		clientId = [aClientId copy];
 		clientSecret = [aClientSecret copy];
 		authorizeURL = [anAuthorizeURL copy];
 		tokenURL = [aTokenURL copy];
-		
+        accessToken = [anAccessToken retain];
+        
+        self.persistent = shouldPersist;
 		self.delegate = aDelegate;
 	}
 	return self;
