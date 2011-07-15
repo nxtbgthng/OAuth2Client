@@ -82,6 +82,9 @@
                                                                                           queue:nil
                                                                                      usingBlock:^(NSNotification *notification){
 //                                                                                         NSLog(@"Account %@ did change access token.", notification.object);
+                                                                                         @synchronized (self.accountsDict) {
+                                                                                             [NXOAuth2AccountStore storeAccountsInDefaultKeychain:self.accountsDict];
+                                                                                         }
                                                                                      }];
         
         self.accountFailToGetAccessTokenObserver = [[NSNotificationCenter defaultCenter] addObserverForName:NXOAuth2AccountDidFailToGetAccessToken
@@ -157,6 +160,7 @@
 {
     @synchronized (self.accountsDict) {
         [self.accountsDict removeObjectForKey:account.identifier];
+        [NXOAuth2AccountStore storeAccountsInDefaultKeychain:self.accountsDict];
     }
     
     [[NSNotificationCenter defaultCenter] postNotificationName:NXOAuth2AccountRemoved object:account];
@@ -354,6 +358,56 @@
 }
 
 #if TARGET_OS_IPHONE
+
++ (NSDictionary *)accountsFromDefaultKeychain;
+{
+    NSString *serviceName = [self keychainServiceName];
+    
+    NSDictionary *result = nil;
+	NSDictionary *query = [NSDictionary dictionaryWithObjectsAndKeys:
+						   (NSString *)kSecClassGenericPassword, kSecClass,
+						   serviceName, kSecAttrService,
+						   kCFBooleanTrue, kSecReturnAttributes,
+						   nil];
+	OSStatus status = SecItemCopyMatching((CFDictionaryRef)query, (CFTypeRef *)&result);
+	[result autorelease];
+	
+	if (status != noErr) {
+		NSAssert1(status == errSecItemNotFound, @"Unexpected error while fetching accounts from keychain: %d", status);
+		return nil;
+	}
+	
+	return [NSKeyedUnarchiver unarchiveObjectWithData:[result objectForKey:(NSString *)kSecAttrGeneric]];
+}
+
++ (void)storeAccountsInDefaultKeychain:(NSDictionary *)accounts;
+{
+    [self removeFromDefaultKeychain];
+ 
+    NSString *serviceName = [self keychainServiceName];
+    
+    NSData *data = [NSKeyedArchiver archivedDataWithRootObject:accounts];
+	NSDictionary *query = [NSDictionary dictionaryWithObjectsAndKeys:
+						   (NSString *)kSecClassGenericPassword, kSecClass,
+						   serviceName, kSecAttrService,
+						   @"OAuth 2 Account Store", kSecAttrLabel,
+						   data, kSecAttrGeneric,
+						   nil];
+	OSStatus __attribute__((unused)) err = SecItemAdd((CFDictionaryRef)query, NULL);
+	NSAssert1(err == noErr, @"Error while adding token to keychain: %d", err);
+}
+
++ (void)removeFromDefaultKeychain;
+{
+    NSString *serviceName = [self keychainServiceName];
+    NSDictionary *query = [NSDictionary dictionaryWithObjectsAndKeys:
+						   (NSString *)kSecClassGenericPassword, kSecClass,
+						   serviceName, kSecAttrService,
+						   nil];
+	OSStatus __attribute__((unused)) err = SecItemDelete((CFDictionaryRef)query);
+	NSAssert1((err == noErr || err == errSecItemNotFound), @"Error while deleting token from keychain: %d", err);
+
+}
 
 #else
 
