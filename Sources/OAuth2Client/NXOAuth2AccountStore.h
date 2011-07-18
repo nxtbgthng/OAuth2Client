@@ -58,6 +58,7 @@ typedef NSArray *(^NXOAuth2TrustedCertificatesHandler)(NSString *hostname);
 #pragma mark Manage Accounts
 
 - (void)requestAccessToAccountWithType:(NSString *)accountType;
+- (void)requestAccessToAccountWithType:(NSString *)accountType username:(NSString *)username password:(NSString *)password;
 - (void)removeAccount:(NXOAuth2Account *)account;
 
 

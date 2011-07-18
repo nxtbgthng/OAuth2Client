@@ -156,13 +156,18 @@
     [client requestAccess];
 }
 
+- (void)requestAccessToAccountWithType:(NSString *)accountType username:(NSString *)username password:(NSString *)password;
+{
+    NXOAuth2Client *client = [self pendingOAuthClientForAccountType:accountType];
+    [client authenticateWithUsername:username password:password];
+}
+
 - (void)removeAccount:(NXOAuth2Account *)account;
 {
     @synchronized (self.accountsDict) {
         [self.accountsDict removeObjectForKey:account.identifier];
         [NXOAuth2AccountStore storeAccountsInDefaultKeychain:self.accountsDict];
     }
-    
     [[NSNotificationCenter defaultCenter] postNotificationName:NXOAuth2AccountRemoved object:account];
 }
 
@@ -171,7 +176,11 @@
 - (void)setConfiguration:(NSDictionary *)configuration
           forAccountType:(NSString *)accountType;
 {
-    // TODO: Check if configuration is valid
+    NSAssert([configuration objectForKey:kNXOAuth2AccountStoreConfigurationClientID], @"Missing OAuth2 client ID for account type '%@'.", accountType);
+    NSAssert([configuration objectForKey:kNXOAuth2AccountStoreConfigurationSecret], @"Missing OAuth2 client secret for account type '%@'.", accountType);
+    NSAssert([configuration objectForKey:kNXOAuth2AccountStoreConfigurationAuthorizeURL], @"Missing OAuth2 authorize URL for account type '%@'.", accountType);
+    NSAssert([configuration objectForKey:kNXOAuth2AccountStoreConfigurationTokenURL], @"Missing OAuth2 token URL for account type '%@'.", accountType);
+    
     @synchronized (self.configurations) {
         [self.configurations setObject:configuration forKey:accountType];
     }

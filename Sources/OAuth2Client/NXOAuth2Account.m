@@ -100,6 +100,8 @@
 
 - (void)oauthClientNeedsAuthentication:(NXOAuth2Client *)client;
 {
+    // TODO: Will this delegate method be called if a client is already connected?
+    
     NSLog(@"%s", __FUNCTION__);
 }
 
@@ -107,13 +109,14 @@
 {
     [accessToken release];
     accessToken = [oauthClient.accessToken retain];
-    
     [[NSNotificationCenter defaultCenter] postNotificationName:NXOAuth2AccountDidChangeAccessToken
                                                         object:self];
 }
 
 - (void)oauthClientDidLoseAccessToken:(NXOAuth2Client *)client;
 {
+    // TODO: In which situations will this method be called on an already authenticated client?
+    
     [accessToken release];
     accessToken = nil;
     [[NSNotificationCenter defaultCenter] postNotificationName:NXOAuth2AccountDidChangeAccessToken
@@ -122,12 +125,12 @@
 
 - (void)oauthClient:(NXOAuth2Client *)client didFailToGetAccessTokenWithError:(NSError *)error;
 {
+    // TODO: In which situations will this method be called on an already authenticated client?
+    
     [accessToken release];
     accessToken = nil;
-    
     NSDictionary *userInfo = [NSDictionary dictionaryWithObject:error
                                                          forKey:kNXOAuth2AccountStoreError];
-    
     [[NSNotificationCenter defaultCenter] postNotificationName:NXOAuth2AccountDidFailToGetAccessToken
                                                         object:self
                                                       userInfo:userInfo];
