@@ -86,6 +86,7 @@ extern NSString * const NXOAuth2AccountStoreDidFailToRequestAccess;
 
 extern NSString * const NXOAuth2AccountDidChangeUserData;
 extern NSString * const NXOAuth2AccountDidChangeAccessToken;
+extern NSString * const NXOAuth2AccountDidLoseAccessToken;
 extern NSString * const NXOAuth2AccountDidFailToGetAccessToken;
 
 

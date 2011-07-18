@@ -44,6 +44,7 @@ NSString * const NXOAuth2AccountStoreDidFailToRequestAccess = @"NXOAuth2AccountS
 
 NSString * const NXOAuth2AccountDidChangeUserData = @"NXOAuth2AccountDidChangeUserData";
 NSString * const NXOAuth2AccountDidChangeAccessToken = @"NXOAuth2AccountDidChangeAccessToken";
+NSString * const NXOAuth2AccountDidLoseAccessToken = @"NXOAuth2AccountDidLoseAccessToken";
 NSString * const NXOAuth2AccountDidFailToGetAccessToken = @"NXOAuth2AccountDidFailToGetAccessToken";
 
 

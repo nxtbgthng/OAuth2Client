@@ -60,8 +60,6 @@
 {
     @synchronized (oauthClient) {
         if (oauthClient == nil) {
-        // TODO: Create an oauth client with the marshaled token.
-            
             NSDictionary *configuration = [[NXOAuth2AccountStore sharedStore] configurationForAccountType:self.accountType];
             
             NSString *clientID = [configuration objectForKey:kNXOAuth2AccountStoreConfigurationClientID];
@@ -115,10 +113,16 @@
 
 - (void)oauthClientDidLoseAccessToken:(NXOAuth2Client *)client;
 {
-    // TODO: In which situations will this method be called on an already authenticated client?
-    
     [accessToken release];
     accessToken = nil;
+    [[NSNotificationCenter defaultCenter] postNotificationName:NXOAuth2AccountDidLoseAccessToken
+                                                        object:self];
+}
+
+- (void)oauthClientDidRefreshAccessToken:(NXOAuth2Client *)client;
+{
+    [accessToken release];
+    accessToken = [oauthClient.accessToken retain];
     [[NSNotificationCenter defaultCenter] postNotificationName:NXOAuth2AccountDidChangeAccessToken
                                                         object:self];
 }

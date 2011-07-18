@@ -31,8 +31,9 @@
 - (NXOAuth2Client *)pendingOAuthClientForAccountType:(NSString *)accountType;
 - (NSString *)accountTypeOfPendingOAuthClient:(NXOAuth2Client *)oauthClient;
 
-@property (nonatomic, assign) id accountUserDataObserver;
-@property (nonatomic, assign) id accountAccessTokenObserver;
+@property (nonatomic, assign) id accountDidChangeUserDataObserver;
+@property (nonatomic, assign) id accountDidChangeAccessTokenObserver;
+@property (nonatomic, assign) id accountDidLoseAccessTokenObserver;
 @property (nonatomic, assign) id accountFailToGetAccessTokenObserver;
 
 
@@ -70,38 +71,62 @@
         self.trustModeHandler = [NSMutableDictionary dictionary];
         self.trustedCertificatesHandler = [NSMutableDictionary dictionary];
         
-        self.accountUserDataObserver = [[NSNotificationCenter defaultCenter] addObserverForName:NXOAuth2AccountDidChangeUserData
-                                                                                 object:nil
-                                                                                  queue:nil
-                                                                             usingBlock:^(NSNotification *notification){
-                                                                                 @synchronized (self.accountsDict) {
-                                                                                     [NXOAuth2AccountStore storeAccountsInDefaultKeychain:self.accountsDict];
-                                                                                 }
-                                                                             }];
+        self.accountDidChangeUserDataObserver = [[NSNotificationCenter defaultCenter] addObserverForName:NXOAuth2AccountDidChangeUserData
+                                                                                                  object:nil
+                                                                                                   queue:nil
+                                                                                              usingBlock:^(NSNotification *notification){
+                                                                                                  @synchronized (self.accountsDict) {
+                                                                                                      // The user data of an account has been changed.
+                                                                                                      // Save all accounts in the default keychain.
+                                                                                                      [NXOAuth2AccountStore storeAccountsInDefaultKeychain:self.accountsDict];
+                                                                                                  }
+                                                                                              }];
         
-        self.accountAccessTokenObserver = [[NSNotificationCenter defaultCenter] addObserverForName:NXOAuth2AccountDidChangeAccessToken
-                                                                                         object:nil
-                                                                                          queue:nil
-                                                                                     usingBlock:^(NSNotification *notification){
-                                                                                         @synchronized (self.accountsDict) {
-                                                                                             [NXOAuth2AccountStore storeAccountsInDefaultKeychain:self.accountsDict];
-                                                                                         }
-                                                                                     }];
+        self.accountDidChangeAccessTokenObserver = [[NSNotificationCenter defaultCenter] addObserverForName:NXOAuth2AccountDidChangeAccessToken
+                                                                                                     object:nil
+                                                                                                      queue:nil
+                                                                                                 usingBlock:^(NSNotification *notification){
+                                                                                                     @synchronized (self.accountsDict) {
+                                                                                                         // An access token of an account has been changed.
+                                                                                                         // Save all accounts in the default keychain.
+                                                                                                         [NXOAuth2AccountStore storeAccountsInDefaultKeychain:self.accountsDict];
+                                                                                                     }
+                                                                                                 }];
+        
+        self.accountDidLoseAccessTokenObserver = [[NSNotificationCenter defaultCenter] addObserverForName:NXOAuth2AccountDidLoseAccessToken
+                                                                                                   object:nil
+                                                                                                    queue:nil
+                                                                                               usingBlock:^(NSNotification *notification){
+                                                                                                   // Remove accounts from the account store if there
+                                                                                                   // access token could not be refreshed.
+                                                                                                   // These accounts can't be used anymore.
+                                                                                                   NSLog(@"Removing account from store because it lost its access token. - %@", notification.object);
+                                                                                                   [self removeAccount:notification.object];
+                                                                                               }];
         
         self.accountFailToGetAccessTokenObserver = [[NSNotificationCenter defaultCenter] addObserverForName:NXOAuth2AccountDidFailToGetAccessToken
-                                                                                         object:nil
-                                                                                          queue:nil
-                                                                                     usingBlock:^(NSNotification *notification){
-                                                                                     }];
+                                                                                                     object:nil
+                                                                                                      queue:nil
+                                                                                                 usingBlock:^(NSNotification *notification){
+                                                                                                     // TODO: How should this kind of error be handled?
+                                                                                                 }];
     }
     return self;
 }
 
 - (void)dealloc;
 {
-    [[NSNotificationCenter defaultCenter] removeObserver:self.accountUserDataObserver];
-    [[NSNotificationCenter defaultCenter] removeObserver:self.accountAccessTokenObserver];
+    [[NSNotificationCenter defaultCenter] removeObserver:self.accountDidChangeUserDataObserver];
+    [[NSNotificationCenter defaultCenter] removeObserver:self.accountDidChangeAccessTokenObserver];
+    [[NSNotificationCenter defaultCenter] removeObserver:self.accountDidLoseAccessTokenObserver];
     [[NSNotificationCenter defaultCenter] removeObserver:self.accountFailToGetAccessTokenObserver];
+    
+    [pendingOAuthClients release];
+    [accountsDict release];
+    [configurations release];
+    [trustModeHandler release];
+    [trustedCertificatesHandler release];
+    
     [super dealloc];
 }
 
@@ -114,8 +139,9 @@
 @synthesize trustModeHandler;
 @synthesize trustedCertificatesHandler;
 
-@synthesize accountUserDataObserver;
-@synthesize accountAccessTokenObserver;
+@synthesize accountDidChangeUserDataObserver;
+@synthesize accountDidChangeAccessTokenObserver;
+@synthesize accountDidLoseAccessTokenObserver;
 @synthesize accountFailToGetAccessTokenObserver;
 
 - (NSArray *)accounts;

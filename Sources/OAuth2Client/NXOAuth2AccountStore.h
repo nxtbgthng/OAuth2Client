@@ -26,8 +26,9 @@ typedef NSArray *(^NXOAuth2TrustedCertificatesHandler)(NSString *hostname);
     NSMutableDictionary *configurations;
     NSMutableDictionary *trustModeHandler;
     NSMutableDictionary *trustedCertificatesHandler;
-    id accountUserDataObserver;
-    id accountAccessTokenObserver;
+    id accountDidChangeUserDataObserver;
+    id accountDidChangeAccessTokenObserver;
+    id accountDidLoseAccessTokenObserver;
     id accountFailToGetAccessTokenObserver;
 }
 

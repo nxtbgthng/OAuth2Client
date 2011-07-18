@@ -152,6 +152,10 @@ NSString * const NXOAuth2ClientConnectionContextTokenRefresh = @"tokenRefresh";
                 [delegate oauthClientDidLoseAccessToken:self];
             }
         }
+    } else {
+        if ([delegate respondsToSelector:@selector(oauthClientDidRefreshAccessToken:)]) {
+            [delegate oauthClientDidRefreshAccessToken:self];
+        }
     }
 }
 
