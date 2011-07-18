@@ -40,7 +40,7 @@ NSString * const NXOAuth2DidStartConnection = @"NXOAuth2DidStartConnection";
 NSString * const NXOAuth2DidEndConnection = @"NXOAuth2DidEndConnection";
 NSString * const NXOAuth2AccountCreated = @"NXOAuth2AccountCreated";
 NSString * const NXOAuth2AccountRemoved = @"NXOAuth2AccountRemoved";
-NSString * const NXOAuth2AccountStoreFailToGetAccessToken = @"NXOAuth2AccountStoreFailToGetAccessToken";
+NSString * const NXOAuth2AccountStoreDidFailToRequestAccess = @"NXOAuth2AccountStoreDidFailToRequestAccess";
 
 NSString * const NXOAuth2AccountDidChangeUserData = @"NXOAuth2AccountDidChangeUserData";
 NSString * const NXOAuth2AccountDidChangeAccessToken = @"NXOAuth2AccountDidChangeAccessToken";

@@ -82,7 +82,7 @@ extern NSString * const NXOAuth2DidEndConnection;
 extern NSString * const NXOAuth2AccountCreated;
 extern NSString * const NXOAuth2AccountRemoved;
 
-extern NSString * const NXOAuth2AccountStoreFailToGetAccessToken;
+extern NSString * const NXOAuth2AccountStoreDidFailToRequestAccess;
 
 extern NSString * const NXOAuth2AccountDidChangeUserData;
 extern NSString * const NXOAuth2AccountDidChangeAccessToken;

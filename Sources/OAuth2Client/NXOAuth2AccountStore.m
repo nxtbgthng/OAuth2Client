@@ -358,7 +358,7 @@
                               accountType, kNXOAuth2AccountStoreAccountType,
                               error, kNXOAuth2AccountStoreError, nil];
     
-    [[NSNotificationCenter defaultCenter] postNotificationName:NXOAuth2AccountStoreFailToGetAccessToken
+    [[NSNotificationCenter defaultCenter] postNotificationName:NXOAuth2AccountStoreDidFailToRequestAccess
                                                         object:self
                                                       userInfo:userInfo];
 }
