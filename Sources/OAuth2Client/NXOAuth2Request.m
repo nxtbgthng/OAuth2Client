@@ -15,7 +15,7 @@
 @interface NXOAuth2Request () <NXOAuth2ConnectionDelegate>
 @property (nonatomic, retain) NXOAuth2Connection *connection;
 @property (nonatomic, retain) NXOAuth2RequestResponseHandler handler;
-@property (nonatomic, retain) NXOAuth2RequestProgressHandler progresHandler;
+@property (nonatomic, retain) NXOAuth2RequestProgressHandler progressHandler;
 @property (nonatomic, retain) NXOAuth2Request *me;
 @end
 
@@ -60,7 +60,7 @@
 @synthesize account;
 @synthesize connection;
 @synthesize handler;
-@synthesize progresHandler;
+@synthesize progressHandler;
 @synthesize me;
 
 
@@ -82,12 +82,12 @@
     self.me = self;
 }
 
-- (void)performRequestWithResponseHandler:(NXOAuth2RequestResponseHandler)aResponseHandler progressHandler:(NXOAuth2RequestProgressHandler)aProgresHandler;
+- (void)performRequestWithResponseHandler:(NXOAuth2RequestResponseHandler)aResponseHandler progressHandler:(NXOAuth2RequestProgressHandler)aProgressHandler;
 {
     NSAssert(self.me == nil, @"This object an only perform one request at the same time.");
     
     self.handler = [[aResponseHandler copy] autorelease];
-    self.progresHandler = [[aProgresHandler copy] autorelease];
+    self.progressHandler = [[aProgressHandler copy] autorelease];
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:self.URL];
     [request setHTTPMethod:self.requestMethod];
     self.connection = [[[NXOAuth2Connection alloc] initWithRequest:request
@@ -106,7 +106,7 @@
 {
     self.handler(data, nil);
     self.handler = nil;
-    self.progresHandler = nil;
+    self.progressHandler = nil;
     self.connection = nil;
 
     self.me = nil;
@@ -116,7 +116,7 @@
 {
     self.handler(nil, error);
     self.handler = nil;
-    self.progresHandler = nil;
+    self.progressHandler = nil;
     self.connection = nil;
     
     self.me = nil;
@@ -124,7 +124,7 @@
 
 - (void)oauthConnection:(NXOAuth2Connection *)connection didSendBytes:(unsigned long long)bytesSend ofTotal:(unsigned long long)bytesTotal;
 {
-    self.progresHandler(((float)bytesSend)/bytesTotal);
+    self.progressHandler(bytesSend, bytesTotal);
 }
 
 @end
