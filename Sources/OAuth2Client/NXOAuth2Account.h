@@ -8,12 +8,13 @@
 
 #import <Foundation/Foundation.h>
 
+#import "NXOAuth2ClientDelegate.h"
 #import "NXOAuth2TrustDelegate.h"
 
 @class NXOAuth2Client;
 @class NXOAuth2AccessToken;
 
-@interface NXOAuth2Account : NSObject <NXOAuth2TrustDelegate> {
+@interface NXOAuth2Account : NSObject <NXOAuth2ClientDelegate, NXOAuth2TrustDelegate> {
 @private
     NSString *accountType;
     NSString *identifier;
@@ -21,8 +22,6 @@
     NXOAuth2Client *oauthClient;
     NXOAuth2AccessToken *accessToken;
 }
-
-- (id)initAccountWithOAuthClient:(NXOAuth2Client *)oauthClient accountType:(NSString *)accountType;
 
 #pragma mark Accessors
 

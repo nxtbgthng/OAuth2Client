@@ -9,12 +9,12 @@
 #import "NSString+NXOAuth2.h"
 
 #import "NXOAuth2Client.h"
-#import "NXOAuth2ClientDelegate.h"
+
 #import "NXOAuth2AccountStore.h"
 
 #import "NXOAuth2Account.h"
 
-@interface NXOAuth2Account () <NXOAuth2ClientDelegate>
+@interface NXOAuth2Account ()
 
 @end
 
@@ -29,19 +29,6 @@
 
 
 #pragma mark Lifecycle
-
-- (id)initAccountWithOAuthClient:(NXOAuth2Client *)anOAuthClient accountType:(NSString *)anAccountType;
-{
-    self = [super init];
-    if (self) {
-        accountType = [anAccountType retain];
-        oauthClient = [anOAuthClient retain];
-        accessToken = [oauthClient.accessToken retain];
-        oauthClient.delegate = self;
-        identifier = [[NSString nxoauth2_stringWithUUID] retain];
-    }
-    return self;
-}
 
 - (void)dealloc;
 {
@@ -96,6 +83,25 @@
 }
 
 
+#pragma mark NXOAuth2TrustDelegate
+
+-(NXOAuth2TrustMode)connection:(NXOAuth2Connection *)connection trustModeForHostname:(NSString *)hostname;
+{
+    NXOAuth2TrustModeHandler handler = [[NXOAuth2AccountStore sharedStore] trustModeHandlerForAccountType:self.accountType];
+    if (handler) {
+        return handler(connection, hostname);
+    } else {
+        return NXOAuth2TrustModeSystem;
+    }
+}
+
+-(NSArray *)connection:(NXOAuth2Connection *)connection trustedCertificatesForHostname:(NSString *)hostname;
+{
+    NXOAuth2TrustedCertificatesHandler handler = [[NXOAuth2AccountStore sharedStore] trustedCertificatesHandlerForAccountType:self.accountType];
+    return handler(hostname);
+}
+
+
 #pragma mark NXOAuth2ClientDelegate
 
 - (void)oauthClientNeedsAuthentication:(NXOAuth2Client *)client;
@@ -140,25 +146,6 @@
     [[NSNotificationCenter defaultCenter] postNotificationName:NXOAuth2AccountDidFailToGetAccessToken
                                                         object:self
                                                       userInfo:userInfo];
-}
-
-
-#pragma mark NXOAuth2TrustDelegate
-
--(NXOAuth2TrustMode)connection:(NXOAuth2Connection *)connection trustModeForHostname:(NSString *)hostname;
-{
-    NXOAuth2TrustModeHandler handler = [[NXOAuth2AccountStore sharedStore] trustModeHandlerForAccountType:self.accountType];
-    if (handler) {
-        return handler(connection, hostname);
-    } else {
-        return NXOAuth2TrustModeSystem;
-    }
-}
-
--(NSArray *)connection:(NXOAuth2Connection *)connection trustedCertificatesForHostname:(NSString *)hostname;
-{
-    NXOAuth2TrustedCertificatesHandler handler = [[NXOAuth2AccountStore sharedStore] trustedCertificatesHandlerForAccountType:self.accountType];
-    return handler(hostname);
 }
 
 
