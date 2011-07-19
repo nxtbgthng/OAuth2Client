@@ -27,6 +27,7 @@
 @property (nonatomic, readwrite, retain) NSMutableDictionary *configurations;
 @property (nonatomic, readwrite, retain) NSMutableDictionary *trustModeHandler;
 @property (nonatomic, readwrite, retain) NSMutableDictionary *trustedCertificatesHandler;
+@property (nonatomic, readwrite, retain) NSMutableDictionary *preparedAuthorizationURLHandler;
 
 #pragma mark OAuthClient to AccountType Relation
 - (NXOAuth2Client *)pendingOAuthClientForAccountType:(NSString *)accountType;
@@ -71,6 +72,7 @@
         self.configurations = [NSMutableDictionary dictionary];
         self.trustModeHandler = [NSMutableDictionary dictionary];
         self.trustedCertificatesHandler = [NSMutableDictionary dictionary];
+        self.preparedAuthorizationURLHandler = [NSMutableDictionary dictionary];
         
         self.accountDidChangeUserDataObserver = [[NSNotificationCenter defaultCenter] addObserverForName:NXOAuth2AccountDidChangeUserData
                                                                                                   object:nil
@@ -144,6 +146,7 @@
 @synthesize accountDidChangeAccessTokenObserver;
 @synthesize accountDidLoseAccessTokenObserver;
 @synthesize accountFailToGetAccessTokenObserver;
+@synthesize preparedAuthorizationURLHandler;
 
 - (NSArray *)accounts;
 {
@@ -220,6 +223,20 @@
        result = [self.configurations objectForKey:accountType];
     }
     return result;
+}
+
+#pragma mark Prepared Authorization URL Handler
+
+- (void)setPreparedAuthorizationURLHandlerForAccountType:(NSString *)accountType block:(NXOAuth2PreparedAuthorizationURLHandler)handler;
+{
+    @synchronized (preparedAuthorizationURLHandler) {
+        [self.preparedAuthorizationURLHandler setObject:[[handler copy] autorelease] forKey:accountType];
+    }
+}
+
+- (NXOAuth2PreparedAuthorizationURLHandler)preparedAuthorizationURLHandlerForAccountType:(NSString *)accountType;
+{
+    return [self.preparedAuthorizationURLHandler objectForKey:accountType];
 }
 
 
@@ -342,13 +359,19 @@
     }
     
     NSURL *redirectURL = [configuration objectForKey:kNXOAuth2AccountStoreConfigurationRedirectURL];
+    NSURL *preparedURL = [client authorizationURLWithRedirectURL:redirectURL];
     
-    // TODO: Should the URL be opend via a method provided by the user?
+    NXOAuth2PreparedAuthorizationURLHandler handler = [self preparedAuthorizationURLHandlerForAccountType:accountType];
+    
+    if (handler) {
+        handler(preparedURL);
+    } else {
 #if TARGET_OS_IPHONE
-    [[UIApplication sharedApplication] openURL:[client authorizationURLWithRedirectURL:redirectURL]];
+        [[UIApplication sharedApplication] openURL:preparedURL];
 #else
-    [[NSWorkspace sharedWorkspace] openURL:[client authorizationURLWithRedirectURL:redirectURL]];
+        [[NSWorkspace sharedWorkspace] openURL:preparedURL];
 #endif
+    }
 }
 
 - (void)oauthClientDidGetAccessToken:(NXOAuth2Client *)client;

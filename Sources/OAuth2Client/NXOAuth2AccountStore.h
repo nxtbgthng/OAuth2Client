@@ -16,6 +16,7 @@
 
 typedef NXOAuth2TrustMode(^NXOAuth2TrustModeHandler)(NXOAuth2Connection *connection, NSString *hostname);
 typedef NSArray *(^NXOAuth2TrustedCertificatesHandler)(NSString *hostname);
+typedef void(^NXOAuth2PreparedAuthorizationURLHandler)(NSURL *preparedURL);
 
 
 @interface NXOAuth2AccountStore : NSObject <NXOAuth2TrustDelegate> {
@@ -25,6 +26,7 @@ typedef NSArray *(^NXOAuth2TrustedCertificatesHandler)(NSString *hostname);
     NSMutableDictionary *configurations;
     NSMutableDictionary *trustModeHandler;
     NSMutableDictionary *trustedCertificatesHandler;
+    NSMutableDictionary *preparedAuthorizationURLHandler;
     id accountDidChangeUserDataObserver;
     id accountDidChangeAccessTokenObserver;
     id accountDidLoseAccessTokenObserver;
@@ -44,6 +46,12 @@ typedef NSArray *(^NXOAuth2TrustedCertificatesHandler)(NSString *hostname);
 
 - (void)setConfiguration:(NSDictionary *)configuration forAccountType:(NSString *)accountType;
 - (NSDictionary *)configurationForAccountType:(NSString *)accountType;
+
+
+#pragma mark Prepared Authorization URL Handler
+
+- (void)setPreparedAuthorizationURLHandlerForAccountType:(NSString *)accountType block:(NXOAuth2PreparedAuthorizationURLHandler)handler;
+- (NXOAuth2PreparedAuthorizationURLHandler)preparedAuthorizationURLHandlerForAccountType:(NSString *)accountType;
 
 
 #pragma Trust Mode Handler
