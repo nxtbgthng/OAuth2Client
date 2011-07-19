@@ -16,6 +16,7 @@
 #import "NXOAuth2Client.h"
 #import "NXOAuth2Connection.h"
 #import "NXOAuth2Account.h"
+#import "NXOAuth2Account+Private.h"
 
 #import "NXOAuth2AccountStore.h"
 
