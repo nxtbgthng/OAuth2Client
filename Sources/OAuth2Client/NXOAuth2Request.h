@@ -17,7 +17,7 @@ typedef void(^NXOAuth2RequestProgressHandler)(unsigned long long bytesSend, unsi
 @interface NXOAuth2Request : NSObject {
 @private    
     NSDictionary *parameters;
-    NSURL *URL;
+    NSURL *resource;
     NSString * requestMethod;
     NXOAuth2Account *account;
     NXOAuth2Connection *connection;
@@ -28,20 +28,21 @@ typedef void(^NXOAuth2RequestProgressHandler)(unsigned long long bytesSend, unsi
 
 #pragma mark Lifecycle
 
-+ (id)requestWithURL:(NSURL *)url parameters:(NSDictionary *)parameters requestMethod:(NSString *)requestMethod;
-- (id)initWithURL:(NSURL *)url parameters:(NSDictionary *)parameters requestMethod:(NSString *)requestMethod;
++ (id)requestOnResource:(NSURL *)url withMethod:(NSString *)method usingParameters:(NSDictionary *)parameter;
+- (id)initWithResource:(NSURL *)url method:(NSString *)method parameters:(NSDictionary *)parameter;
+
 
 #pragma mark Accessors
 
 @property(nonatomic, readwrite, retain) NXOAuth2Account *account;
 @property(nonatomic, readonly) NSDictionary *parameters;
 @property(nonatomic, readonly) NSString *requestMethod;
-@property(nonatomic, readonly) NSURL *URL;
+@property(nonatomic, readonly) NSURL *resource;
 
 
 #pragma mark Perform Request
 
 - (void)performRequestWithResponseHandler:(NXOAuth2RequestResponseHandler)handler;
-- (void)performRequestWithResponseHandler:(NXOAuth2RequestResponseHandler)handler progressHandler:(NXOAuth2RequestProgressHandler)progresHandler;
+- (void)performRequestWithResponseHandler:(NXOAuth2RequestResponseHandler)handler sendProgressHandler:(NXOAuth2RequestProgressHandler)progresHandler;
 
 @end

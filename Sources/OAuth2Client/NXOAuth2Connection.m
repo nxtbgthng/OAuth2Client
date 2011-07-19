@@ -52,7 +52,8 @@
                finish:(void (^)(void))finishBlock 
                  fail:(void (^)(NSError *error))failBlock;
 {
-    if ([self initWithRequest:aRequest requestParameters:someRequestParameters oauthClient:aClient delegate:nil]) {
+    self = [self initWithRequest:aRequest requestParameters:someRequestParameters oauthClient:aClient delegate:nil];
+    if (self) {
         finish = Block_copy(finishBlock);
         fail = Block_copy(failBlock);
     }
@@ -354,15 +355,12 @@
 				if ([anchorCertChecksum isEqualToString:certificateChecksum]) {
 					return YES;
 				}
-				
 			}
-			
 			return NO;
 		} else {
 			return NO;
 		}
 	}
-	
 	return NO;
 }
 

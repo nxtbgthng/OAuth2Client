@@ -24,18 +24,20 @@
 
 #pragma mark Lifecycle
 
-+ (id)requestWithURL:(NSURL *)url parameters:(NSDictionary *)parameters requestMethod:(NSString *)requestMethod;
++ (id)requestOnResource:(NSURL *)aResource withMethod:(NSString *)aMethod usingParameters:(NSDictionary *)someParameters;
 {
-    return [[[NXOAuth2Request alloc] initWithURL:url parameters:parameters requestMethod:requestMethod] autorelease];
+    return [[[NXOAuth2Request alloc] initWithResource:aResource
+                                               method:aMethod
+                                           parameters:someParameters] autorelease];
 }
 
-- (id)initWithURL:(NSURL *)aURL parameters:(NSDictionary *)someParameters requestMethod:(NSString *)aRequestMethod;
+- (id)initWithResource:(NSURL *)aResource method:(NSString *)aMethod parameters:(NSDictionary *)someParameters;
 {
     self = [super init];
     if (self) {
-        URL = [aURL retain];
+        resource = [aResource retain];
         parameters = [someParameters retain];
-        requestMethod = [aRequestMethod retain];
+        requestMethod = [aMethod retain];
     }
     return self;
 }
@@ -43,7 +45,7 @@
 - (void)dealloc;
 {
     [parameters release];
-    [URL release];
+    [resource release];
     [requestMethod release];
     [account release];
     [connection release];
@@ -56,7 +58,7 @@
 #pragma mark Accessors
 
 @synthesize parameters;
-@synthesize URL;
+@synthesize resource;
 @synthesize requestMethod;
 @synthesize account;
 @synthesize connection;
@@ -72,7 +74,7 @@
     NSAssert(self.me == nil, @"This object can perform only one request at the same time.");
     
     self.responseHandler = [[aHandler copy] autorelease];
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:self.URL];
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:self.resource];
     [request setHTTPMethod:self.requestMethod];
     self.connection = [[[NXOAuth2Connection alloc] initWithRequest:request
                                                  requestParameters:self.parameters
@@ -84,13 +86,30 @@
     self.me = self;
 }
 
+- (void)performRequestWithResponseHandler:(NXOAuth2RequestResponseHandler)aResponseHandler sendProgressHandler:(NXOAuth2RequestProgressHandler)aProgressHandler;
+{
+    NSAssert(self.me == nil, @"This object an only perform one request at the same time.");
+    
+    self.responseHandler = [[aResponseHandler copy] autorelease];
+    self.progressHandler = [[aProgressHandler copy] autorelease];
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:self.resource];
+    [request setHTTPMethod:self.requestMethod];
+    self.connection = [[[NXOAuth2Connection alloc] initWithRequest:request
+                                                 requestParameters:self.parameters
+                                                       oauthClient:self.account.oauthClient
+                                                          delegate:self] autorelease];
+    
+    // Keep request object alive during the request is performing.
+    self.me = self;
+}
+
 - (void)performRequestWithResponseHandler:(NXOAuth2RequestResponseHandler)aResponseHandler progressHandler:(NXOAuth2RequestProgressHandler)aProgressHandler;
 {
     NSAssert(self.me == nil, @"This object an only perform one request at the same time.");
     
     self.responseHandler = [[aResponseHandler copy] autorelease];
     self.progressHandler = [[aProgressHandler copy] autorelease];
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:self.URL];
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:self.resource];
     [request setHTTPMethod:self.requestMethod];
     self.connection = [[[NXOAuth2Connection alloc] initWithRequest:request
                                                  requestParameters:self.parameters
