@@ -18,7 +18,6 @@ typedef NXOAuth2TrustMode(^NXOAuth2TrustModeHandler)(NXOAuth2Connection *connect
 typedef NSArray *(^NXOAuth2TrustedCertificatesHandler)(NSString *hostname);
 
 
-
 @interface NXOAuth2AccountStore : NSObject <NXOAuth2TrustDelegate> {
 @private
     NSMutableDictionary *pendingOAuthClients;

@@ -82,15 +82,17 @@
 - (void)setUserData:(id<NSObject,NSCoding,NSCopying>)someUserData;
 {
     if (userData != someUserData) {
-        [userData release]; userData = [someUserData retain];
-        [[NSNotificationCenter defaultCenter] postNotificationName:NXOAuth2AccountDidChangeUserData
-                                                            object:self];
+        @synchronized (userData) {
+            [userData release]; userData = [someUserData retain];
+            [[NSNotificationCenter defaultCenter] postNotificationName:NXOAuth2AccountDidChangeUserData
+                                                                object:self];
+        }
     }
 }
 
 - (NSString *)description;
 {
-    return [NSString stringWithFormat:@"<NXOAuth2Account identifier:'%@' accountType:'%@' userData:%@>", self.identifier, self.accountType, self.userData];
+    return [NSString stringWithFormat:@"<NXOAuth2Account identifier:'%@' accountType:'%@' accessToken:%@ userData:%@>", self.identifier, self.accountType, self.accessToken, self.userData];
 }
 
 
@@ -165,18 +167,18 @@
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
 	[aCoder encodeObject:identifier forKey:@"identifier"];
+    [aCoder encodeObject:accountType forKey:@"accountType"];
 	[aCoder encodeObject:accessToken forKey:@"accessToken"];
-	[aCoder encodeObject:accountType forKey:@"accountType"];
     [aCoder encodeObject:userData forKey:@"userData"];
 }
 
 - (id)initWithCoder:(NSCoder *)aDecoder
 {
 	if (self = [super init]) {
-		identifier = [[aDecoder decodeObjectForKey:@"identifier"] copy];
-		accessToken = [[aDecoder decodeObjectForKey:@"accessToken"] retain];
+        userData = [[aDecoder decodeObjectForKey:@"userData"] retain];
+        accessToken = [[aDecoder decodeObjectForKey:@"accessToken"] retain];
 		accountType = [[aDecoder decodeObjectForKey:@"accountType"] copy];
-        userData = [[aDecoder decodeObjectForKey:@"userData"] copy];
+        identifier = [[aDecoder decodeObjectForKey:@"identifier"] copy];
 	}
 	return self;
 }

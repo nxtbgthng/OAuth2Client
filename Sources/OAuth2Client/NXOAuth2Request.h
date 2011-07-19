@@ -21,7 +21,7 @@ typedef void(^NXOAuth2RequestProgressHandler)(unsigned long long bytesSend, unsi
     NSString * requestMethod;
     NXOAuth2Account *account;
     NXOAuth2Connection *connection;
-    NXOAuth2RequestResponseHandler handler;
+    NXOAuth2RequestResponseHandler responseHandler;
     NXOAuth2RequestProgressHandler progressHandler;
     NXOAuth2Request *me;
 }
