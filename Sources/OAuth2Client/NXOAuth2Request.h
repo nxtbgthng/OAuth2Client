@@ -26,6 +26,13 @@ typedef void(^NXOAuth2RequestProgressHandler)(unsigned long long bytesSend, unsi
     NXOAuth2Request *me;
 }
 
++ (void)performMethod:(NSString *)method
+           onResource:(NSURL *)resource
+      usingParameters:(NSDictionary *)parameters
+          withAccount:(NXOAuth2Account *)account
+  sendProgressHandler:(NXOAuth2RequestProgressHandler)progressHandler
+      responseHandler:(NXOAuth2RequestResponseHandler)responseHandler;
+
 #pragma mark Lifecycle
 
 + (id)requestOnResource:(NSURL *)url withMethod:(NSString *)method usingParameters:(NSDictionary *)parameter;

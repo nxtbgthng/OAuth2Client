@@ -20,6 +20,28 @@
 
 #import "NXOAuth2AccountStore.h"
 
+
+#pragma mark Notifications
+
+NSString * const NXOAuth2AccountStoreDidFailToRequestAccessNotification = @"NXOAuth2AccountStoreDidFailToRequestAccessNotification";
+NSString * const NXOAuth2AccountStoreDidCreateAccountNotification = @"NXOAuth2AccountStoreDidCreateAccountNotification";
+NSString * const NXOAuth2AccountStoreDidRemoveAccountNotification = @"NXOAuth2AccountStoreDidRemoveAccountNotification";
+
+#pragma mark Configuration
+
+NSString * const kNXOAuth2AccountStoreConfigurationClientID = @"kNXOAuth2AccountStoreConfigurationClientID";
+NSString * const kNXOAuth2AccountStoreConfigurationSecret = @"kNXOAuth2AccountStoreConfigurationSecret";
+NSString * const kNXOAuth2AccountStoreConfigurationAuthorizeURL = @"kNXOAuth2AccountStoreConfigurationAuthorizeURL";
+NSString * const kNXOAuth2AccountStoreConfigurationTokenURL = @"kNXOAuth2AccountStoreConfigurationTokenURL";
+NSString * const kNXOAuth2AccountStoreConfigurationRedirectURL = @"kNXOAuth2AccountStoreConfigurationRedirectURL";
+
+#pragma mark Account Type
+
+NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccountType";
+
+#pragma mark -
+
+
 @interface NXOAuth2AccountStore () <NXOAuth2ClientDelegate>
 @property (nonatomic, readwrite, retain) NSMutableDictionary *pendingOAuthClients;
 @property (nonatomic, readwrite, retain) NSMutableDictionary *accountsDict;
@@ -74,7 +96,7 @@
         self.trustedCertificatesHandler = [NSMutableDictionary dictionary];
         self.preparedAuthorizationURLHandler = [NSMutableDictionary dictionary];
         
-        self.accountDidChangeUserDataObserver = [[NSNotificationCenter defaultCenter] addObserverForName:NXOAuth2AccountDidChangeUserData
+        self.accountDidChangeUserDataObserver = [[NSNotificationCenter defaultCenter] addObserverForName:NXOAuth2AccountDidChangeUserDataNotification
                                                                                                   object:nil
                                                                                                    queue:nil
                                                                                               usingBlock:^(NSNotification *notification){
@@ -85,7 +107,7 @@
                                                                                                   }
                                                                                               }];
         
-        self.accountDidChangeAccessTokenObserver = [[NSNotificationCenter defaultCenter] addObserverForName:NXOAuth2AccountDidChangeAccessToken
+        self.accountDidChangeAccessTokenObserver = [[NSNotificationCenter defaultCenter] addObserverForName:NXOAuth2AccountDidChangeAccessTokenNotification
                                                                                                      object:nil
                                                                                                       queue:nil
                                                                                                  usingBlock:^(NSNotification *notification){
@@ -96,7 +118,7 @@
                                                                                                      }
                                                                                                  }];
         
-        self.accountDidLoseAccessTokenObserver = [[NSNotificationCenter defaultCenter] addObserverForName:NXOAuth2AccountDidLoseAccessToken
+        self.accountDidLoseAccessTokenObserver = [[NSNotificationCenter defaultCenter] addObserverForName:NXOAuth2AccountDidLoseAccessTokenNotification
                                                                                                    object:nil
                                                                                                     queue:nil
                                                                                                usingBlock:^(NSNotification *notification){
@@ -107,7 +129,7 @@
                                                                                                    [self removeAccount:notification.object];
                                                                                                }];
         
-        self.accountFailToGetAccessTokenObserver = [[NSNotificationCenter defaultCenter] addObserverForName:NXOAuth2AccountDidFailToGetAccessToken
+        self.accountFailToGetAccessTokenObserver = [[NSNotificationCenter defaultCenter] addObserverForName:NXOAuth2AccountDidFailToGetAccessTokenNotification
                                                                                                      object:nil
                                                                                                       queue:nil
                                                                                                  usingBlock:^(NSNotification *notification){
@@ -198,10 +220,26 @@
         [self.accountsDict removeObjectForKey:account.identifier];
         [NXOAuth2AccountStore storeAccountsInDefaultKeychain:self.accountsDict];
     }
-    [[NSNotificationCenter defaultCenter] postNotificationName:NXOAuth2AccountRemoved object:account];
+    [[NSNotificationCenter defaultCenter] postNotificationName:NXOAuth2AccountStoreDidRemoveAccountNotification object:account];
 }
 
 #pragma mark Configuration
+
+- (void)setClientID:(NSString *)aClientID
+             secret:(NSString *)aSecret
+   authorizationURL:(NSURL *)anAuthorizationURL
+           tokenURL:(NSURL *)aTokenURL
+        redirectURL:(NSURL *)aRedirectURL
+     forAccountType:(NSString *)anAccountType;
+{
+    [self setConfiguration:[NSDictionary dictionaryWithObjectsAndKeys:
+                            aClientID, kNXOAuth2AccountStoreConfigurationClientID,
+                            aSecret, kNXOAuth2AccountStoreConfigurationSecret,
+                            anAuthorizationURL, kNXOAuth2AccountStoreConfigurationAuthorizeURL,
+                            aTokenURL, kNXOAuth2AccountStoreConfigurationTokenURL,
+                            aRedirectURL, kNXOAuth2AccountStoreConfigurationRedirectURL, nil] 
+            forAccountType:anAccountType];
+}
 
 - (void)setConfiguration:(NSDictionary *)configuration
           forAccountType:(NSString *)accountType;
@@ -220,10 +258,11 @@
 {
     NSDictionary *result = nil;
     @synchronized (self.configurations) {
-       result = [self.configurations objectForKey:accountType];
+        result = [self.configurations objectForKey:accountType];
     }
     return result;
 }
+
 
 #pragma mark Prepared Authorization URL Handler
 
@@ -388,7 +427,7 @@
         [NXOAuth2AccountStore storeAccountsInDefaultKeychain:self.accountsDict];
     }
     
-    [[NSNotificationCenter defaultCenter] postNotificationName:NXOAuth2AccountCreated object:account];
+    [[NSNotificationCenter defaultCenter] postNotificationName:NXOAuth2AccountStoreDidCreateAccountNotification object:account];
 }
 
 - (void)oauthClientDidLoseAccessToken:(NXOAuth2Client *)client;
@@ -417,7 +456,7 @@
                               accountType, kNXOAuth2AccountStoreAccountType,
                               error, kNXOAuth2AccountStoreError, nil];
     
-    [[NSNotificationCenter defaultCenter] postNotificationName:NXOAuth2AccountStoreDidFailToRequestAccess
+    [[NSNotificationCenter defaultCenter] postNotificationName:NXOAuth2AccountStoreDidFailToRequestAccessNotification
                                                         object:self
                                                       userInfo:userInfo];
 }

@@ -192,6 +192,7 @@
 		9429B38B1226789400D31807 /* OAuth2Client */ = {
 			isa = PBXGroup;
 			children = (
+				F6E1A11313D7128100B6DAC3 /* Private */,
 				9404FAC1123E3A6900397DD1 /* NXOAuth2.h */,
 				9429B5321226D7A600D31807 /* NXOAuth2Constants.h */,
 				9429B5331226D7A600D31807 /* NXOAuth2Constants.m */,
@@ -199,8 +200,6 @@
 				F65713CD13CC87FD00C8A33A /* NXOAuth2AccountStore.m */,
 				F6B39C6E13CC8A3200B43FE0 /* NXOAuth2Account.h */,
 				F6B39C6F13CC8A3200B43FE0 /* NXOAuth2Account.m */,
-				F6525B4313D593C900ACAE8F /* NXOAuth2Account+Private.h */,
-				F6525B4413D593C900ACAE8F /* NXOAuth2Account+Private.m */,
 				F68B9A0613CDA5BC001CA749 /* NXOAuth2Request.h */,
 				F6CEFD8D13CDD83B00F19E55 /* NXOAuth2Request.m */,
 				F6F2746B13CF0A440090EA04 /* Client */,
@@ -245,6 +244,15 @@
 				94E5B276122D457400C7021A /* OAuth2Client.framework-Info.plist */,
 			);
 			name = Resources;
+			sourceTree = "<group>";
+		};
+		F6E1A11313D7128100B6DAC3 /* Private */ = {
+			isa = PBXGroup;
+			children = (
+				F6525B4313D593C900ACAE8F /* NXOAuth2Account+Private.h */,
+				F6525B4413D593C900ACAE8F /* NXOAuth2Account+Private.m */,
+			);
+			name = Private;
 			sourceTree = "<group>";
 		};
 		F6F2746B13CF0A440090EA04 /* Client */ = {

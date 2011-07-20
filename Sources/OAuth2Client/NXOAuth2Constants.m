@@ -38,23 +38,7 @@ NSString * const NXOAuth2HTTPErrorDomain = @"NXOAuth2HTTPErrorDomain";
 
 NSString * const NXOAuth2DidStartConnection = @"NXOAuth2DidStartConnection";
 NSString * const NXOAuth2DidEndConnection = @"NXOAuth2DidEndConnection";
-NSString * const NXOAuth2AccountCreated = @"NXOAuth2AccountCreated";
-NSString * const NXOAuth2AccountRemoved = @"NXOAuth2AccountRemoved";
-NSString * const NXOAuth2AccountStoreDidFailToRequestAccess = @"NXOAuth2AccountStoreDidFailToRequestAccess";
-
-NSString * const NXOAuth2AccountDidChangeUserData = @"NXOAuth2AccountDidChangeUserData";
-NSString * const NXOAuth2AccountDidChangeAccessToken = @"NXOAuth2AccountDidChangeAccessToken";
-NSString * const NXOAuth2AccountDidLoseAccessToken = @"NXOAuth2AccountDidLoseAccessToken";
-NSString * const NXOAuth2AccountDidFailToGetAccessToken = @"NXOAuth2AccountDidFailToGetAccessToken";
 
 
-#pragma mark OAuth2 Configuration
 
-NSString * const kNXOAuth2AccountStoreConfigurationClientID = @"kNXOAuth2AccountStoreConfigurationClientID";
-NSString * const kNXOAuth2AccountStoreConfigurationSecret = @"kNXOAuth2AccountStoreConfigurationSecret";
-NSString * const kNXOAuth2AccountStoreConfigurationAuthorizeURL = @"kNXOAuth2AccountStoreConfigurationAuthorizeURL";
-NSString * const kNXOAuth2AccountStoreConfigurationTokenURL = @"kNXOAuth2AccountStoreConfigurationTokenURL";
-NSString * const kNXOAuth2AccountStoreConfigurationRedirectURL = @"kNXOAuth2AccountStoreConfigurationRedirectURL";
-
-NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccountType";
 NSString * const kNXOAuth2AccountStoreError = @"kNXOAuth2AccountStoreError";

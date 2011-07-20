@@ -13,11 +13,35 @@
 @class NXOAuth2Account;
 @class NXOAuth2Connection;
 
+#pragma mark Notifications
+
+extern NSString * const NXOAuth2AccountStoreDidFailToRequestAccessNotification;
+extern NSString * const NXOAuth2AccountStoreDidCreateAccountNotification;
+extern NSString * const NXOAuth2AccountStoreDidRemoveAccountNotification;
+
+
+#pragma mark Configuration
+
+extern NSString * const kNXOAuth2AccountStoreConfigurationClientID;
+extern NSString * const kNXOAuth2AccountStoreConfigurationSecret;
+extern NSString * const kNXOAuth2AccountStoreConfigurationAuthorizeURL;
+extern NSString * const kNXOAuth2AccountStoreConfigurationTokenURL;
+extern NSString * const kNXOAuth2AccountStoreConfigurationRedirectURL;
+
+
+#pragma mark Account Type
+
+extern NSString * const kNXOAuth2AccountStoreAccountType;
+
+
+#pragma mark Handler
 
 typedef NXOAuth2TrustMode(^NXOAuth2TrustModeHandler)(NXOAuth2Connection *connection, NSString *hostname);
 typedef NSArray *(^NXOAuth2TrustedCertificatesHandler)(NSString *hostname);
 typedef void(^NXOAuth2PreparedAuthorizationURLHandler)(NSURL *preparedURL);
 
+
+#pragma mark -
 
 @interface NXOAuth2AccountStore : NSObject <NXOAuth2TrustDelegate> {
 @private
@@ -44,7 +68,15 @@ typedef void(^NXOAuth2PreparedAuthorizationURLHandler)(NSURL *preparedURL);
 
 #pragma mark Configuration
 
+- (void)setClientID:(NSString *)aClientID
+             secret:(NSString *)aSecret
+   authorizationURL:(NSURL *)anAuthorizationURL
+           tokenURL:(NSURL *)aTokenURL
+        redirectURL:(NSURL *)aRedirectURL
+     forAccountType:(NSString *)anAccountType;
+
 - (void)setConfiguration:(NSDictionary *)configuration forAccountType:(NSString *)accountType;
+
 - (NSDictionary *)configurationForAccountType:(NSString *)accountType;
 
 

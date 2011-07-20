@@ -22,6 +22,23 @@
 
 @implementation NXOAuth2Request
 
+
++ (void)performMethod:(NSString *)aMethod
+           onResource:(NSURL *)aResource
+      usingParameters:(NSDictionary *)someParameters
+          withAccount:(NXOAuth2Account *)anAccount
+  sendProgressHandler:(NXOAuth2RequestProgressHandler)aProgressHandler
+      responseHandler:(NXOAuth2RequestResponseHandler)aResponseHandler;
+{
+    NXOAuth2Request *r = [NXOAuth2Request requestOnResource:aResource
+                                                 withMethod:aMethod
+                                            usingParameters:someParameters];
+    r.account = anAccount;
+    [r performRequestWithResponseHandler:aResponseHandler
+                     sendProgressHandler:aProgressHandler];
+}
+
+
 #pragma mark Lifecycle
 
 + (id)requestOnResource:(NSURL *)aResource withMethod:(NSString *)aMethod usingParameters:(NSDictionary *)someParameters;

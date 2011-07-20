@@ -9,15 +9,19 @@
 #import "NSString+NXOAuth2.h"
 
 #import "NXOAuth2Client.h"
-
 #import "NXOAuth2AccountStore.h"
 
 #import "NXOAuth2Account.h"
 
-@interface NXOAuth2Account ()
 
-@end
+#pragma mark Notifications
 
+NSString * const NXOAuth2AccountDidChangeUserDataNotification = @"NXOAuth2AccountDidChangeUserDataNotification";
+NSString * const NXOAuth2AccountDidChangeAccessTokenNotification = @"NXOAuth2AccountDidChangeAccessTokenNotification";
+NSString * const NXOAuth2AccountDidLoseAccessTokenNotification = @"NXOAuth2AccountDidLoseAccessTokenNotification";
+NSString * const NXOAuth2AccountDidFailToGetAccessTokenNotification = @"NXOAuth2AccountDidFailToGetAccessTokenNotification";
+
+#pragma mark -
 
 @implementation NXOAuth2Account
 
@@ -71,7 +75,7 @@
     if (userData != someUserData) {
         @synchronized (userData) {
             [userData release]; userData = [someUserData retain];
-            [[NSNotificationCenter defaultCenter] postNotificationName:NXOAuth2AccountDidChangeUserData
+            [[NSNotificationCenter defaultCenter] postNotificationName:NXOAuth2AccountDidChangeUserDataNotification
                                                                 object:self];
         }
     }
@@ -115,7 +119,7 @@
 {
     [accessToken release];
     accessToken = [oauthClient.accessToken retain];
-    [[NSNotificationCenter defaultCenter] postNotificationName:NXOAuth2AccountDidChangeAccessToken
+    [[NSNotificationCenter defaultCenter] postNotificationName:NXOAuth2AccountDidChangeAccessTokenNotification
                                                         object:self];
 }
 
@@ -123,7 +127,7 @@
 {
     [accessToken release];
     accessToken = nil;
-    [[NSNotificationCenter defaultCenter] postNotificationName:NXOAuth2AccountDidLoseAccessToken
+    [[NSNotificationCenter defaultCenter] postNotificationName:NXOAuth2AccountDidLoseAccessTokenNotification
                                                         object:self];
 }
 
@@ -131,7 +135,7 @@
 {
     [accessToken release];
     accessToken = [oauthClient.accessToken retain];
-    [[NSNotificationCenter defaultCenter] postNotificationName:NXOAuth2AccountDidChangeAccessToken
+    [[NSNotificationCenter defaultCenter] postNotificationName:NXOAuth2AccountDidChangeAccessTokenNotification
                                                         object:self];
 }
 
@@ -143,7 +147,7 @@
     accessToken = nil;
     NSDictionary *userInfo = [NSDictionary dictionaryWithObject:error
                                                          forKey:kNXOAuth2AccountStoreError];
-    [[NSNotificationCenter defaultCenter] postNotificationName:NXOAuth2AccountDidFailToGetAccessToken
+    [[NSNotificationCenter defaultCenter] postNotificationName:NXOAuth2AccountDidFailToGetAccessTokenNotification
                                                         object:self
                                                       userInfo:userInfo];
 }

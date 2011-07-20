@@ -14,6 +14,15 @@
 @class NXOAuth2Client;
 @class NXOAuth2AccessToken;
 
+#pragma mark Notifications
+
+extern NSString * const NXOAuth2AccountDidChangeUserDataNotification;
+extern NSString * const NXOAuth2AccountDidChangeAccessTokenNotification;
+extern NSString * const NXOAuth2AccountDidLoseAccessTokenNotification;
+extern NSString * const NXOAuth2AccountDidFailToGetAccessTokenNotification;
+
+#pragma mark -
+
 @interface NXOAuth2Account : NSObject <NXOAuth2ClientDelegate, NXOAuth2TrustDelegate> {
 @private
     NSString *accountType;
