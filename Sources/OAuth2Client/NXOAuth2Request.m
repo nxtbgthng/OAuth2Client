@@ -137,6 +137,17 @@
     self.me = self;
 }
 
+- (void)cancel;
+{
+    [self.connection cancel];
+    self.responseHandler = nil;
+    self.progressHandler = nil;
+    self.connection = nil;
+    
+    // Release the referens to self (break cycle) after the current run loop.
+    [[self.me retain] autorelease];
+    self.me = nil;
+}
 
 #pragma mark NXOAuth2ConnectionDelegate
 
@@ -148,8 +159,7 @@
     self.connection = nil;
 
     // Release the referens to self (break cycle) after the current run loop.
-    NXOAuth2Request *running = self.me;
-    [[running retain] autorelease];
+    [[self.me retain] autorelease];
     self.me = nil;
 }
 
@@ -161,8 +171,7 @@
     self.connection = nil;
     
     // Release the referens to self (break cycle) after the current run loop.
-    NXOAuth2Request *running = self.me;
-    [[running retain] autorelease];
+    [[self.me retain] autorelease];
     self.me = nil;
 }
 

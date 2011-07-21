@@ -52,4 +52,8 @@ typedef void(^NXOAuth2RequestProgressHandler)(unsigned long long bytesSend, unsi
 - (void)performRequestWithResponseHandler:(NXOAuth2RequestResponseHandler)handler;
 - (void)performRequestWithResponseHandler:(NXOAuth2RequestResponseHandler)handler sendProgressHandler:(NXOAuth2RequestProgressHandler)progresHandler;
 
+#pragma mark Cancel
+
+- (void)cancel;
+
 @end
