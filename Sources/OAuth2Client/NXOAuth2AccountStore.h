@@ -16,9 +16,7 @@
 #pragma mark Notifications
 
 extern NSString * const NXOAuth2AccountStoreDidFailToRequestAccessNotification;
-extern NSString * const NXOAuth2AccountStoreDidCreateAccountNotification;
-extern NSString * const NXOAuth2AccountStoreDidRemoveAccountNotification;
-
+extern NSString * const NXOAuth2AccountStoreAccountsDidChangeNotification;
 
 #pragma mark Configuration
 

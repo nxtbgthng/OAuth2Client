@@ -24,8 +24,7 @@
 #pragma mark Notifications
 
 NSString * const NXOAuth2AccountStoreDidFailToRequestAccessNotification = @"NXOAuth2AccountStoreDidFailToRequestAccessNotification";
-NSString * const NXOAuth2AccountStoreDidCreateAccountNotification = @"NXOAuth2AccountStoreDidCreateAccountNotification";
-NSString * const NXOAuth2AccountStoreDidRemoveAccountNotification = @"NXOAuth2AccountStoreDidRemoveAccountNotification";
+NSString * const NXOAuth2AccountStoreAccountsDidChangeNotification = @"NXOAuth2AccountStoreAccountsDidChangeNotification";
 
 #pragma mark Configuration
 
@@ -220,7 +219,7 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
         [self.accountsDict removeObjectForKey:account.identifier];
         [NXOAuth2AccountStore storeAccountsInDefaultKeychain:self.accountsDict];
     }
-    [[NSNotificationCenter defaultCenter] postNotificationName:NXOAuth2AccountStoreDidRemoveAccountNotification object:account];
+    [[NSNotificationCenter defaultCenter] postNotificationName:NXOAuth2AccountStoreAccountsDidChangeNotification object:self];
 }
 
 #pragma mark Configuration
@@ -427,7 +426,7 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
         [NXOAuth2AccountStore storeAccountsInDefaultKeychain:self.accountsDict];
     }
     
-    [[NSNotificationCenter defaultCenter] postNotificationName:NXOAuth2AccountStoreDidCreateAccountNotification object:account];
+    [[NSNotificationCenter defaultCenter] postNotificationName:NXOAuth2AccountStoreAccountsDidChangeNotification object:self];
 }
 
 - (void)oauthClientDidLoseAccessToken:(NXOAuth2Client *)client;
