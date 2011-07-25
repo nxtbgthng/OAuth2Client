@@ -153,7 +153,9 @@
 
 - (void)oauthConnection:(NXOAuth2Connection *)connection didFinishWithData:(NSData *)data;
 {
-    self.responseHandler(data, nil);
+    if (self.responseHandler) {
+        self.responseHandler(data, nil);
+    }
     self.responseHandler = nil;
     self.progressHandler = nil;
     self.connection = nil;
@@ -165,7 +167,9 @@
 
 - (void)oauthConnection:(NXOAuth2Connection *)connection didFailWithError:(NSError *)error;
 {
-    self.responseHandler(nil, error);
+    if (self.responseHandler) {
+        self.responseHandler(nil, error);
+    }
     self.responseHandler = nil;
     self.progressHandler = nil;
     self.connection = nil;
@@ -177,7 +181,9 @@
 
 - (void)oauthConnection:(NXOAuth2Connection *)connection didSendBytes:(unsigned long long)bytesSend ofTotal:(unsigned long long)bytesTotal;
 {
-    self.progressHandler(bytesSend, bytesTotal);
+    if (self.progressHandler) {
+        self.progressHandler(bytesSend, bytesTotal);
+    }
 }
 
 @end
