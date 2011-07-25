@@ -114,6 +114,7 @@
 @synthesize context, userInfo;
 @synthesize savesData;
 @synthesize client;
+@synthesize response;
 
 
 - (id<NXOAuth2TrustDelegate>)trustDelegate;

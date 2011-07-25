@@ -154,7 +154,7 @@
 - (void)oauthConnection:(NXOAuth2Connection *)connection didFinishWithData:(NSData *)data;
 {
     if (self.responseHandler) {
-        self.responseHandler(data, nil);
+        self.responseHandler(self.connection.response, data, nil);
     }
     self.responseHandler = nil;
     self.progressHandler = nil;
@@ -168,7 +168,7 @@
 - (void)oauthConnection:(NXOAuth2Connection *)connection didFailWithError:(NSError *)error;
 {
     if (self.responseHandler) {
-        self.responseHandler(nil, error);
+        self.responseHandler(self.connection.response, nil, error);
     }
     self.responseHandler = nil;
     self.progressHandler = nil;

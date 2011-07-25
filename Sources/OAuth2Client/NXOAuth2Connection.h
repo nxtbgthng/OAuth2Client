@@ -72,6 +72,7 @@
 @property (readonly) NSData *data;
 @property (assign) BOOL savesData;
 @property (readonly) long long expectedContentLength;
+@property (readonly) NSURLResponse *response;
 @property (readonly) NSInteger statusCode;
 @property (retain) id context;
 @property (retain) NSDictionary *userInfo;

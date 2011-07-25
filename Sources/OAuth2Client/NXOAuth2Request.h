@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-typedef void(^NXOAuth2RequestResponseHandler)(NSData *responseData, NSError *error);
+typedef void(^NXOAuth2RequestResponseHandler)(NSURLResponse *response, NSData *responseData, NSError *error);
 typedef void(^NXOAuth2RequestProgressHandler)(unsigned long long bytesSend, unsigned long long bytesTotal);
 
 @class NXOAuth2Account;
