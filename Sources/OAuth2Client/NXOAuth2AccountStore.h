@@ -41,7 +41,7 @@ typedef void(^NXOAuth2PreparedAuthorizationURLHandler)(NSURL *preparedURL);
 
 #pragma mark -
 
-@interface NXOAuth2AccountStore : NSObject <NXOAuth2TrustDelegate> {
+@interface NXOAuth2AccountStore : NSObject {
 @private
     NSMutableDictionary *pendingOAuthClients;
     NSMutableDictionary *accountsDict;

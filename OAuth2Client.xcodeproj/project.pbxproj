@@ -63,8 +63,6 @@
 		AACBBE4A0F95108600F1A2B1 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AACBBE490F95108600F1A2B1 /* Foundation.framework */; };
 		F6525B4513D593C900ACAE8F /* NXOAuth2Account+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = F6525B4313D593C900ACAE8F /* NXOAuth2Account+Private.h */; };
 		F6525B4613D593C900ACAE8F /* NXOAuth2Account+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = F6525B4313D593C900ACAE8F /* NXOAuth2Account+Private.h */; };
-		F6525B4713D593C900ACAE8F /* NXOAuth2Account+Private.m in Sources */ = {isa = PBXBuildFile; fileRef = F6525B4413D593C900ACAE8F /* NXOAuth2Account+Private.m */; };
-		F6525B4813D593C900ACAE8F /* NXOAuth2Account+Private.m in Sources */ = {isa = PBXBuildFile; fileRef = F6525B4413D593C900ACAE8F /* NXOAuth2Account+Private.m */; };
 		F65713CE13CC87FD00C8A33A /* NXOAuth2AccountStore.h in Headers */ = {isa = PBXBuildFile; fileRef = F65713CC13CC87FD00C8A33A /* NXOAuth2AccountStore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F65713CF13CC87FD00C8A33A /* NXOAuth2AccountStore.h in Headers */ = {isa = PBXBuildFile; fileRef = F65713CC13CC87FD00C8A33A /* NXOAuth2AccountStore.h */; };
 		F65713D013CC87FD00C8A33A /* NXOAuth2AccountStore.m in Sources */ = {isa = PBXBuildFile; fileRef = F65713CD13CC87FD00C8A33A /* NXOAuth2AccountStore.m */; };
@@ -113,7 +111,6 @@
 		AACBBE490F95108600F1A2B1 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		D2AAC07E0554694100DB518D /* libOAuth2Client.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libOAuth2Client.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		F6525B4313D593C900ACAE8F /* NXOAuth2Account+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NXOAuth2Account+Private.h"; sourceTree = SOURCE_ROOT; };
-		F6525B4413D593C900ACAE8F /* NXOAuth2Account+Private.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NXOAuth2Account+Private.m"; sourceTree = SOURCE_ROOT; };
 		F65713CC13CC87FD00C8A33A /* NXOAuth2AccountStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NXOAuth2AccountStore.h; sourceTree = "<group>"; };
 		F65713CD13CC87FD00C8A33A /* NXOAuth2AccountStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NXOAuth2AccountStore.m; sourceTree = "<group>"; };
 		F68B9A0613CDA5BC001CA749 /* NXOAuth2Request.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NXOAuth2Request.h; sourceTree = "<group>"; };
@@ -250,7 +247,6 @@
 			isa = PBXGroup;
 			children = (
 				F6525B4313D593C900ACAE8F /* NXOAuth2Account+Private.h */,
-				F6525B4413D593C900ACAE8F /* NXOAuth2Account+Private.m */,
 			);
 			name = Private;
 			sourceTree = "<group>";
@@ -418,7 +414,6 @@
 				F65713D013CC87FD00C8A33A /* NXOAuth2AccountStore.m in Sources */,
 				F6B39C7213CC8A3200B43FE0 /* NXOAuth2Account.m in Sources */,
 				F6F2746A13CEF9280090EA04 /* NXOAuth2Request.m in Sources */,
-				F6525B4713D593C900ACAE8F /* NXOAuth2Account+Private.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -439,7 +434,6 @@
 				F65713D113CC87FD00C8A33A /* NXOAuth2AccountStore.m in Sources */,
 				F6B39C7313CC8A3200B43FE0 /* NXOAuth2Account.m in Sources */,
 				F6CEFD8F13CDDE6C00F19E55 /* NXOAuth2Request.m in Sources */,
-				F6525B4813D593C900ACAE8F /* NXOAuth2Account+Private.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

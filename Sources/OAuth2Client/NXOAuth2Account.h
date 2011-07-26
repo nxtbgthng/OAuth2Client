@@ -8,9 +8,6 @@
 
 #import <Foundation/Foundation.h>
 
-#import "NXOAuth2ClientDelegate.h"
-#import "NXOAuth2TrustDelegate.h"
-
 @class NXOAuth2Client;
 @class NXOAuth2AccessToken;
 
@@ -23,7 +20,7 @@ extern NSString * const NXOAuth2AccountDidFailToGetAccessTokenNotification;
 
 #pragma mark -
 
-@interface NXOAuth2Account : NSObject <NXOAuth2ClientDelegate, NXOAuth2TrustDelegate> {
+@interface NXOAuth2Account : NSObject {
 @private
     NSString *accountType;
     NSString *identifier;

@@ -41,7 +41,7 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
 #pragma mark -
 
 
-@interface NXOAuth2AccountStore () <NXOAuth2ClientDelegate>
+@interface NXOAuth2AccountStore () <NXOAuth2ClientDelegate, NXOAuth2TrustDelegate>
 @property (nonatomic, readwrite, retain) NSMutableDictionary *pendingOAuthClients;
 @property (nonatomic, readwrite, retain) NSMutableDictionary *accountsDict;
 
@@ -150,7 +150,7 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
     [configurations release];
     [trustModeHandler release];
     [trustedCertificatesHandler release];
-    
+    [preparedAuthorizationURLHandler release];
     [super dealloc];
 }
 

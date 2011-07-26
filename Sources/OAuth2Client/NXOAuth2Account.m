@@ -8,6 +8,9 @@
 
 #import "NSString+NXOAuth2.h"
 
+#import "NXOAuth2ClientDelegate.h"
+#import "NXOAuth2TrustDelegate.h"
+
 #import "NXOAuth2Client.h"
 #import "NXOAuth2AccountStore.h"
 
@@ -20,6 +23,30 @@ NSString * const NXOAuth2AccountDidChangeUserDataNotification = @"NXOAuth2Accoun
 NSString * const NXOAuth2AccountDidChangeAccessTokenNotification = @"NXOAuth2AccountDidChangeAccessTokenNotification";
 NSString * const NXOAuth2AccountDidLoseAccessTokenNotification = @"NXOAuth2AccountDidLoseAccessTokenNotification";
 NSString * const NXOAuth2AccountDidFailToGetAccessTokenNotification = @"NXOAuth2AccountDidFailToGetAccessTokenNotification";
+
+#pragma mark -
+
+@interface NXOAuth2Account () <NXOAuth2ClientDelegate, NXOAuth2TrustDelegate>
+@end
+
+#pragma mark -
+
+@implementation NXOAuth2Account (Private)
+
+- (id)initAccountWithOAuthClient:(NXOAuth2Client *)anOAuthClient accountType:(NSString *)anAccountType;
+{
+    self = [super init];
+    if (self) {
+        accountType = [anAccountType retain];
+        oauthClient = [anOAuthClient retain];
+        accessToken = [oauthClient.accessToken retain];
+        oauthClient.delegate = self;
+        identifier = [[NSString nxoauth2_stringWithUUID] retain];
+    }
+    return self;
+}
+
+@end
 
 #pragma mark -
 
