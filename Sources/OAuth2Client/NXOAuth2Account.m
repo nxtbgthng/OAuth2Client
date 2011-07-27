@@ -3,7 +3,12 @@
 //  OAuth2Client
 //
 //  Created by Tobias Kräntzer on 12.07.11.
+//
 //  Copyright 2011 nxtbgthng. All rights reserved.
+//
+//  Licenced under the new BSD-licence.
+//  See README.md in this reprository for 
+//  the full licence.
 //
 
 #import "NSString+NXOAuth2.h"
@@ -137,9 +142,8 @@ NSString * const NXOAuth2AccountDidFailToGetAccessTokenNotification = @"NXOAuth2
 
 - (void)oauthClientNeedsAuthentication:(NXOAuth2Client *)client;
 {
-    // TODO: Will this delegate method be called if a client is already connected?
-    
-    NSLog(@"%s", __FUNCTION__);
+    // This delegate method will never be called, because an account
+    // contains only an authenticated oauch client.
 }
 
 - (void)oauthClientDidGetAccessToken:(NXOAuth2Client *)client;
@@ -168,8 +172,6 @@ NSString * const NXOAuth2AccountDidFailToGetAccessTokenNotification = @"NXOAuth2
 
 - (void)oauthClient:(NXOAuth2Client *)client didFailToGetAccessTokenWithError:(NSError *)error;
 {
-    // TODO: In which situations will this method be called on an already authenticated client?
-    
     [accessToken release];
     accessToken = nil;
     NSDictionary *userInfo = [NSDictionary dictionaryWithObject:error

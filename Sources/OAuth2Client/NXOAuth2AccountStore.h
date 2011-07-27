@@ -3,7 +3,12 @@
 //  OAuth2Client
 //
 //  Created by Tobias Kräntzer on 12.07.11.
+//
 //  Copyright 2011 nxtbgthng. All rights reserved.
+//
+//  Licenced under the new BSD-licence.
+//  See README.md in this reprository for 
+//  the full licence.
 //
 
 #import <Foundation/Foundation.h>
@@ -52,7 +57,6 @@ typedef void(^NXOAuth2PreparedAuthorizationURLHandler)(NSURL *preparedURL);
     id accountDidChangeUserDataObserver;
     id accountDidChangeAccessTokenObserver;
     id accountDidLoseAccessTokenObserver;
-    id accountFailToGetAccessTokenObserver;
 }
 
 + (id)sharedStore;

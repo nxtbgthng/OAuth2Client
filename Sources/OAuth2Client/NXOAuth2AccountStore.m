@@ -3,7 +3,12 @@
 //  OAuth2Client
 //
 //  Created by Tobias Kräntzer on 12.07.11.
+//
 //  Copyright 2011 nxtbgthng. All rights reserved.
+//
+//  Licenced under the new BSD-licence.
+//  See README.md in this reprository for 
+//  the full licence.
 //
 
 #if TARGET_OS_IPHONE
@@ -57,7 +62,6 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
 @property (nonatomic, assign) id accountDidChangeUserDataObserver;
 @property (nonatomic, assign) id accountDidChangeAccessTokenObserver;
 @property (nonatomic, assign) id accountDidLoseAccessTokenObserver;
-@property (nonatomic, assign) id accountFailToGetAccessTokenObserver;
 
 
 #pragma mark Keychain Support
@@ -124,16 +128,9 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
                                                                                                    // Remove accounts from the account store if there
                                                                                                    // access token could not be refreshed.
                                                                                                    // These accounts can't be used anymore.
-                                                                                                   NSLog(@"Removing account from store because it lost its access token. - %@", notification.object);
+                                                                                                   NSLog(@"Removing account with id '%@' from account store because it lost its access token.", [notification.object identifier]);
                                                                                                    [self removeAccount:notification.object];
                                                                                                }];
-        
-        self.accountFailToGetAccessTokenObserver = [[NSNotificationCenter defaultCenter] addObserverForName:NXOAuth2AccountDidFailToGetAccessTokenNotification
-                                                                                                     object:nil
-                                                                                                      queue:nil
-                                                                                                 usingBlock:^(NSNotification *notification){
-                                                                                                     // TODO: How should this kind of error be handled?
-                                                                                                 }];
     }
     return self;
 }
@@ -143,7 +140,6 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
     [[NSNotificationCenter defaultCenter] removeObserver:self.accountDidChangeUserDataObserver];
     [[NSNotificationCenter defaultCenter] removeObserver:self.accountDidChangeAccessTokenObserver];
     [[NSNotificationCenter defaultCenter] removeObserver:self.accountDidLoseAccessTokenObserver];
-    [[NSNotificationCenter defaultCenter] removeObserver:self.accountFailToGetAccessTokenObserver];
     
     [pendingOAuthClients release];
     [accountsDict release];
@@ -162,12 +158,11 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
 @synthesize configurations;
 @synthesize trustModeHandler;
 @synthesize trustedCertificatesHandler;
+@synthesize preparedAuthorizationURLHandler;
 
 @synthesize accountDidChangeUserDataObserver;
 @synthesize accountDidChangeAccessTokenObserver;
 @synthesize accountDidLoseAccessTokenObserver;
-@synthesize accountFailToGetAccessTokenObserver;
-@synthesize preparedAuthorizationURLHandler;
 
 - (NSArray *)accounts;
 {
@@ -434,7 +429,8 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
     // This delegate method should never be called because the account store
     // does not act as an delegate for established connections.
     
-    NSLog(@"Account store did lose access token for client: %@", client);
+    // If there is one case that was overlooked, we will remove the oauth
+    // client from the list of pending oauth clients as a precaution.
     NSString *accountType;
     @synchronized (self.pendingOAuthClients) {
         accountType = [self accountTypeOfPendingOAuthClient:client];
@@ -444,7 +440,6 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
 
 - (void)oauthClient:(NXOAuth2Client *)client didFailToGetAccessTokenWithError:(NSError *)error;
 {
-    NSLog(@"Account store did fail to get access token with error: %@", error);
     NSString *accountType;
     @synchronized (self.pendingOAuthClients) {
         accountType = [self accountTypeOfPendingOAuthClient:client];
