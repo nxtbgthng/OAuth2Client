@@ -39,6 +39,9 @@
 #define NXOAuth2ConnectionDebug 0
 #endif
 
+typedef void(^NXOAuth2ConnectionResponseHandler)(NSURLResponse *response, NSData *responseData, NSError *error);
+typedef void(^NXOAuth2ConnectionSendingProgressHandler)(unsigned long long bytesSend, unsigned long long bytesTotal);
+
 @interface NXOAuth2Connection : NSObject {
 @private
 	NSURLConnection		*connection;
@@ -56,10 +59,8 @@
 	
 	NSObject<NXOAuth2ConnectionDelegate>	*delegate;	// assigned
     
-#if NX_BLOCKS_AVAILABLE && NS_BLOCKS_AVAILABLE
-    void (^finish)(void);
-    void (^fail)(NSError *error);
-#endif
+    NXOAuth2ConnectionResponseHandler responseHandler;
+    NXOAuth2ConnectionSendingProgressHandler sendingProgressHandler;
 	
 	BOOL				sendConnectionDidEndNotification;
     
@@ -78,14 +79,11 @@
 @property (retain) NSDictionary *userInfo;
 @property (readonly) NXOAuth2Client *client;
 
-#if NX_BLOCKS_AVAILABLE && NS_BLOCKS_AVAILABLE
-- (id)initWithRequest:(NSMutableURLRequest *)request
-	requestParameters:(NSDictionary *)requestParameters
-		  oauthClient:(NXOAuth2Client *)client
-               finish:(void (^)(void))finishBlock 
-                 fail:(void (^)(NSError *error))failBlock;
-#endif
-
+- (id) initWithRequest:(NSMutableURLRequest *)request
+     requestParameters:(NSDictionary *)requestParameters
+           oauthClient:(NXOAuth2Client *)client
+sendingProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)sendingProgressHandler
+       responseHandler:(NXOAuth2ConnectionResponseHandler)responseHandler;
 
 - (id)initWithRequest:(NSMutableURLRequest *)request
 	requestParameters:(NSDictionary *)requestParameters

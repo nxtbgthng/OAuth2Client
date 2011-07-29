@@ -13,9 +13,6 @@
 
 #import <Foundation/Foundation.h>
 
-typedef void(^NXOAuth2RequestResponseHandler)(NSURLResponse *response, NSData *responseData, NSError *error);
-typedef void(^NXOAuth2RequestSendProgressHandler)(unsigned long long bytesSend, unsigned long long bytesTotal);
-
 @class NXOAuth2Account;
 @class NXOAuth2Connection;
 
@@ -26,10 +23,9 @@ typedef void(^NXOAuth2RequestSendProgressHandler)(unsigned long long bytesSend, 
     NSString * requestMethod;
     NXOAuth2Account *account;
     NXOAuth2Connection *connection;
-    NXOAuth2RequestResponseHandler responseHandler;
-    NXOAuth2RequestSendProgressHandler sendProgressHandler;
     NXOAuth2Request *me;
 }
+
 
 #pragma mark Class Methods
 
@@ -37,18 +33,14 @@ typedef void(^NXOAuth2RequestSendProgressHandler)(unsigned long long bytesSend, 
            onResource:(NSURL *)resource
       usingParameters:(NSDictionary *)parameters
           withAccount:(NXOAuth2Account *)account
-  sendProgressHandler:(NXOAuth2RequestSendProgressHandler)progressHandler
-      responseHandler:(NXOAuth2RequestResponseHandler)responseHandler;
+  sendProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)progressHandler
+      responseHandler:(NXOAuth2ConnectionResponseHandler)responseHandler;
 
-+ (NXOAuth2Request *)requestOnResource:(NSURL *)url
-                            withMethod:(NSString *)method
-                       usingParameters:(NSDictionary *)parameter;
-
-+ (NXOAuth2Request *)request;
 
 #pragma mark Lifecycle
 
 - (id)initWithResource:(NSURL *)url method:(NSString *)method parameters:(NSDictionary *)parameter;
+
 
 #pragma mark Accessors
 
@@ -58,16 +50,17 @@ typedef void(^NXOAuth2RequestSendProgressHandler)(unsigned long long bytesSend, 
 @property (nonatomic, readwrite, retain) NSURL *resource;
 @property (nonatomic, readwrite, retain) NSDictionary *parameters;
 
-@property (nonatomic, copy) NXOAuth2RequestResponseHandler responseHandler;
-@property (nonatomic, copy) NXOAuth2RequestSendProgressHandler sendProgressHandler;
 
 #pragma mark Signed NSURLRequest
 
 - (NSURLRequest *)signedURLRequest;
 
+
 #pragma mark Perform Request
 
-- (void)performRequest;
+- (void)performRequestWithSendingProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)progressHandler
+                                 responseHandler:(NXOAuth2ConnectionResponseHandler)responseHandler;
+
 
 #pragma mark Cancel
 

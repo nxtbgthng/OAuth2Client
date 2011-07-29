@@ -38,31 +38,16 @@
            onResource:(NSURL *)aResource
       usingParameters:(NSDictionary *)someParameters
           withAccount:(NXOAuth2Account *)anAccount
-  sendProgressHandler:(NXOAuth2RequestSendProgressHandler)aProgressHandler
-      responseHandler:(NXOAuth2RequestResponseHandler)aResponseHandler;
+  sendProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)progressHandler
+      responseHandler:(NXOAuth2ConnectionResponseHandler)responseHandler;
 {
-    NXOAuth2Request *r = [NXOAuth2Request requestOnResource:aResource
-                                                 withMethod:aMethod
-                                            usingParameters:someParameters];
-    r.account = anAccount;
-    r.responseHandler = aResponseHandler;
-    r.sendProgressHandler = aProgressHandler;
-    [r performRequest];
+    NXOAuth2Request *request = [[[NXOAuth2Request alloc] initWithResource:aResource
+                                                                   method:aMethod
+                                                               parameters:someParameters] autorelease];
+    request.account = anAccount;
+    [request performRequestWithSendingProgressHandler:progressHandler responseHandler:responseHandler];
 }
 
-+ (NXOAuth2Request *)requestOnResource:(NSURL *)aResource
-                            withMethod:(NSString *)aMethod
-                       usingParameters:(NSDictionary *)someParameters;
-{
-    return [[[NXOAuth2Request alloc] initWithResource:aResource
-                                               method:aMethod
-                                           parameters:someParameters] autorelease];
-}
-
-+ (NXOAuth2Request *)request;
-{
-    return [[self new] autorelease];
-}
 
 #pragma mark Lifecycle
 
@@ -84,8 +69,6 @@
     [requestMethod release];
     [account release];
     [connection release];
-    [responseHandler release];
-    [sendProgressHandler release];
     [super dealloc];
 }
 
@@ -97,8 +80,6 @@
 @synthesize requestMethod;
 @synthesize account;
 @synthesize connection;
-@synthesize responseHandler;
-@synthesize sendProgressHandler;
 @synthesize me;
 
 
@@ -127,7 +108,8 @@
 
 #pragma mark Perform Request
 
-- (void)performRequest;
+- (void)performRequestWithSendingProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)progressHandler
+                                 responseHandler:(NXOAuth2ConnectionResponseHandler)responseHandler;
 {
     NSAssert(self.me == nil, @"This object an only perform one request at the same time.");
     
@@ -136,19 +118,20 @@
     self.connection = [[[NXOAuth2Connection alloc] initWithRequest:request
                                                  requestParameters:self.parameters
                                                        oauthClient:self.account.oauthClient
-                                                          delegate:self] autorelease];
+                                            sendingProgressHandler:progressHandler
+                                                   responseHandler:responseHandler] autorelease];
+    self.connection.delegate = self;
     
     // Keep request object alive during the request is performing.
     self.me = self;
 }
+
 
 #pragma mark Cancel
 
 - (void)cancel;
 {
     [self.connection cancel];
-    self.responseHandler = nil;
-    self.sendProgressHandler = nil;
     self.connection = nil;
     
     // Release the referens to self (break cycle) after the current run loop.
@@ -160,11 +143,6 @@
 
 - (void)oauthConnection:(NXOAuth2Connection *)connection didFinishWithData:(NSData *)data;
 {
-    if (self.responseHandler) {
-        self.responseHandler(self.connection.response, data, nil);
-    }
-    self.responseHandler = nil;
-    self.sendProgressHandler = nil;
     self.connection = nil;
 
     // Release the referens to self (break cycle) after the current run loop.
@@ -174,24 +152,13 @@
 
 - (void)oauthConnection:(NXOAuth2Connection *)connection didFailWithError:(NSError *)error;
 {
-    if (self.responseHandler) {
-        self.responseHandler(self.connection.response, nil, error);
-    }
-    self.responseHandler = nil;
-    self.sendProgressHandler = nil;
     self.connection = nil;
     
-    // Release the referens to self (break cycle) after the current run loop.
+    // Release the reference to self (break cycle) after the current run loop.
     [[self.me retain] autorelease];
     self.me = nil;
 }
 
-- (void)oauthConnection:(NXOAuth2Connection *)connection didSendBytes:(unsigned long long)bytesSend ofTotal:(unsigned long long)bytesTotal;
-{
-    if (self.sendProgressHandler) {
-        self.sendProgressHandler(bytesSend, bytesTotal);
-    }
-}
 
 #pragma mark Apply Parameters
 
