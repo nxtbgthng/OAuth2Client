@@ -210,11 +210,13 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
 
 - (void)removeAccount:(NXOAuth2Account *)account;
 {
-    @synchronized (self.accountsDict) {
-        [self.accountsDict removeObjectForKey:account.identifier];
-        [NXOAuth2AccountStore storeAccountsInDefaultKeychain:self.accountsDict];
+    if (account) {
+        @synchronized (self.accountsDict) {
+            [self.accountsDict removeObjectForKey:account.identifier];
+            [NXOAuth2AccountStore storeAccountsInDefaultKeychain:self.accountsDict];
+        }
+        [[NSNotificationCenter defaultCenter] postNotificationName:NXOAuth2AccountStoreAccountsDidChangeNotification object:self];
     }
-    [[NSNotificationCenter defaultCenter] postNotificationName:NXOAuth2AccountStoreAccountsDidChangeNotification object:self];
 }
 
 #pragma mark Configuration
