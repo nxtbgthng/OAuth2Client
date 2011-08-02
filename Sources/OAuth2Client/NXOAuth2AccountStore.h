@@ -53,7 +53,6 @@ typedef void(^NXOAuth2PreparedAuthorizationURLHandler)(NSURL *preparedURL);
     NSMutableDictionary *configurations;
     NSMutableDictionary *trustModeHandler;
     NSMutableDictionary *trustedCertificatesHandler;
-    NSMutableDictionary *preparedAuthorizationURLHandler;
     id accountDidChangeUserDataObserver;
     id accountDidChangeAccessTokenObserver;
     id accountDidLoseAccessTokenObserver;
@@ -82,12 +81,6 @@ typedef void(^NXOAuth2PreparedAuthorizationURLHandler)(NSURL *preparedURL);
 - (NSDictionary *)configurationForAccountType:(NSString *)accountType;
 
 
-#pragma mark Prepared Authorization URL Handler
-
-- (void)setPreparedAuthorizationURLHandlerForAccountType:(NSString *)accountType block:(NXOAuth2PreparedAuthorizationURLHandler)handler;
-- (NXOAuth2PreparedAuthorizationURLHandler)preparedAuthorizationURLHandlerForAccountType:(NSString *)accountType;
-
-
 #pragma Trust Mode Handler
 
 - (void)setTrustModeHandlerForAccountType:(NSString *)accountType block:(NXOAuth2TrustModeHandler)handler;
@@ -100,6 +93,7 @@ typedef void(^NXOAuth2PreparedAuthorizationURLHandler)(NSURL *preparedURL);
 #pragma mark Manage Accounts
 
 - (void)requestAccessToAccountWithType:(NSString *)accountType;
+- (void)requestAccessToAccountWithType:(NSString *)accountType withPreparedAuthorizationURLHandler:(NXOAuth2PreparedAuthorizationURLHandler)aPreparedAuthorizationURLHandler;
 - (void)requestAccessToAccountWithType:(NSString *)accountType username:(NSString *)username password:(NSString *)password;
 - (void)removeAccount:(NXOAuth2Account *)account;
 
