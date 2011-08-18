@@ -532,7 +532,7 @@ sendingProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)aSendingProgres
 		[delegate oauthConnection:self didSendBytes:totalBytesWritten ofTotal:totalBytesExpectedToWrite];
 	}
     
-    if (sendingProgressHandler) sendingProgressHandler(bytesWritten, totalBytesExpectedToWrite);
+    if (sendingProgressHandler) sendingProgressHandler(totalBytesWritten, totalBytesExpectedToWrite);
 }
 
 - (NSInputStream *)connection:(NSURLConnection *)connection needNewBodyStream:(NSURLRequest *)aRequest;
