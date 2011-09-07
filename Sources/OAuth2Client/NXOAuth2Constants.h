@@ -76,13 +76,6 @@ extern NSString * const NXOAuth2HTTPErrorDomain;				// domain
 // The error code represents the http status code
 
 
-#pragma mark Notifications
-
-extern NSString * const NXOAuth2DidStartConnection;
-extern NSString * const NXOAuth2DidEndConnection;
-
-
-
 #pragma mark TLS Trust Modes
 
 /*
@@ -112,5 +105,5 @@ typedef enum  {
 
 
 
-extern NSString * const kNXOAuth2AccountStoreError;
+extern NSString * const NXOAuth2AccountStoreErrorKey;
 

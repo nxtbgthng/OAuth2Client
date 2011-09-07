@@ -421,7 +421,7 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
     
     NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
                               accountType, kNXOAuth2AccountStoreAccountType,
-                              error, kNXOAuth2AccountStoreError, nil];
+                              error, NXOAuth2AccountStoreErrorKey, nil];
     
     [[NSNotificationCenter defaultCenter] postNotificationName:NXOAuth2AccountStoreDidFailToRequestAccessNotification
                                                         object:self

@@ -32,15 +32,9 @@ NSInteger const NXOAuth2CouldNotRefreshTokenErrorCode	= -2001;
 #pragma mark HTTP Errors
 
 NSString * const NXOAuth2HTTPErrorDomain = @"NXOAuth2HTTPErrorDomain";
-
 // The error code represents the http status code
 
 
-#pragma mark Notifications
+#pragma mark UserInfo Keys
 
-NSString * const NXOAuth2DidStartConnection = @"NXOAuth2DidStartConnection";
-NSString * const NXOAuth2DidEndConnection = @"NXOAuth2DidEndConnection";
-
-
-
-NSString * const kNXOAuth2AccountStoreError = @"kNXOAuth2AccountStoreError";
+NSString * const NXOAuth2AccountStoreErrorKey = @"NXOAuth2AccountStoreErrorKey";

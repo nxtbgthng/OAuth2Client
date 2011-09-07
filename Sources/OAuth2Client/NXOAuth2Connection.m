@@ -26,6 +26,9 @@
 @end
 
 
+NSString * const NXOAuth2ConnectionDidStartNotification = @"NXOAuth2ConnectionDidStartNotification";
+NSString * const NXOAuth2ConnectionDidEndNotification = @"NXOAuth2ConnectionDidEndNotification";
+
 
 @interface NXOAuth2Connection ()
 - (NSURLConnection *)createConnection;
@@ -82,7 +85,7 @@ sendingProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)aSendingProgres
 
 - (void)dealloc;
 {
-	if (sendConnectionDidEndNotification) [[NSNotificationCenter defaultCenter] postNotificationName:NXOAuth2DidEndConnection object:self];
+	if (sendConnectionDidEndNotification) [[NSNotificationCenter defaultCenter] postNotificationName:NXOAuth2ConnectionDidEndNotification object:self];
 	sendConnectionDidEndNotification = NO;
 	
     Block_release(sendingProgressHandler);
@@ -152,7 +155,7 @@ sendingProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)aSendingProgres
 
 - (void)cancel;
 {
-	if (sendConnectionDidEndNotification) [[NSNotificationCenter defaultCenter] postNotificationName:NXOAuth2DidEndConnection object:self];
+	if (sendConnectionDidEndNotification) [[NSNotificationCenter defaultCenter] postNotificationName:NXOAuth2ConnectionDidEndNotification object:self];
 	sendConnectionDidEndNotification = NO;
 	
 	[connection cancel];
@@ -207,7 +210,7 @@ sendingProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)aSendingProgres
     [startDate release]; startDate = [[NSDate alloc] init];
 #endif
 	
-	if (!sendConnectionDidEndNotification) [[NSNotificationCenter defaultCenter] postNotificationName:NXOAuth2DidStartConnection object:self];
+	if (!sendConnectionDidEndNotification) [[NSNotificationCenter defaultCenter] postNotificationName:NXOAuth2ConnectionDidStartNotification object:self];
 	sendConnectionDidEndNotification = YES;
 	
 	return [aConnection autorelease];
@@ -438,7 +441,7 @@ sendingProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)aSendingProgres
     NSLog(@"%.0fms (SUCC) - %@", -[startDate timeIntervalSinceNow]*1000.0, [self descriptionForRequest:request]);
 #endif
     
-	if (sendConnectionDidEndNotification) [[NSNotificationCenter defaultCenter] postNotificationName:NXOAuth2DidEndConnection object:self];
+	if (sendConnectionDidEndNotification) [[NSNotificationCenter defaultCenter] postNotificationName:NXOAuth2ConnectionDidEndNotification object:self];
 	sendConnectionDidEndNotification = NO;
 	
 	if(self.statusCode < 400) {
@@ -483,7 +486,7 @@ sendingProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)aSendingProgres
     NSLog(@"%.0fms (FAIL) - %@ (%@ %i)", -[startDate timeIntervalSinceNow]*1000.0, [self descriptionForRequest:request], [error domain], [error code]);
 #endif
     
-	if (sendConnectionDidEndNotification) [[NSNotificationCenter defaultCenter] postNotificationName:NXOAuth2DidEndConnection object:self];
+	if (sendConnectionDidEndNotification) [[NSNotificationCenter defaultCenter] postNotificationName:NXOAuth2ConnectionDidEndNotification object:self];
 	sendConnectionDidEndNotification = NO;
 	
 	if ([delegate respondsToSelector:@selector(oauthConnection:didFailWithError:)]) {

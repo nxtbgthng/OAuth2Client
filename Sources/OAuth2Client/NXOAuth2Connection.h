@@ -35,12 +35,20 @@
  *	unsigned requests.
  */
 
+
 #ifndef NXOAuth2ConnectionDebug
 #define NXOAuth2ConnectionDebug 0
 #endif
 
+
+
+extern NSString * const NXOAuth2ConnectionDidStartNotification;
+extern NSString * const NXOAuth2ConnectionDidEndNotification;
+
+
 typedef void(^NXOAuth2ConnectionResponseHandler)(NSURLResponse *response, NSData *responseData, NSError *error);
 typedef void(^NXOAuth2ConnectionSendingProgressHandler)(unsigned long long bytesSend, unsigned long long bytesTotal);
+
 
 @interface NXOAuth2Connection : NSObject {
 @private
