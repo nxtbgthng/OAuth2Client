@@ -53,9 +53,6 @@ typedef void(^NXOAuth2PreparedAuthorizationURLHandler)(NSURL *preparedURL);
     NSMutableDictionary *configurations;
     NSMutableDictionary *trustModeHandler;
     NSMutableDictionary *trustedCertificatesHandler;
-    id accountDidChangeUserDataObserver;
-    id accountDidChangeAccessTokenObserver;
-    id accountDidLoseAccessTokenObserver;
 }
 
 + (id)sharedStore;
