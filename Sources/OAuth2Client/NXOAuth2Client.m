@@ -364,13 +364,16 @@ NSString * const NXOAuth2ClientConnectionContextTokenRefresh = @"tokenRefresh";
 															userInfo:[NSDictionary dictionaryWithObjectsAndKeys:
 																	  NSLocalizedString(@"Access token could not be refreshed", @"NXOAuth2CouldNotRefreshTokenErrorCode description"), NSLocalizedDescriptionKey,
 																	  nil]];
-				for (NXOAuth2Connection *retryConnection in waitingConnections) {
-					id<NXOAuth2ConnectionDelegate> connectionDelegate = retryConnection.delegate;
-					if ([connectionDelegate respondsToSelector:@selector(oauthConnection:didFailWithError:)]) {
-						[connectionDelegate oauthConnection:retryConnection didFailWithError:retryFailedError];
+                
+                NSArray *failedConnections = [waitingConnections copy];
+                [waitingConnections removeAllObjects];
+				for (NXOAuth2Connection *connection in failedConnections) {
+					id<NXOAuth2ConnectionDelegate> connectionDelegate = connection.delegate;
+                        if ([connectionDelegate respondsToSelector:@selector(oauthConnection:didFailWithError:)]) {
+						[connectionDelegate oauthConnection:connection didFailWithError:retryFailedError];
 					}
-				}
-				[waitingConnections removeAllObjects];
+                }
+                [failedConnections release];
 			}
 			
 			if ([[error domain] isEqualToString:NXOAuth2HTTPErrorDomain]

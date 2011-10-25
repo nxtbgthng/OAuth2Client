@@ -497,7 +497,7 @@ sendingProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)aSendingProgres
 
 - (NSURLRequest *)connection:(NSURLConnection *)aConnection willSendRequest:(NSURLRequest *)aRequest redirectResponse:(NSURLResponse *)aRedirectResponse;
 {
-	
+    
 	if (!aRedirectResponse) {
 #if (NXOAuth2ConnectionDebug)
 		NSLog(@"%.0fms (WILL) - %@", -[startDate timeIntervalSinceNow]*1000.0, [self descriptionForRequest:aRequest]);
@@ -520,12 +520,15 @@ sendingProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)aSendingProgres
 	NSMutableURLRequest *mutableRequest = [[aRequest mutableCopy] autorelease];
 	mutableRequest.HTTPMethod = request.HTTPMethod;
 	
-	if(hostChanged
-	   || (schemeChanged && !schemeChangedToHTTPS)) {
-		
+	if (hostChanged || (schemeChanged && !schemeChangedToHTTPS)) {
 		[mutableRequest setValue:nil forHTTPHeaderField:@"Authorization"]; // strip Authorization information
 		return mutableRequest;
-	}
+	} else {
+        // iOS 5 automaticaly strips the authorization 'token' from the header.
+        // Thus we have to add the OAuth2 'token' again.
+        [mutableRequest setValue:[NSString stringWithFormat:@"OAuth %@", client.accessToken.accessToken]
+              forHTTPHeaderField:@"Authorization"];
+    }
 	return mutableRequest;
 }
 
