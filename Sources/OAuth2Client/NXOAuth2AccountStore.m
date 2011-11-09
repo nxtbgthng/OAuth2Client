@@ -287,12 +287,28 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
 
 - (BOOL)handleRedirectURL:(NSURL *)aURL;
 {
+    __block NSURL *fixedRedirectURL = nil;
     NSSet *accountTypes;
+    
     @synchronized (self.configurations) {
         accountTypes = [self.configurations keysOfEntriesPassingTest:^(id key, id obj, BOOL *stop) {
             NSDictionary *configuration = obj;
             NSURL *redirectURL = [configuration objectForKey:kNXOAuth2AccountStoreConfigurationRedirectURL];
-            if ( [[aURL absoluteString] hasPrefix:[redirectURL absoluteString]]) {
+            if ( [[[aURL absoluteString] lowercaseString] hasPrefix:[[redirectURL absoluteString] lowercaseString]]) {
+                
+                // WORKAROUND: The URL which is passed to this method may be lower case also the scheme is registered in camel case. Therefor replace the prefix with the stored redirectURL.
+                if (fixedRedirectURL == nil) {
+                    if ([aURL.scheme isEqualToString:redirectURL.scheme]) {
+                        fixedRedirectURL = [aURL retain];
+                    } else {
+                        NSRange prefixRange;
+                        prefixRange.location = 0;
+                        prefixRange.length = [redirectURL.absoluteString length];
+                        fixedRedirectURL = [[NSURL URLWithString:[aURL.absoluteString stringByReplacingCharactersInRange:prefixRange
+                                                                                                             withString:redirectURL.absoluteString]] retain];
+                    }
+                }
+                
                 return YES;
             } else {
                 return NO;
@@ -300,9 +316,11 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
         }];
     }
     
+    [fixedRedirectURL autorelease];
+    
     for (NSString *accountType in accountTypes) {
         NXOAuth2Client *client = [self pendingOAuthClientForAccountType:accountType];
-        if ([client openRedirectURL:aURL]) {
+        if ([client openRedirectURL:fixedRedirectURL]) {
             return YES;
         }
     }
