@@ -13,8 +13,9 @@
 
 #import <Foundation/Foundation.h>
 
+#import "NXOAuth2Connection.h"
+
 @class NXOAuth2Account;
-@class NXOAuth2Connection;
 
 @interface NXOAuth2Request : NSObject {
 @private    
