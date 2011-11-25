@@ -20,14 +20,14 @@
 
 #pragma mark Lifecycle
 
-+ (id)tokenWithResponseBody:(NSString *)responseBody;
++ (id)tokenWithResponseBody:(NSString *)theResponseBody;
 {
 	// do we really need a JSON dependency? We can easily split this up ourselfs
-	responseBody = [[[responseBody stringByReplacingOccurrencesOfString:@"{" withString:@""]
-					 stringByReplacingOccurrencesOfString:@"}" withString:@""]
-					stringByReplacingOccurrencesOfString:@"\"" withString:@""];
+	NSString *normalizedRsponseBody = [[[theResponseBody stringByReplacingOccurrencesOfString:@"{" withString:@""]
+                                        stringByReplacingOccurrencesOfString:@"}" withString:@""]
+                                       stringByReplacingOccurrencesOfString:@"\"" withString:@""];
 	NSMutableDictionary *jsonDict = [NSMutableDictionary dictionary];
-	for (NSString *keyValuePair in [responseBody componentsSeparatedByString:@","]) {
+	for (NSString *keyValuePair in [normalizedRsponseBody componentsSeparatedByString:@","]) {
 		NSArray *keyAndValue = [keyValuePair componentsSeparatedByString:@":"];
 		if (keyAndValue.count == 2) {
 			NSString *key = [keyAndValue objectAtIndex:0];
@@ -54,7 +54,8 @@
 	return [[[[self class] alloc] initWithAccessToken:anAccessToken
 										 refreshToken:aRefreshToken
 											expiresAt:expiryDate
-												scope:scope] autorelease];
+												scope:scope
+                                         responseBody:theResponseBody] autorelease];
 }
 
 - (id)initWithAccessToken:(NSString *)anAccessToken;
@@ -72,12 +73,22 @@
 
 - (id)initWithAccessToken:(NSString *)anAccessToken refreshToken:(NSString *)aRefreshToken expiresAt:(NSDate *)anExpiryDate scope:(NSSet *)aScope;
 {
+	return [[[self class] alloc] initWithAccessToken:anAccessToken
+                                        refreshToken:aRefreshToken
+                                           expiresAt:anExpiryDate
+                                               scope:aScope
+                                        responseBody:nil];
+}
+
+- (id)initWithAccessToken:(NSString *)anAccessToken refreshToken:(NSString *)aRefreshToken expiresAt:(NSDate *)anExpiryDate scope:(NSSet *)aScope responseBody:(NSString *)aResponseBody;
+{
 	self = [super init];
 	if (self) {
 		accessToken  = [anAccessToken copy];
 		refreshToken = [aRefreshToken copy];
 		expiresAt    = [anExpiryDate copy];
 		scope        = aScope ? [aScope copy] : [[NSSet alloc] init];
+        responseBody = [aResponseBody copy];
 	}
 	return self;
 }
@@ -88,6 +99,7 @@
 	[refreshToken release];
 	[expiresAt release];
 	[scope release];
+    [responseBody release];
 	[super dealloc];
 }
 
@@ -98,6 +110,7 @@
 @synthesize refreshToken;
 @synthesize expiresAt;
 @synthesize scope;
+@synthesize responseBody;
 
 - (BOOL)doesExpire;
 {
@@ -123,14 +136,19 @@
 	[aCoder encodeObject:accessToken forKey:@"accessToken"];
 	[aCoder encodeObject:refreshToken forKey:@"refreshToken"];
 	[aCoder encodeObject:expiresAt forKey:@"expiresAt"];
+    [aCoder encodeObject:scope forKey:@"scope"];
+    [aCoder encodeObject:responseBody forKey:@"responseBody"];
 }
 
 - (id)initWithCoder:(NSCoder *)aDecoder
 {
-	if (self = [super init]) {
+    self = [super init];
+	if (self) {
 		accessToken = [[aDecoder decodeObjectForKey:@"accessToken"] copy];
 		refreshToken = [[aDecoder decodeObjectForKey:@"refreshToken"] copy];
-		expiresAt = [[aDecoder decodeObjectForKey:@"expiresAt"] retain];
+		expiresAt = [[aDecoder decodeObjectForKey:@"expiresAt"] copy];
+        scope = [[aDecoder decodeObjectForKey:@"scope"] copy];
+        responseBody = [[aDecoder decodeObjectForKey:@"responseBody"] copy];
 	}
 	return self;
 }
@@ -236,7 +254,7 @@
         SecKeychainItemFreeContent(&list, password);
     } else {
 		// TODO find out why this always works in i386 and always fails on ppc
-		NSLog(@"Error from SecKeychainItemCopyContent: %d", err);
+		NSLog(@"Error from SecKeychainItemCopyContent: %ld", err);
         return nil;
     }
     CFRelease(item);
