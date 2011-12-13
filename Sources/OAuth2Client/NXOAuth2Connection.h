@@ -7,7 +7,7 @@
 //  Copyright 2010 nxtbgthng. All rights reserved. 
 //
 //  Licenced under the new BSD-licence.
-//  See README.md in this reprository for 
+//  See README.md in this repository for 
 //  the full licence.
 //
 
@@ -35,9 +35,20 @@
  *	unsigned requests.
  */
 
+
 #ifndef NXOAuth2ConnectionDebug
 #define NXOAuth2ConnectionDebug 0
 #endif
+
+
+
+extern NSString * const NXOAuth2ConnectionDidStartNotification;
+extern NSString * const NXOAuth2ConnectionDidEndNotification;
+
+
+typedef void(^NXOAuth2ConnectionResponseHandler)(NSURLResponse *response, NSData *responseData, NSError *error);
+typedef void(^NXOAuth2ConnectionSendingProgressHandler)(unsigned long long bytesSend, unsigned long long bytesTotal);
+
 
 @interface NXOAuth2Connection : NSObject {
 @private
@@ -56,10 +67,8 @@
 	
 	NSObject<NXOAuth2ConnectionDelegate>	*delegate;	// assigned
     
-#if NX_BLOCKS_AVAILABLE && NS_BLOCKS_AVAILABLE
-    void (^finish)(void);
-    void (^fail)(NSError *error);
-#endif
+    NXOAuth2ConnectionResponseHandler responseHandler;
+    NXOAuth2ConnectionSendingProgressHandler sendingProgressHandler;
 	
 	BOOL				sendConnectionDidEndNotification;
     
@@ -72,18 +81,17 @@
 @property (readonly) NSData *data;
 @property (assign) BOOL savesData;
 @property (readonly) long long expectedContentLength;
+@property (readonly) NSURLResponse *response;
 @property (readonly) NSInteger statusCode;
 @property (retain) id context;
 @property (retain) NSDictionary *userInfo;
+@property (readonly) NXOAuth2Client *client;
 
-#if NX_BLOCKS_AVAILABLE && NS_BLOCKS_AVAILABLE
-- (id)initWithRequest:(NSMutableURLRequest *)request
-	requestParameters:(NSDictionary *)requestParameters
-		  oauthClient:(NXOAuth2Client *)client
-               finish:(void (^)(void))finishBlock 
-                 fail:(void (^)(NSError *error))failBlock;
-#endif
-
+- (id) initWithRequest:(NSMutableURLRequest *)request
+     requestParameters:(NSDictionary *)requestParameters
+           oauthClient:(NXOAuth2Client *)client
+sendingProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)sendingProgressHandler
+       responseHandler:(NXOAuth2ConnectionResponseHandler)responseHandler;
 
 - (id)initWithRequest:(NSMutableURLRequest *)request
 	requestParameters:(NSDictionary *)requestParameters

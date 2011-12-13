@@ -3,9 +3,11 @@
 //  OAuth2Client
 //
 //  Created by Ullrich Schäfer on 27.08.10.
+//
 //  Copyright 2010 nxtbgthng. All rights reserved. 
+//
 //  Licenced under the new BSD-licence.
-//  See README.md in this reprository for 
+//  See README.md in this repository for 
 //  the full licence.
 //
 
@@ -23,6 +25,9 @@
 - (void)removeConnectionFromWaitingQueue:(NXOAuth2Connection *)connection;
 @end
 
+
+NSString * const NXOAuth2ConnectionDidStartNotification = @"NXOAuth2ConnectionDidStartNotification";
+NSString * const NXOAuth2ConnectionDidEndNotification = @"NXOAuth2ConnectionDidEndNotification";
 
 
 @interface NXOAuth2Connection ()
@@ -45,20 +50,19 @@
 
 #pragma mark Lifecycle
 
-#if NX_BLOCKS_AVAILABLE && NS_BLOCKS_AVAILABLE
-- (id)initWithRequest:(NSMutableURLRequest *)aRequest
-	requestParameters:(NSDictionary *)someRequestParameters
-		  oauthClient:(NXOAuth2Client *)aClient
-               finish:(void (^)(void))finishBlock 
-                 fail:(void (^)(NSError *error))failBlock;
+-  (id)initWithRequest:(NSMutableURLRequest *)aRequest
+     requestParameters:(NSDictionary *)someRequestParameters
+           oauthClient:(NXOAuth2Client *)aClient
+sendingProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)aSendingProgressHandler
+       responseHandler:(NXOAuth2ConnectionResponseHandler)aResponseHandler;
 {
-    if ([self initWithRequest:aRequest requestParameters:someRequestParameters oauthClient:aClient delegate:nil]) {
-        finish = Block_copy(finishBlock);
-        fail = Block_copy(failBlock);
+    self = [self initWithRequest:aRequest requestParameters:someRequestParameters oauthClient:aClient delegate:nil];
+    if (self) {
+        sendingProgressHandler = Block_copy(aSendingProgressHandler);
+        responseHandler = Block_copy(aResponseHandler);
     }
     return self;
 }
-#endif
 
 - (id)initWithRequest:(NSMutableURLRequest *)aRequest
 	requestParameters:(NSDictionary *)someRequestParameters
@@ -70,7 +74,7 @@
 		sendConnectionDidEndNotification = NO;
 		delegate = aDelegate;	// assign only
 		client = [aClient retain];
-		
+
 		request = [aRequest copy];
 		requestParameters = [someRequestParameters copy];
 		connection = [[self createConnection] retain];
@@ -81,13 +85,12 @@
 
 - (void)dealloc;
 {
-	if (sendConnectionDidEndNotification) [[NSNotificationCenter defaultCenter] postNotificationName:NXOAuth2DidEndConnection object:self];
+	if (sendConnectionDidEndNotification) [[NSNotificationCenter defaultCenter] postNotificationName:NXOAuth2ConnectionDidEndNotification object:self];
 	sendConnectionDidEndNotification = NO;
 	
-#if NX_BLOCKS_AVAILABLE && NS_BLOCKS_AVAILABLE
-    Block_release(fail);
-    Block_release(finish);
-#endif
+    Block_release(sendingProgressHandler);
+    Block_release(responseHandler);
+
 	[connection cancel];
 	[connection release];
 	[data release];
@@ -112,6 +115,8 @@
 @synthesize data;
 @synthesize context, userInfo;
 @synthesize savesData;
+@synthesize client;
+@synthesize response;
 
 
 - (id<NXOAuth2TrustDelegate>)trustDelegate;
@@ -129,10 +134,11 @@
 
 - (NSInteger)statusCode;
 {
-	NSHTTPURLResponse *httpResponse = nil;
-	if ([response isKindOfClass:[NSHTTPURLResponse class]])
-		httpResponse = (NSHTTPURLResponse *)response;
-	return httpResponse.statusCode;
+	if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
+		NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
+        return httpResponse.statusCode;
+    }
+    return 0;
 }
 
 - (long long)expectedContentLength;
@@ -149,7 +155,7 @@
 
 - (void)cancel;
 {
-	if (sendConnectionDidEndNotification) [[NSNotificationCenter defaultCenter] postNotificationName:NXOAuth2DidEndConnection object:self];
+	if (sendConnectionDidEndNotification) [[NSNotificationCenter defaultCenter] postNotificationName:NXOAuth2ConnectionDidEndNotification object:self];
 	sendConnectionDidEndNotification = NO;
 	
 	[connection cancel];
@@ -204,7 +210,7 @@
     [startDate release]; startDate = [[NSDate alloc] init];
 #endif
 	
-	if (!sendConnectionDidEndNotification) [[NSNotificationCenter defaultCenter] postNotificationName:NXOAuth2DidStartConnection object:self];
+	if (!sendConnectionDidEndNotification) [[NSNotificationCenter defaultCenter] postNotificationName:NXOAuth2ConnectionDidStartNotification object:self];
 	sendConnectionDidEndNotification = YES;
 	
 	return [aConnection autorelease];
@@ -353,15 +359,12 @@
 				if ([anchorCertChecksum isEqualToString:certificateChecksum]) {
 					return YES;
 				}
-				
 			}
-			
 			return NO;
 		} else {
 			return NO;
 		}
 	}
-	
 	return NO;
 }
 
@@ -438,16 +441,14 @@
     NSLog(@"%.0fms (SUCC) - %@", -[startDate timeIntervalSinceNow]*1000.0, [self descriptionForRequest:request]);
 #endif
     
-	if (sendConnectionDidEndNotification) [[NSNotificationCenter defaultCenter] postNotificationName:NXOAuth2DidEndConnection object:self];
+	if (sendConnectionDidEndNotification) [[NSNotificationCenter defaultCenter] postNotificationName:NXOAuth2ConnectionDidEndNotification object:self];
 	sendConnectionDidEndNotification = NO;
 	
 	if(self.statusCode < 400) {
 		if ([delegate respondsToSelector:@selector(oauthConnection:didFinishWithData:)]) {
 			[delegate oauthConnection:self didFinishWithData:data];
 		}
-#if NX_BLOCKS_AVAILABLE && NS_BLOCKS_AVAILABLE
-        if (finish) finish();
-#endif
+        if (responseHandler) responseHandler(response, data, nil);
 	} else {
 		if (self.statusCode == 401) {
 			// check if token is still valid
@@ -475,9 +476,7 @@
 		if ([delegate respondsToSelector:@selector(oauthConnection:didFailWithError:)]) {
 			[delegate oauthConnection:self didFailWithError:error];
 		}
-#if NX_BLOCKS_AVAILABLE && NS_BLOCKS_AVAILABLE
-        if (fail) fail(error);
-#endif
+        if (responseHandler) responseHandler (response, data, error);
 	}
 }
 
@@ -487,15 +486,13 @@
     NSLog(@"%.0fms (FAIL) - %@ (%@ %i)", -[startDate timeIntervalSinceNow]*1000.0, [self descriptionForRequest:request], [error domain], [error code]);
 #endif
     
-	if (sendConnectionDidEndNotification) [[NSNotificationCenter defaultCenter] postNotificationName:NXOAuth2DidEndConnection object:self];
+	if (sendConnectionDidEndNotification) [[NSNotificationCenter defaultCenter] postNotificationName:NXOAuth2ConnectionDidEndNotification object:self];
 	sendConnectionDidEndNotification = NO;
 	
 	if ([delegate respondsToSelector:@selector(oauthConnection:didFailWithError:)]) {
 		[delegate oauthConnection:self didFailWithError:error];
 	}
-#if NX_BLOCKS_AVAILABLE && NS_BLOCKS_AVAILABLE
-    if (fail) fail(error);
-#endif
+    if (responseHandler) responseHandler (response, data, error);
 }
 
 - (NSURLRequest *)connection:(NSURLConnection *)aConnection willSendRequest:(NSURLRequest *)aRequest redirectResponse:(NSURLResponse *)aRedirectResponse;
@@ -540,6 +537,8 @@
 	if ([delegate respondsToSelector:@selector(oauthConnection:didSendBytes:ofTotal:)]) {
 		[delegate oauthConnection:self didSendBytes:totalBytesWritten ofTotal:totalBytesExpectedToWrite];
 	}
+    
+    if (sendingProgressHandler) sendingProgressHandler(totalBytesWritten, totalBytesExpectedToWrite);
 }
 
 - (NSInputStream *)connection:(NSURLConnection *)connection needNewBodyStream:(NSURLRequest *)aRequest;

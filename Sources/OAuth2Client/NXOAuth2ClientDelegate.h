@@ -3,9 +3,13 @@
 //  OAuth2Client
 //
 //  Created by Gernot Poetsch on 14.09.10.
+//
 //  Copyright 2010 nxtbgthng. All rights reserved.
 //
-
+//  Licenced under the new BSD-licence.
+//  See README.md in this repository for 
+//  the full licence.
+//
 
 #import "NXOAuth2Constants.h"
 #import "NXOAuth2TrustDelegate.h"
@@ -23,6 +27,7 @@
 @optional
 - (void)oauthClientDidGetAccessToken:(NXOAuth2Client *)client;
 - (void)oauthClientDidLoseAccessToken:(NXOAuth2Client *)client;
+- (void)oauthClientDidRefreshAccessToken:(NXOAuth2Client *)client;
 - (void)oauthClient:(NXOAuth2Client *)client didFailToGetAccessTokenWithError:(NSError *)error;
 
 @end

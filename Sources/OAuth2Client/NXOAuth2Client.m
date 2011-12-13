@@ -7,7 +7,7 @@
 //  Copyright 2010 nxtbgthng. All rights reserved. 
 //
 //  Licenced under the new BSD-licence.
-//  See README.md in this reprository for 
+//  See README.md in this repository for 
 //  the full licence.
 //
 
@@ -41,17 +41,35 @@ NSString * const NXOAuth2ClientConnectionContextTokenRefresh = @"tokenRefresh";
 			  tokenURL:(NSURL *)aTokenURL
               delegate:(NSObject<NXOAuth2ClientDelegate> *)aDelegate;
 {
-	NSAssert(aTokenURL != nil && anAuthorizeURL != nil, @"No token or no authorize URL");
+	return [self initWithClientID:aClientId
+                     clientSecret:aClientSecret
+                     authorizeURL:anAuthorizeURL
+                         tokenURL:aTokenURL
+                      accessToken:nil
+                       persistent:YES
+                         delegate:aDelegate];
+}
+
+- (id)initWithClientID:(NSString *)aClientId
+		  clientSecret:(NSString *)aClientSecret
+		  authorizeURL:(NSURL *)anAuthorizeURL
+			  tokenURL:(NSURL *)aTokenURL
+           accessToken:(NXOAuth2AccessToken *)anAccessToken
+            persistent:(BOOL)shouldPersist
+              delegate:(NSObject<NXOAuth2ClientDelegate> *)aDelegate;
+{
+    NSAssert(aTokenURL != nil && anAuthorizeURL != nil, @"No token or no authorize URL");
 	self = [super init];
 	if (self) {
 		refreshConnectionDidRetryCount = 0;
-        persistent = YES;
 		
 		clientId = [aClientId copy];
 		clientSecret = [aClientSecret copy];
 		authorizeURL = [anAuthorizeURL copy];
 		tokenURL = [aTokenURL copy];
-		
+        accessToken = [anAccessToken retain];
+        
+        self.persistent = shouldPersist;
 		self.delegate = aDelegate;
 	}
 	return self;
@@ -73,7 +91,7 @@ NSString * const NXOAuth2ClientConnectionContextTokenRefresh = @"tokenRefresh";
 
 @synthesize clientId, clientSecret, userAgent, delegate, persistent, accessToken;
 
-- (void) setPersistent:(BOOL)shouldPersist;
+- (void)setPersistent:(BOOL)shouldPersist;
 {
 	if (persistent == shouldPersist) return;
 	
@@ -133,6 +151,10 @@ NSString * const NXOAuth2ClientConnectionContextTokenRefresh = @"tokenRefresh";
             if ([delegate respondsToSelector:@selector(oauthClientDidLoseAccessToken:)]) {
                 [delegate oauthClientDidLoseAccessToken:self];
             }
+        }
+    } else {
+        if ([delegate respondsToSelector:@selector(oauthClientDidRefreshAccessToken:)]) {
+            [delegate oauthClientDidRefreshAccessToken:self];
         }
     }
 }

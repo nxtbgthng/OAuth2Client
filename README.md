@@ -24,7 +24,7 @@ Getting the sources is as easy as doing a:
 
 - drag the OAuth2Client.xcodeproj into your project
 - add OAuth2Client as a build dependency
-- add `/tmp/OAuth2Client.dst/usr/local/include` to your user header search path in the build settings
+- add `OAuth2Client/**` to your user header search path in the build settings
 - link your target against OAuth2Client (drag the OAuth2Client product from OAuth2Client.xcodeproj to your
 targets *Link Binary With Libraries*)
 - `#import "NXOAuth2.h"`
@@ -44,114 +44,130 @@ to your targets *Link Binary With Libraries*)
 
 ## Using the OAuth2Client
 
-### Create an instance of NXOAuth2Client
+### Configure your Client
 
-To create an NXOAuth2Client instance you need OAuth2 credentials (client id & secret) and endpoints (authorize &
-token URL) for your application. You usually get them from the service you want to connect to. You also need to
-pass in an *delegate* which is discussed later.
+The best place to configure your client is `+[UIApplicationDelegate initialize]` on iOS or `+[NSApplicationDelegate initialize]` on Mac OS X. There you can call `-[NXOAuth2AccountStore setClientID:secret:authorizationURL:tokenURL:redirectURL:forAccountType:]` on the shared account store for each service you want to have access to from your application. The account type is a string which is used as an identifier for a certain service.
 
 <pre>
-	// client is a ivar
-	client = [[NXOAuth2Client alloc] initWithClientID:@"xXxXxXxXxXxXxXxXxXxXxXxXxXxXxXx"
-									 	 clientSecret:@"xXxXxXxXxXxXxXxXxXxXxXxXxXxXxXx"
-									 	 authorizeURL:[NSURL URLWithString:@"https://myHost/oauth2/authenticate"]
-										 	 tokenURL:[NSURL URLWithString:@"https://myHost/oauth2/token"]
-									 	 	 delegate:self];
-</pre>
-
-Once you got your instance of the client you can check if you already have a valid token.
-
-<pre>
-	[client requestAccess];
-</pre>
-
-This method triggers the authentication flow and will invoke one or more of the callback methods implemented in the clients delegate.
-
-
-### The Delegate
-<a name="TheDelegate"></a>
-The Authentication Delegate is the place to get callbacks on the status of authentication. It defines following methods:
-
-<pre>
-@required
-	- (void)oauthClientNeedsAuthentication:(NXOAuth2Client *)client;
-
-@optional
-	- (void)oauthClientDidGetAccessToken:(NXOAuth2Client *)client;
-	- (void)oauthClientDidLoseAccessToken:(NXOAuth2Client *)client;
-	- (void)oauthClient:(NXOAuth2Client *)client didFailToGetAccessTokenWithError:(NSError *)error;
-</pre>
-
-#### The optional delegate methods
-
-The first three delegate methods inform you when authentication is gained or lost, as well as when an error occurred during the process.
-`-oauthClientDidGetAccessToken:` for example is called when the authorization flow finishes with an access token or when your app was
-authorized in a previous session and the access token has been found in the keychain.
-
-`-oauthClientDidLoseAccessToken:` is called whenever the token is lost. This might be the case when the token expires and there has been
-an error refreshing it, or when the user revokes access on the service your connecting to.
-
-`-oauthClient:didFailToGetAccessTokenWithError:` returns the error that prevented the client from getting a valid access token. See the
-constants header file (`NXOAuth2Constants.h`) and the [section about errors](http://tools.ietf.org/html/draft-ietf-oauth-v2-10#section-3.2.1)
-in the OAuth2 spec for more information which errors to expect. Besides errors in the `NXOAuth2ErrorDomain` you should also handle NSURL errors
-in the `NSURLErrorDomain`.
-
-#### The required delegate method
-
-The fourth method needs to be implemented by your app and is responsible for choosing the OAuth2 authorization flow. The wrapper supports
-the user-agent & the user credentials flow of OAuth2 draft 10. The following two sections show you example implementations for both type of flows.
-
-
-##### User-agent flow
-
-In the user-agent flow your app opens an internal user-agent (an embedded web view) or an external user-agent (the default browser) to open a
-site on the service your connecting to. The user enters his credentials and is redirected to an URL you define. This URL should open your
-application or should be intercepted if you're using an internal web view. Pass this URL to the `-authorizationURLWithRedirectURL:` method
-of your NXOAuth2Client instance, and it will get the access token out of it.
-
-<pre>
-- (void)oauthClientRequestedAuthorization:(NXOAuth2Client *)aClient;
++ (void)initialize;
 {
-	// webserver flow
-	
-	// this is your redirect url. register it with your app
-	NSURL *authorizationURL = [client authorizationURLWithRedirectURL:[NSURL URLWithString:@"x-myapp://oauth2"]];
-	#if TARGET_OS_IPHONE
-	[[UIApplication sharedApplication] openURL:authorizationURL];	// this line quits the application or puts it to the background, be prepared
-	#else
-	[[NSWorkspace sharedWorkspace] openURL:authorizationURL];
-	#endif
+	[[NXOAuth2AccountStore sharedStore] setClientID:@"xXxXxXxXxXxX"
+                                             secret:@"xXxXxXxXxXxX"
+                                   authorizationURL:[NSURL URLWithString:@"https://...your auth URL..."]
+                                           tokenURL:[NSURL URLWithString:@"https://...your token URL..."]
+                                        redirectURL:[NSURL URLWithString:@"https://...your redirect URL..."]
+                                     forAccountType:@"myFancyService"];
 }
 </pre>
 
-##### User credentials flow
+### Requesting Access to a Service
 
-The user credentials flow allows your app do present the user a custom login form. Please consider that this flow is *generally discouraged*
-since the user has to enter his credentials in an untrusted environment and can't control what your app does with the entrusted credentials.
+Once you have configured your client you are ready to request access to one of those services. The NXOAuth2AccountStore provides three different methods for this:
 
+- Username and Password
+ <pre>
+ [[NXOAuth2AccountStore sharedStore] requestAccessToAccountWithType:@"myFancyService"
+ 	                                                       username:aUserName
+ 	                                                       password:aPassword];
+ </pre>
+
+- External Browser
+ <pre>
+ [[NXOAuth2AccountStore sharedStore] requestAccessToAccountWithType:@"myFancyService"];
+ </pre>
+  
+ If you are using an external browser, your application needs to handle the URL you have registered as an redirect URL for the account type. The service will redirect to that URL after the authentication process.
+
+- Provide an Authorization URL Handler
+ <pre>
+ [[NXOAuth2AccountStore sharedStore] requestAccessToAccountWithType:@"myFancyService"
+ 	                            withPreparedAuthorizationURLHandler:^(NSURL *preparedURL){
+ 	                                // Open a web view or similar
+ 	                            }];
+ </pre>
+ Using an authorization URL handler gives you the ability to open the URL in an own web view or do some fancy stuff for authentication. Therefor you pass a block to the NXOAuth2AccountStore while requesting access.
+
+#### On Success
+
+After a successful authentication, a new `NXOAuth2Account` object is in the list of accounts of `NXOAuth2AccountStore`. You will receive a notification of type `NXOAuth2AccountStoreAccountsDidChangeNotification`, e.g., for updating your UI.
 <pre>
-- (void)oauthClientRequestedAuthorization:(NXOAuth2Client *)aClient;
-{
-	// user credentials flow
-	[client authorizeWithUsername:username password:password];
-	// you probably don't yet have username & password.
-	// if so, open a view to query them from the user & call this method with the results asynchronously.
-}
+[[NSNotificationCenter defaultCenter] addObserverForName:NXOAuth2AccountStoreAccountsDidChangeNotification
+                                                  object:[NXOAuth2AccountStore sharedStore]
+                                                   queue:nil
+                                              usingBlock:^(NSNotification *aNotification){
+                                                    // Update your UI
+                                              }];
 </pre>
 
-### Sending requests
+#### On Failure
 
-Create your request as usual but don't use NSURLConnection but `NXOAuth2Connection`. It has a similar delegate protocol but signs the request
-when an `NXOAuth2Client` is passed in. If you don't pass in the client but nil, the connection will work standalone but not sign any request. Make
-sure to retain the connection for as long as it's running. The best place for doing so is it's delegate. You can also cancel the connection if
-the delegate is deallocated.
-
+If the authentication did not succeed, a notification of type `NXOAuth2AccountStoreDidFailToRequestAccessNotification` containing an `NSError` will be send.
 <pre>
-	NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"https://myHost/someResource"]];
-	// retain the connection for as long as it's running.
-	NXOAuth2Connection *connection = [[NXOAuth2Connection alloc] initWithRequest:request oauthClient:aClient delegate:self];
+[[NSNotificationCenter defaultCenter] addObserverForName:NXOAuth2AccountStoreAccountsDidChangeNotification
+                                                  object:[NXOAuth2AccountStore sharedStore]
+                                                   queue:nil
+                                              usingBlock:^(NSNotification *aNotification){
+                                                    NSError *error = [aNotification.userInfo objectForKey:NXOAuth2AccountStoreErrorKey];
+                                                    // Do something with the error
+                                              }];
 </pre>
 
+### Getting a List of all Accounts
+
+The authenticated accounts can be accessed via the `NXOAuth2AccountStore`. Either the complete list, only a list of accounts for a specific service or an account with an identifier (maybe cached in the user settings).
+
+<pre>
+for (NXOAuth2Account *account in [[NXOAuth2AccountStore sharedStore] accounts]) {
+    // Do something with the account	
+};
+
+for (NXOAuth2Account *account in [[NXOAuth2AccountStore sharedStore] accountsWithAccountType:@"myFancyService"]) {
+    // Do something with the account	
+};
+
+NXOAuth2Account *account = [[NXOAuth2AccountStore sharedStore] accountWithIdentifier:@"...cached account id..."];
+</pre>
+
+Each `NXOAuth2Account` has a property `userData` which can be used to store some related information for that account.
+<pre>
+NXOAuth2Account *account = // ... get an account
+NSDictionary *userData = // ...
+
+account.userData = userData;
+</pre>
+
+This payload will be stored together with the accounts in the Keychain. Thus it shouldn't be to big.
+
+### Invoking a Request
+
+An request using the authentication for a service can be invoked via `NXOAuth2Request`. The most convenient method (see below) is a class method which you pass the method, a resource and some parameters (or nil) for the request and to handlers (both optional). One for a progress and the other for the response. The account is used for authentication and can be nil. Then a normal request without authentication will be invoked.
+<pre>
+[NXOAuth2Request performMethod:@"GET"
+                    onResource:[NSURL URLWithString:@"https://...your service URL..."]
+               usingParameters:nil
+                   withAccount:anAccount
+           sendProgressHandler:^(unsigned long long bytesSend, unsigned long long bytesTotal) { // e.g., update a progress indicator }
+               responseHandler:^(NSURLResponse *response, NSData *responseData, NSError *error){
+                   // Process the response
+               }];
+</pre>
+
+#### Getting a signed NSURLRequest
+
+In some circumstances you have to go the *god old way* and use an `NSURLConnection`. Maybe if you to download a large file. Therefor `NXOAuth2Request` gives you the possibility to get an `NSURLRequest` containing the additional information to authenticate that request.
+
+<pre>
+NXOAuth2Request *theRequest = [[NXOAuth2Request alloc] initWithResource:[NSURL URLWithString:@"https://...your service URL..."]
+									                             method:@"GET"
+								                             parameters:nil];
+theRequest.account = // ... an account
+                               
+NSURLRequest *sigendRequest = [theRequest signedURLRequest];
+
+[theRequest release];
+
+// Invoke the request with you preferd method
+</pre>
 
 ## BSD License 
 
