@@ -3,9 +3,11 @@
 //  OAuth2Client
 //
 //  Created by Ullrich Schäfer on 27.08.10.
+//
 //  Copyright 2010 nxtbgthng. All rights reserved. 
+//
 //  Licenced under the new BSD-licence.
-//  See README.md in this reprository for 
+//  See README.md in this repository for 
 //  the full licence.
 //
 
@@ -74,11 +76,6 @@ extern NSString * const NXOAuth2HTTPErrorDomain;				// domain
 // The error code represents the http status code
 
 
-#pragma mark Notifications
-
-extern NSString * const NXOAuth2DidStartConnection;
-extern NSString * const NXOAuth2DidEndConnection;
-
 #pragma mark TLS Trust Modes
 
 /*
@@ -105,4 +102,8 @@ typedef enum  {
 	NXOAuth2TrustModeSystem              = 1 << 1,
 	NXOAuth2TrustModeSpecificCertificate = 1 << 2
 } NXOAuth2TrustMode;
+
+
+
+extern NSString * const NXOAuth2AccountStoreErrorKey;
 

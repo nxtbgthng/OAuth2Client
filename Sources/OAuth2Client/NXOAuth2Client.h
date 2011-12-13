@@ -7,7 +7,7 @@
 //  Copyright 2010 nxtbgthng. All rights reserved. 
 //
 //  Licenced under the new BSD-licence.
-//  See README.md in this reprository for 
+//  See README.md in this repository for 
 //  the full licence.
 //
 
@@ -77,6 +77,13 @@ extern NSString * const NXOAuth2ClientConnectionContextTokenRefresh;
 			  tokenURL:(NSURL *)tokenURL
               delegate:(NSObject<NXOAuth2ClientDelegate> *)delegate;
 
+- (id)initWithClientID:(NSString *)clientId
+		  clientSecret:(NSString *)clientSecret
+		  authorizeURL:(NSURL *)authorizeURL
+			  tokenURL:(NSURL *)tokenURL
+           accessToken:(NXOAuth2AccessToken *)accessToken
+            persistent:(BOOL)shouldPersist
+              delegate:(NSObject<NXOAuth2ClientDelegate> *)delegate;
 
 - (BOOL)openRedirectURL:(NSURL *)URL;
 

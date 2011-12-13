@@ -3,9 +3,11 @@
 //  OAuth2Client
 //
 //  Created by Ullrich Schäfer on 27.08.10.
+//
 //  Copyright 2010 nxtbgthng. All rights reserved. 
+//
 //  Licenced under the new BSD-licence.
-//  See README.md in this reprository for 
+//  See README.md in this repository for 
 //  the full licence.
 //
 
@@ -30,11 +32,9 @@ NSInteger const NXOAuth2CouldNotRefreshTokenErrorCode	= -2001;
 #pragma mark HTTP Errors
 
 NSString * const NXOAuth2HTTPErrorDomain = @"NXOAuth2HTTPErrorDomain";
-
 // The error code represents the http status code
 
 
-#pragma mark Notifications
+#pragma mark UserInfo Keys
 
-NSString * const NXOAuth2DidStartConnection = @"NXOAuth2DidStartConnection";
-NSString * const NXOAuth2DidEndConnection = @"NXOAuth2DidEndConnection";
+NSString * const NXOAuth2AccountStoreErrorKey = @"NXOAuth2AccountStoreErrorKey";
