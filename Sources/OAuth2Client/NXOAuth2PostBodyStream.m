@@ -126,7 +126,10 @@
 
 - (void)open;
 {
-	NSAssert((contentStreams != nil) && (boundary != nil), @"Stream has been reopened after close");
+    if ((contentStreams != nil) && (boundary != nil)) {
+        // If post data is to big this happens and usualy triggers an HTTP 413 error
+        NSLog(@"%s Stream has been reopened after close", __FUNCTION__);
+    }
     [contentStreams makeObjectsPerformSelector:@selector(open)];
     currentStream = nil;
 	streamIndex = 0;
