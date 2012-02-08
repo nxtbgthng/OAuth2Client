@@ -65,6 +65,8 @@ extern NSString * const NXOAuth2ClientConnectionContextTokenRefresh;
 @property (nonatomic, retain) NXOAuth2AccessToken	*accessToken;
 @property (nonatomic, assign) NSObject<NXOAuth2ClientDelegate>*	delegate;
 
+@property (nonatomic, readonly, getter = isAuthenticating) BOOL authenticating;
+
 /*!
  * If set to NO, the access token is not stored any keychain, will be removed if it was.
  * Defaults to YES
