@@ -103,7 +103,7 @@ After a successful authentication, a new `NXOAuth2Account` object is in the list
 
 If the authentication did not succeed, a notification of type `NXOAuth2AccountStoreDidFailToRequestAccessNotification` containing an `NSError` will be send.
 <pre>
-[[NSNotificationCenter defaultCenter] addObserverForName:NXOAuth2AccountStoreAccountsDidChangeNotification
+[[NSNotificationCenter defaultCenter] addObserverForName:NXOAuth2AccountStoreDidFailToRequestAccessNotification
                                                   object:[NXOAuth2AccountStore sharedStore]
                                                    queue:nil
                                               usingBlock:^(NSNotification *aNotification){
