@@ -330,9 +330,9 @@ sendingProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)aSendingProgres
 		OSStatus errGetTrustResult = noErr;
 		CFArrayRef certificates = (CFArrayRef)[NSMutableArray array];
 		
-#if TARGET_OS_IPHONE
+#if TARGET_OS_IPHONE || MAC_OS_X_VERSION_10_7
 		
-		// The iOS way of getting the certs.
+		// The iOS/10.7+ way of getting the certs.
 		for (CFIndex index = 0; index < SecTrustGetCertificateCount(serverTrust); index++) {
 			SecCertificateRef certificate = SecTrustGetCertificateAtIndex(serverTrust, index);
 			[(NSMutableArray *)certificates addObject:(id)certificate];
