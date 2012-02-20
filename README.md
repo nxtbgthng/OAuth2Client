@@ -98,6 +98,7 @@ After a successful authentication, a new `NXOAuth2Account` object is in the list
                                                     // Update your UI
                                               }];
 </pre>
+If an account was added the `userInfo` dictionary of the notification will contain the new account at the `NXOAuth2AccountStoreNewAccountUserInfoKey`. Note though that this notification can be triggered on other events (e.g. account removal). In that case this key will not be set.
 
 #### On Failure
 

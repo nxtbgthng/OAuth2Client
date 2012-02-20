@@ -23,6 +23,8 @@
 extern NSString * const NXOAuth2AccountStoreDidFailToRequestAccessNotification;
 extern NSString * const NXOAuth2AccountStoreAccountsDidChangeNotification;
 
+extern NSString * const NXOAuth2AccountStoreNewAccountUserInfoKey;
+
 #pragma mark Configuration
 
 extern NSString * const kNXOAuth2AccountStoreConfigurationClientID;

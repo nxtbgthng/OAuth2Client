@@ -31,6 +31,8 @@
 NSString * const NXOAuth2AccountStoreDidFailToRequestAccessNotification = @"NXOAuth2AccountStoreDidFailToRequestAccessNotification";
 NSString * const NXOAuth2AccountStoreAccountsDidChangeNotification = @"NXOAuth2AccountStoreAccountsDidChangeNotification";
 
+NSString * const NXOAuth2AccountStoreNewAccountUserInfoKey = @"NXOAuth2AccountStoreNewAccountUserInfoKey";
+
 #pragma mark Configuration
 
 NSString * const kNXOAuth2AccountStoreConfigurationClientID = @"kNXOAuth2AccountStoreConfigurationClientID";
@@ -412,7 +414,12 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
         [NXOAuth2AccountStore storeAccountsInDefaultKeychain:self.accountsDict];
     }
     
-    [[NSNotificationCenter defaultCenter] postNotificationName:NXOAuth2AccountStoreAccountsDidChangeNotification object:self];
+	NSDictionary *userInfo = [NSDictionary dictionaryWithObject:account
+														 forKey:NXOAuth2AccountStoreNewAccountUserInfoKey];
+	
+    [[NSNotificationCenter defaultCenter] postNotificationName:NXOAuth2AccountStoreAccountsDidChangeNotification
+														object:self
+													  userInfo:userInfo];
 }
 
 - (void)oauthClientDidLoseAccessToken:(NXOAuth2Client *)client;
