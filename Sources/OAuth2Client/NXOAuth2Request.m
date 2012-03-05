@@ -135,7 +135,7 @@
     self.connection = nil;
     
     // Release the referens to self (break cycle) after the current run loop.
-    [[self.me retain] autorelease];
+    __autoreleasing __attribute__((unused)) id runloopMe = self.me;
     self.me = nil;
 }
 
@@ -144,9 +144,9 @@
 - (void)oauthConnection:(NXOAuth2Connection *)connection didFinishWithData:(NSData *)data;
 {
     self.connection = nil;
-
+    
     // Release the referens to self (break cycle) after the current run loop.
-    [[self.me retain] autorelease];
+    __autoreleasing __attribute__((unused)) id runloopMe = self.me;
     self.me = nil;
 }
 
@@ -155,7 +155,7 @@
     self.connection = nil;
     
     // Release the reference to self (break cycle) after the current run loop.
-    [[self.me retain] autorelease];
+    __autoreleasing __attribute__((unused)) id runloopMe = self.me;
     self.me = nil;
 }
 

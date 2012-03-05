@@ -174,9 +174,10 @@
 						   serviceName, kSecAttrService,
 						   kCFBooleanTrue, kSecReturnAttributes,
 						   nil];
-	OSStatus status = SecItemCopyMatching((CFDictionaryRef)query, (CFTypeRef *)&result);
-	[result autorelease];
-	
+    CFTypeRef cfResult = nil;
+	OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)query, &cfResult);
+    result = (__bridge_transfer NSDictionary *)cfResult;
+    
 	if (status != noErr) {
 		NSAssert1(status == errSecItemNotFound, @"unexpected error while fetching token from keychain: %d", status);
 		return nil;
@@ -196,7 +197,7 @@
 						   data, kSecAttrGeneric,
 						   nil];
 	[self removeFromDefaultKeychainWithServiceProviderName:provider];
-	OSStatus __attribute__((unused)) err = SecItemAdd((CFDictionaryRef)query, NULL);
+	OSStatus __attribute__((unused)) err = SecItemAdd((__bridge CFDictionaryRef)query, NULL);
 	NSAssert1(err == noErr, @"error while adding token to keychain: %d", err);
 }
 
@@ -207,7 +208,7 @@
 						   (NSString *)kSecClassGenericPassword, kSecClass,
 						   serviceName, kSecAttrService,
 						   nil];
-	OSStatus __attribute__((unused)) err = SecItemDelete((CFDictionaryRef)query);
+	OSStatus __attribute__((unused)) err = SecItemDelete((__bridge CFDictionaryRef)query);
 	NSAssert1((err == noErr || err == errSecItemNotFound), @"error while deleting token from keychain: %d", err);
 }
 
@@ -254,7 +255,7 @@
         SecKeychainItemFreeContent(&list, password);
     } else {
 		// TODO find out why this always works in i386 and always fails on ppc
-		NSLog(@"Error from SecKeychainItemCopyContent: %ld", err);
+		NSLog(@"Error from SecKeychainItemCopyContent: %d", err);
         return nil;
     }
     CFRelease(item);

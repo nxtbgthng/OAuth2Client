@@ -318,8 +318,6 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
         }];
     }
     
-    [fixedRedirectURL autorelease];
-    
     for (NSString *accountType in accountTypes) {
         NXOAuth2Client *client = [self pendingOAuthClientForAccountType:accountType];
         if ([client openRedirectURL:fixedRedirectURL]) {
@@ -520,8 +518,9 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
 						   serviceName, kSecAttrService,
 						   kCFBooleanTrue, kSecReturnAttributes,
 						   nil];
-	OSStatus status = SecItemCopyMatching((CFDictionaryRef)query, (CFTypeRef *)&result);
-	[result autorelease];
+    CFTypeRef cfResult = nil;
+	OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)query, &cfResult);
+    result = (__bridge_transfer NSDictionary *)cfResult;
 	
 	if (status != noErr) {
 		NSAssert1(status == errSecItemNotFound, @"Unexpected error while fetching accounts from keychain: %d", status);
@@ -544,7 +543,7 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
 						   @"OAuth 2 Account Store", kSecAttrLabel,
 						   data, kSecAttrGeneric,
 						   nil];
-	OSStatus __attribute__((unused)) err = SecItemAdd((CFDictionaryRef)query, NULL);
+	OSStatus __attribute__((unused)) err = SecItemAdd((__bridge CFDictionaryRef)query, NULL);
 	NSAssert1(err == noErr, @"Error while adding token to keychain: %d", err);
 }
 
@@ -555,7 +554,7 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
 						   (NSString *)kSecClassGenericPassword, kSecClass,
 						   serviceName, kSecAttrService,
 						   nil];
-	OSStatus __attribute__((unused)) err = SecItemDelete((CFDictionaryRef)query);
+	OSStatus __attribute__((unused)) err = SecItemDelete((__bridge CFDictionaryRef)query);
 	NSAssert1((err == noErr || err == errSecItemNotFound), @"Error while deleting token from keychain: %d", err);
 
 }

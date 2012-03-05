@@ -15,6 +15,7 @@
 
 #import "NXOAuth2ClientDelegate.h"
 #import "NXOAuth2TrustDelegate.h"
+#import "NXOAuth2AccessToken.h"
 
 #import "NXOAuth2Client.h"
 #import "NXOAuth2AccountStore.h"
