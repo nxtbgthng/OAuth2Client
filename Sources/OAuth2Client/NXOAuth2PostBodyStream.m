@@ -36,7 +36,7 @@
 		streamIndex = 0;
 		
 		if (postParameters) {
-			contentStreams = [[self streamsForParameters:postParameters contentLength:&numBytesTotal] retain];
+			contentStreams = [self streamsForParameters:postParameters contentLength:&numBytesTotal];
 		} else {
 			contentStreams = [[NSArray alloc] init];
 		}
@@ -44,12 +44,6 @@
 	return self;
 }
 
-- (void)dealloc;
-{
-	[boundary release];
-	[contentStreams release];
-	[super dealloc];
-}
 
 
 #pragma mark Accessors
@@ -70,12 +64,10 @@
 			for (id content in contentArray) {
 				NXOAuth2PostBodyPart *part = [[NXOAuth2PostBodyPart alloc] initWithName:key content:content];
 				[parts addObject:part];
-				[part release];
 			}
 		} else {
 			NXOAuth2PostBodyPart *part = [[NXOAuth2PostBodyPart alloc] initWithName:key content:value];
 			[parts addObject:part];
-			[part release];
 		}
 	}
 	return parts;
@@ -92,26 +84,24 @@
 	
     NSString *delimiter = firstDelimiter;
     for (NXOAuth2PostBodyPart *part in parts) {
-		NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-		
-		NSData *delimiterData = [delimiter dataUsingEncoding:NSUTF8StringEncoding];
-		NSData *contentHeaderData = [[part contentHeaders] dataUsingEncoding:NSUTF8StringEncoding];
-		
-		int dataLength = delimiterData.length + contentHeaderData.length;
-        NSMutableData *headerData = [NSMutableData dataWithCapacity: dataLength];
-        [headerData appendData:delimiterData];
-        [headerData appendData:contentHeaderData];
-		
-        NSInputStream *headerStream = [NSInputStream inputStreamWithData:headerData];
-        [streams addObject:headerStream];
-        *contentLength += [headerData length];
-		
-        [streams addObject:[part contentStream]];
-        *contentLength += [part contentLength];
-        
-        delimiter = middleDelimiter;
-		
-		[pool release];
+		@autoreleasepool {
+            NSData *delimiterData = [delimiter dataUsingEncoding:NSUTF8StringEncoding];
+            NSData *contentHeaderData = [[part contentHeaders] dataUsingEncoding:NSUTF8StringEncoding];
+            
+            int dataLength = delimiterData.length + contentHeaderData.length;
+            NSMutableData *headerData = [NSMutableData dataWithCapacity: dataLength];
+            [headerData appendData:delimiterData];
+            [headerData appendData:contentHeaderData];
+            
+            NSInputStream *headerStream = [NSInputStream inputStreamWithData:headerData];
+            [streams addObject:headerStream];
+            *contentLength += [headerData length];
+            
+            [streams addObject:[part contentStream]];
+            *contentLength += [part contentLength];
+            
+            delimiter = middleDelimiter;
+		}
     }
     
     NSData *finalDelimiterData = [finalDelimiter dataUsingEncoding:NSUTF8StringEncoding];
@@ -140,8 +130,8 @@
 - (void)close;
 {
 	[contentStreams makeObjectsPerformSelector:@selector(close)];
-	[contentStreams release]; contentStreams = nil;
-	[boundary release]; boundary = nil;
+	contentStreams = nil;
+	boundary = nil;
 	currentStream = nil;
 }
 

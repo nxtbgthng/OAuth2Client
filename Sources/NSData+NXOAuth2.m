@@ -41,7 +41,7 @@
 		[output appendFormat:@"%02x", digest[i]];
 	}	
 	
-	return [[output copy] autorelease];
+	return [output copy];
 }
 
 

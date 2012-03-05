@@ -51,11 +51,11 @@
 	if (expiresIn) {
 		expiryDate = [NSDate dateWithTimeIntervalSinceNow:[expiresIn integerValue]];
 	}
-	return [[[[self class] alloc] initWithAccessToken:anAccessToken
+	return [[[self class] alloc] initWithAccessToken:anAccessToken
 										 refreshToken:aRefreshToken
 											expiresAt:expiryDate
 												scope:scope
-                                         responseBody:theResponseBody] autorelease];
+                                         responseBody:theResponseBody];
 }
 
 - (id)initWithAccessToken:(NSString *)anAccessToken;
@@ -93,15 +93,6 @@
 	return self;
 }
 
-- (void)dealloc;
-{
-	[accessToken release];
-	[refreshToken release];
-	[expiresAt release];
-	[scope release];
-    [responseBody release];
-	[super dealloc];
-}
 
 
 #pragma mark Accessors
@@ -170,19 +161,20 @@
 	NSString *serviceName = [[self class] serviceNameWithProvider:provider];
 	NSDictionary *result = nil;
 	NSDictionary *query = [NSDictionary dictionaryWithObjectsAndKeys:
-						   (NSString *)kSecClassGenericPassword, kSecClass,
+						   (__bridge NSString *)kSecClassGenericPassword, kSecClass,
 						   serviceName, kSecAttrService,
 						   kCFBooleanTrue, kSecReturnAttributes,
 						   nil];
-	OSStatus status = SecItemCopyMatching((CFDictionaryRef)query, (CFTypeRef *)&result);
-	[result autorelease];
-	
+    CFTypeRef cfResult = nil;
+	OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)query, &cfResult);
+    result = (__bridge_transfer NSDictionary *)cfResult;
+    
 	if (status != noErr) {
 		NSAssert1(status == errSecItemNotFound, @"unexpected error while fetching token from keychain: %d", status);
 		return nil;
 	}
 	
-	return [NSKeyedUnarchiver unarchiveObjectWithData:[result objectForKey:(NSString *)kSecAttrGeneric]];
+	return [NSKeyedUnarchiver unarchiveObjectWithData:[result objectForKey:(__bridge NSString *)kSecAttrGeneric]];
 }
 
 - (void)storeInDefaultKeychainWithServiceProviderName:(NSString *)provider;
@@ -190,13 +182,13 @@
 	NSString *serviceName = [[self class] serviceNameWithProvider:provider];
 	NSData *data = [NSKeyedArchiver archivedDataWithRootObject:self];
 	NSDictionary *query = [NSDictionary dictionaryWithObjectsAndKeys:
-						   (NSString *)kSecClassGenericPassword, kSecClass,
+						   (__bridge NSString *)kSecClassGenericPassword, kSecClass,
 						   serviceName, kSecAttrService,
 						   @"OAuth 2 Access Token", kSecAttrLabel,
 						   data, kSecAttrGeneric,
 						   nil];
 	[self removeFromDefaultKeychainWithServiceProviderName:provider];
-	OSStatus __attribute__((unused)) err = SecItemAdd((CFDictionaryRef)query, NULL);
+	OSStatus __attribute__((unused)) err = SecItemAdd((__bridge CFDictionaryRef)query, NULL);
 	NSAssert1(err == noErr, @"error while adding token to keychain: %d", err);
 }
 
@@ -204,10 +196,10 @@
 {
 	NSString *serviceName = [[self class] serviceNameWithProvider:provider];
 	NSDictionary *query = [NSDictionary dictionaryWithObjectsAndKeys:
-						   (NSString *)kSecClassGenericPassword, kSecClass,
+						   (__bridge NSString *)kSecClassGenericPassword, kSecClass,
 						   serviceName, kSecAttrService,
 						   nil];
-	OSStatus __attribute__((unused)) err = SecItemDelete((CFDictionaryRef)query);
+	OSStatus __attribute__((unused)) err = SecItemDelete((__bridge CFDictionaryRef)query);
 	NSAssert1((err == noErr || err == errSecItemNotFound), @"error while deleting token from keychain: %d", err);
 }
 
@@ -254,7 +246,7 @@
         SecKeychainItemFreeContent(&list, password);
     } else {
 		// TODO find out why this always works in i386 and always fails on ppc
-		NSLog(@"Error from SecKeychainItemCopyContent: %ld", err);
+		NSLog(@"Error from SecKeychainItemCopyContent: %d", err);
         return nil;
     }
     CFRelease(item);

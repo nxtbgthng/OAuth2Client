@@ -40,7 +40,7 @@ NSString * const NXOAuth2ConnectionDidEndNotification = @"NXOAuth2ConnectionDidE
 - (BOOL)isServerCertificateForAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
 										  andHostname:(NSString *)hostname
 								  matchingCertificate:(NSData *)derCertData;
-@property (nonatomic, retain, readonly) id<NXOAuth2TrustDelegate> trustDelegate;
+@property (nonatomic, unsafe_unretained, readonly) id<NXOAuth2TrustDelegate> trustDelegate;
 
 
 @end
@@ -58,8 +58,8 @@ sendingProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)aSendingProgres
 {
     self = [self initWithRequest:aRequest requestParameters:someRequestParameters oauthClient:aClient delegate:nil];
     if (self) {
-        sendingProgressHandler = Block_copy(aSendingProgressHandler);
-        responseHandler = Block_copy(aResponseHandler);
+        sendingProgressHandler = [aSendingProgressHandler copy];
+        responseHandler = [aResponseHandler copy];
     }
     return self;
 }
@@ -73,11 +73,11 @@ sendingProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)aSendingProgres
 	if (self) {
 		sendConnectionDidEndNotification = NO;
 		delegate = aDelegate;	// assign only
-		client = [aClient retain];
+		client = aClient;
 
 		request = [aRequest copy];
 		requestParameters = [someRequestParameters copy];
-		connection = [[self createConnection] retain];
+		connection = [self createConnection];
         savesData = YES;
 	}
 	return self;
@@ -87,25 +87,12 @@ sendingProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)aSendingProgres
 {
 	if (sendConnectionDidEndNotification) [[NSNotificationCenter defaultCenter] postNotificationName:NXOAuth2ConnectionDidEndNotification object:self];
 	sendConnectionDidEndNotification = NO;
-	
-    Block_release(sendingProgressHandler);
-    Block_release(responseHandler);
 
 	[connection cancel];
-	[connection release];
-	[data release];
-	[client release];
-	[response release];
-	[request release];
-	[requestParameters release];
-	[context release];
-	[userInfo release];
     
 #if (NXOAuth2ConnectionDebug)
 	[startDate release];
 #endif
-    
-	[super dealloc];
 }
 
 
@@ -164,9 +151,9 @@ sendingProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)aSendingProgres
 
 - (void)retry;
 {
-	[response release]; response = nil;
-	[connection cancel]; [connection release];
-	connection = [[self createConnection] retain];
+	response = nil;
+	[connection cancel]; 
+	connection = [self createConnection];
 }
 
 
@@ -191,7 +178,7 @@ sendingProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)aSendingProgres
 		oauthAuthorizationHeader = [NSString stringWithFormat:@"OAuth %@", client.accessToken.accessToken];
 	}
 	
-	NSMutableURLRequest *startRequest = [[request mutableCopy] autorelease];
+	NSMutableURLRequest *startRequest = [request mutableCopy];
 	[self applyParameters:requestParameters onRequest:startRequest];
 	
 	if (oauthAuthorizationHeader) {
@@ -213,7 +200,7 @@ sendingProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)aSendingProgres
 	if (!sendConnectionDidEndNotification) [[NSNotificationCenter defaultCenter] postNotificationName:NXOAuth2ConnectionDidStartNotification object:self];
 	sendConnectionDidEndNotification = YES;
 	
-	return [aConnection autorelease];
+	return aConnection;
 }
 
 - (NSString *)descriptionForRequest:(NSURLRequest *)aRequest;
@@ -242,7 +229,6 @@ sendingProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)aSendingProgres
 		[aRequest setValue:contentLength forHTTPHeaderField:@"Content-Length"];
 		
 		[aRequest setHTTPBodyStream:postBodyStream];
-		[postBodyStream release];
 	}
 }
 
@@ -302,13 +288,13 @@ sendingProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)aSendingProgres
 	}
 	
 	SecTrustRef serverTrust = [[challenge protectionSpace] serverTrust];
-	SecCertificateRef anchorCert = SecCertificateCreateWithData(NULL,(CFDataRef)derCertData);
+	SecCertificateRef anchorCert = SecCertificateCreateWithData(NULL,(__bridge CFDataRef)derCertData);
 	
 	if(anchorCert == nil) {
 		return NO;
 	}
 	
-	CFArrayRef allTrustedCert = (CFArrayRef)[NSArray arrayWithObject:(id)anchorCert];
+	CFArrayRef allTrustedCert = (__bridge CFArrayRef)[NSArray arrayWithObject:(__bridge id)anchorCert];
 	
 	CFRelease(anchorCert);
 	
@@ -328,32 +314,31 @@ sendingProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)aSendingProgres
 		// In this case me check if any of the certs is our trusted cert.
 		
 		OSStatus errGetTrustResult = noErr;
-		CFArrayRef certificates = (CFArrayRef)[NSMutableArray array];
+		NSMutableArray *certificates = [NSMutableArray array];
 		
-#if TARGET_OS_IPHONE
+#if TARGET_OS_IPHONE || MAC_OS_X_VERSION_10_7
 		
-		// The iOS way of getting the certs.
+		// The iOS/10.7+ way of getting the certs.
 		for (CFIndex index = 0; index < SecTrustGetCertificateCount(serverTrust); index++) {
 			SecCertificateRef certificate = SecTrustGetCertificateAtIndex(serverTrust, index);
-			[(NSMutableArray *)certificates addObject:(id)certificate];
+			[certificates addObject:(__bridge id)certificate];
 		}
 		
 #else
 		
 		// OS X way of getting to the certs.
 		CSSM_TP_APPLE_EVIDENCE_INFO *statusChain;
-		errGetTrustResult = SecTrustGetResult(serverTrust, &checkResult, &certificates, &statusChain);
+        CFArrayRef cfCertificates;
+		errGetTrustResult = SecTrustGetResult(serverTrust, &checkResult, &cfCertificates, &statusChain);
+        certificates = (__bridge NSArray*)cfCertificates;
 		
 #endif
 		if (errGetTrustResult == noErr) {
 			// find if any cert in the chain matches the provided cert.
-			for (CFIndex index = 0; index < CFArrayGetCount(certificates); index++) {
-				SecCertificateRef certificate = (SecCertificateRef)CFArrayGetValueAtIndex(certificates, index);
-				CFDataRef certData = SecCertificateCopyData(certificate);
-				NSData *certificateData = [NSData dataWithData:(NSData *)certData];
-				CFRelease(certData);
+            for (id certificate in certificates) {
+				CFDataRef certData = SecCertificateCopyData((__bridge SecCertificateRef)certificate);
 				
-				NSString *certificateChecksum = [(NSData *)certificateData nx_SHA1Hexdigest];
+				NSString *certificateChecksum = [(__bridge_transfer NSData *)certData nx_SHA1Hexdigest];
 				NSString *anchorCertChecksum = [derCertData nx_SHA1Hexdigest];
 				
 				if ([anchorCertChecksum isEqualToString:certificateChecksum]) {
@@ -388,8 +373,7 @@ sendingProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)aSendingProgres
     NSLog(@"%.0fms (RESP) - %@", -[startDate timeIntervalSinceNow]*1000.0, [self descriptionForRequest:request]);
 #endif
     
-	[response release];
-	response = [theResponse retain];
+	response = theResponse;
 	
     if (savesData) {
         if (!data) {
@@ -517,7 +501,7 @@ sendingProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)aSendingProgres
 	BOOL schemeChanged = [aRequest.URL.scheme caseInsensitiveCompare:aRedirectResponse.URL.scheme] != NSOrderedSame;
 	BOOL schemeChangedToHTTPS = schemeChanged && ([aRequest.URL.scheme caseInsensitiveCompare:@"https"] == NSOrderedSame);
 	
-	NSMutableURLRequest *mutableRequest = [[aRequest mutableCopy] autorelease];
+	NSMutableURLRequest *mutableRequest = [aRequest mutableCopy];
 	mutableRequest.HTTPMethod = request.HTTPMethod;
 	
 	if (hostChanged || (schemeChanged && !schemeChangedToHTTPS)) {
@@ -543,7 +527,7 @@ sendingProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)aSendingProgres
 
 - (NSInputStream *)connection:(NSURLConnection *)connection needNewBodyStream:(NSURLRequest *)aRequest;
 {
-	return [[[NXOAuth2PostBodyStream alloc] initWithParameters:requestParameters] autorelease];
+	return [[NXOAuth2PostBodyStream alloc] initWithParameters:requestParameters];
 }
 
 - (BOOL)connection:(NSURLConnection *)connection canAuthenticateAgainstProtectionSpace:(NSURLProtectionSpace *)protectionSpace;

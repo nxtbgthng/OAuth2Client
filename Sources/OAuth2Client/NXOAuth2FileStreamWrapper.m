@@ -25,7 +25,7 @@
 
 + (id)wrapperWithStream:(NSInputStream *)aStream contentLength:(unsigned long long)aContentLength fileName:(NSString *)aFileName;
 {
-	return [[[self alloc] initWithStream:aStream contentLength:aContentLength fileName:aFileName] autorelease];
+	return [[self alloc] initWithStream:aStream contentLength:aContentLength fileName:aFileName];
 }
 
 
@@ -48,18 +48,11 @@
 	
 	self = [super init];
 	if (self) {
-		stream = [aStream retain];
+		stream = aStream;
 		contentLength = aContentLength;
 		fileName = [aFileName copy];
 	}
 	return self;
-}
-
-- (void)dealloc;
-{
-	[stream release];
-	[fileName release];
-	[super dealloc];
 }
 
 
