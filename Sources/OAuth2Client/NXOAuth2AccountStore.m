@@ -49,12 +49,12 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
 
 
 @interface NXOAuth2AccountStore () <NXOAuth2ClientDelegate, NXOAuth2TrustDelegate>
-@property (nonatomic, readwrite, retain) NSMutableDictionary *pendingOAuthClients;
-@property (nonatomic, readwrite, retain) NSMutableDictionary *accountsDict;
+@property (nonatomic, strong, readwrite) NSMutableDictionary *pendingOAuthClients;
+@property (nonatomic, strong, readwrite) NSMutableDictionary *accountsDict;
 
-@property (nonatomic, readwrite, retain) NSMutableDictionary *configurations;
-@property (nonatomic, readwrite, retain) NSMutableDictionary *trustModeHandler;
-@property (nonatomic, readwrite, retain) NSMutableDictionary *trustedCertificatesHandler;
+@property (nonatomic, strong, readwrite) NSMutableDictionary *configurations;
+@property (nonatomic, strong, readwrite) NSMutableDictionary *trustModeHandler;
+@property (nonatomic, strong, readwrite) NSMutableDictionary *trustedCertificatesHandler;
 
 #pragma mark OAuthClient to AccountType Relation
 - (NXOAuth2Client *)pendingOAuthClientForAccountType:(NSString *)accountType;
@@ -122,14 +122,8 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
 - (void)dealloc;
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-    
-    [pendingOAuthClients release];
-    [accountsDict release];
-    [configurations release];
-    [trustModeHandler release];
-    [trustedCertificatesHandler release];
-    [super dealloc];
 }
+
 
 #pragma mark Accessors
 
@@ -260,7 +254,7 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
                                     block:(NXOAuth2TrustModeHandler)handler;
 {
     @synchronized (self.trustModeHandler) {
-        [self.trustModeHandler setObject:[[handler copy] autorelease] forKey:accountType];
+        [self.trustModeHandler setObject:[handler copy] forKey:accountType];
     }
 }
 
@@ -268,7 +262,7 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
                                               block:(NXOAuth2TrustedCertificatesHandler)handler;
 {
     @synchronized (self.trustedCertificatesHandler) {
-        [self.trustedCertificatesHandler setObject:[[handler copy] autorelease] forKey:accountType];
+        [self.trustedCertificatesHandler setObject:[handler copy] forKey:accountType];
     }
 }
 
@@ -301,13 +295,13 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
                 // WORKAROUND: The URL which is passed to this method may be lower case also the scheme is registered in camel case. Therefor replace the prefix with the stored redirectURL.
                 if (fixedRedirectURL == nil) {
                     if ([aURL.scheme isEqualToString:redirectURL.scheme]) {
-                        fixedRedirectURL = [aURL retain];
+                        fixedRedirectURL = aURL;
                     } else {
                         NSRange prefixRange;
                         prefixRange.location = 0;
                         prefixRange.length = [redirectURL.absoluteString length];
-                        fixedRedirectURL = [[NSURL URLWithString:[aURL.absoluteString stringByReplacingCharactersInRange:prefixRange
-                                                                                                             withString:redirectURL.absoluteString]] retain];
+                        fixedRedirectURL = [NSURL URLWithString:[aURL.absoluteString stringByReplacingCharactersInRange:prefixRange
+                                                                                                             withString:redirectURL.absoluteString]];
                     }
                 }
                 
@@ -347,11 +341,11 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
             NSURL *authorizeURL = [configuration objectForKey:kNXOAuth2AccountStoreConfigurationAuthorizeURL];
             NSURL *tokenURL = [configuration objectForKey:kNXOAuth2AccountStoreConfigurationTokenURL];
             
-            client = [[[NXOAuth2Client alloc] initWithClientID:clientID
-                                                  clientSecret:clientSecret
-                                                  authorizeURL:authorizeURL
-                                                      tokenURL:tokenURL
-                                                      delegate:self] autorelease];
+            client = [[NXOAuth2Client alloc] initWithClientID:clientID
+                                                 clientSecret:clientSecret
+                                                 authorizeURL:authorizeURL
+                                                     tokenURL:tokenURL
+                                                     delegate:self];
             client.persistent = NO;
             
             [self.pendingOAuthClients setObject:client forKey:accountType];
@@ -406,7 +400,7 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
         [self.pendingOAuthClients removeObjectForKey:accountType];
     }
     
-    NXOAuth2Account *account = [[[NXOAuth2Account alloc] initAccountWithOAuthClient:client accountType:accountType] autorelease];
+    NXOAuth2Account *account = [[NXOAuth2Account alloc] initAccountWithOAuthClient:client accountType:accountType];
     @synchronized (self.accountsDict) {
         [self.accountsDict setValue:account forKey:account.identifier];
         [NXOAuth2AccountStore storeAccountsInDefaultKeychain:self.accountsDict];
@@ -514,7 +508,7 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
     
     NSDictionary *result = nil;
 	NSDictionary *query = [NSDictionary dictionaryWithObjectsAndKeys:
-						   (NSString *)kSecClassGenericPassword, kSecClass,
+						   (__bridge NSString *)kSecClassGenericPassword, kSecClass,
 						   serviceName, kSecAttrService,
 						   kCFBooleanTrue, kSecReturnAttributes,
 						   nil];
@@ -527,7 +521,7 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
 		return nil;
 	}
 	
-	return [NSKeyedUnarchiver unarchiveObjectWithData:[result objectForKey:(NSString *)kSecAttrGeneric]];
+	return [NSKeyedUnarchiver unarchiveObjectWithData:[result objectForKey:(__bridge NSString *)kSecAttrGeneric]];
 }
 
 + (void)storeAccountsInDefaultKeychain:(NSDictionary *)accounts;
@@ -538,7 +532,7 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
     
     NSData *data = [NSKeyedArchiver archivedDataWithRootObject:accounts];
 	NSDictionary *query = [NSDictionary dictionaryWithObjectsAndKeys:
-						   (NSString *)kSecClassGenericPassword, kSecClass,
+						   (__bridge NSString *)kSecClassGenericPassword, kSecClass,
 						   serviceName, kSecAttrService,
 						   @"OAuth 2 Account Store", kSecAttrLabel,
 						   data, kSecAttrGeneric,
@@ -551,7 +545,7 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
 {
     NSString *serviceName = [self keychainServiceName];
     NSDictionary *query = [NSDictionary dictionaryWithObjectsAndKeys:
-						   (NSString *)kSecClassGenericPassword, kSecClass,
+						   (__bridge NSString *)kSecClassGenericPassword, kSecClass,
 						   serviceName, kSecAttrService,
 						   nil];
 	OSStatus __attribute__((unused)) err = SecItemDelete((__bridge CFDictionaryRef)query);

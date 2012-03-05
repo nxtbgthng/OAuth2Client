@@ -19,7 +19,7 @@
 	unsigned long long	contentLength;
 	NSString			*fileName;
 }
-@property (nonatomic, retain, readonly) NSInputStream *stream;
+@property (nonatomic, strong, readonly) NSInputStream *stream;
 @property (nonatomic, assign, readonly) unsigned long long contentLength;
 @property (nonatomic, copy, readonly) NSString *fileName;
 

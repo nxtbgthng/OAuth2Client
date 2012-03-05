@@ -61,7 +61,7 @@ typedef void(^NXOAuth2PreparedAuthorizationURLHandler)(NSURL *preparedURL);
 
 #pragma mark Accessors
 
-@property(nonatomic, readonly) NSArray *accounts;
+@property(nonatomic, strong, readonly) NSArray *accounts;
 - (NSArray *)accountsWithAccountType:(NSString *)accountType;
 - (NXOAuth2Account *)accountWithIdentifier:(NSString *)identifier;
 

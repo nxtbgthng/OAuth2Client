@@ -51,11 +51,11 @@
 	if (expiresIn) {
 		expiryDate = [NSDate dateWithTimeIntervalSinceNow:[expiresIn integerValue]];
 	}
-	return [[[[self class] alloc] initWithAccessToken:anAccessToken
+	return [[[self class] alloc] initWithAccessToken:anAccessToken
 										 refreshToken:aRefreshToken
 											expiresAt:expiryDate
 												scope:scope
-                                         responseBody:theResponseBody] autorelease];
+                                         responseBody:theResponseBody];
 }
 
 - (id)initWithAccessToken:(NSString *)anAccessToken;
@@ -93,15 +93,6 @@
 	return self;
 }
 
-- (void)dealloc;
-{
-	[accessToken release];
-	[refreshToken release];
-	[expiresAt release];
-	[scope release];
-    [responseBody release];
-	[super dealloc];
-}
 
 
 #pragma mark Accessors
@@ -170,7 +161,7 @@
 	NSString *serviceName = [[self class] serviceNameWithProvider:provider];
 	NSDictionary *result = nil;
 	NSDictionary *query = [NSDictionary dictionaryWithObjectsAndKeys:
-						   (NSString *)kSecClassGenericPassword, kSecClass,
+						   (__bridge NSString *)kSecClassGenericPassword, kSecClass,
 						   serviceName, kSecAttrService,
 						   kCFBooleanTrue, kSecReturnAttributes,
 						   nil];
@@ -183,7 +174,7 @@
 		return nil;
 	}
 	
-	return [NSKeyedUnarchiver unarchiveObjectWithData:[result objectForKey:(NSString *)kSecAttrGeneric]];
+	return [NSKeyedUnarchiver unarchiveObjectWithData:[result objectForKey:(__bridge NSString *)kSecAttrGeneric]];
 }
 
 - (void)storeInDefaultKeychainWithServiceProviderName:(NSString *)provider;
@@ -191,7 +182,7 @@
 	NSString *serviceName = [[self class] serviceNameWithProvider:provider];
 	NSData *data = [NSKeyedArchiver archivedDataWithRootObject:self];
 	NSDictionary *query = [NSDictionary dictionaryWithObjectsAndKeys:
-						   (NSString *)kSecClassGenericPassword, kSecClass,
+						   (__bridge NSString *)kSecClassGenericPassword, kSecClass,
 						   serviceName, kSecAttrService,
 						   @"OAuth 2 Access Token", kSecAttrLabel,
 						   data, kSecAttrGeneric,
@@ -205,7 +196,7 @@
 {
 	NSString *serviceName = [[self class] serviceNameWithProvider:provider];
 	NSDictionary *query = [NSDictionary dictionaryWithObjectsAndKeys:
-						   (NSString *)kSecClassGenericPassword, kSecClass,
+						   (__bridge NSString *)kSecClassGenericPassword, kSecClass,
 						   serviceName, kSecAttrService,
 						   nil];
 	OSStatus __attribute__((unused)) err = SecItemDelete((__bridge CFDictionaryRef)query);

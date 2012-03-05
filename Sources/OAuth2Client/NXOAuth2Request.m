@@ -23,8 +23,8 @@
 #import "NXOAuth2Request.h"
 
 @interface NXOAuth2Request () <NXOAuth2ConnectionDelegate>
-@property (nonatomic, retain) NXOAuth2Connection *connection;
-@property (nonatomic, retain) NXOAuth2Request *me;
+@property (nonatomic,  strong, readwrite) NXOAuth2Connection *connection;
+@property (nonatomic,  strong, readwrite) NXOAuth2Request *me;
 #pragma mark Apply Parameters
 - (void)applyParameters:(NSDictionary *)someParameters onRequest:(NSMutableURLRequest *)aRequest;
 @end
@@ -41,9 +41,9 @@
   sendProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)progressHandler
       responseHandler:(NXOAuth2ConnectionResponseHandler)responseHandler;
 {
-    NXOAuth2Request *request = [[[NXOAuth2Request alloc] initWithResource:aResource
-                                                                   method:aMethod
-                                                               parameters:someParameters] autorelease];
+    NXOAuth2Request *request = [[NXOAuth2Request alloc] initWithResource:aResource
+                                                                  method:aMethod
+                                                              parameters:someParameters];
     request.account = anAccount;
     [request performRequestWithSendingProgressHandler:progressHandler responseHandler:responseHandler];
 }
@@ -55,21 +55,11 @@
 {
     self = [super init];
     if (self) {
-        resource = [aResource retain];
-        parameters = [someParameters retain];
-        requestMethod = [aMethod retain];
+        resource = aResource;
+        parameters = someParameters;
+        requestMethod = aMethod;
     }
     return self;
-}
-
-- (void)dealloc;
-{
-    [parameters release];
-    [resource release];
-    [requestMethod release];
-    [account release];
-    [connection release];
-    [super dealloc];
 }
 
 
@@ -115,11 +105,11 @@
     
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:self.resource];
     [request setHTTPMethod:self.requestMethod];
-    self.connection = [[[NXOAuth2Connection alloc] initWithRequest:request
-                                                 requestParameters:self.parameters
-                                                       oauthClient:self.account.oauthClient
-                                            sendingProgressHandler:progressHandler
-                                                   responseHandler:responseHandler] autorelease];
+    self.connection = [[NXOAuth2Connection alloc] initWithRequest:request
+                                                requestParameters:self.parameters
+                                                      oauthClient:self.account.oauthClient
+                                           sendingProgressHandler:progressHandler
+                                                  responseHandler:responseHandler];
     self.connection.delegate = self;
     
     // Keep request object alive during the request is performing.
@@ -179,7 +169,6 @@
 		[aRequest setValue:contentLength forHTTPHeaderField:@"Content-Length"];
 		
 		[aRequest setHTTPBodyStream:postBodyStream];
-		[postBodyStream release];
 	}
 }
 

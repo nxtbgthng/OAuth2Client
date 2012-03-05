@@ -20,9 +20,9 @@
 	unsigned long long	contentLength;
 }
 
-@property (readonly) NSString		*contentHeaders;
-@property (readonly) NSInputStream	*contentStream;
-@property (readonly) unsigned long long	contentLength;
+@property (nonatomic, strong, readonly) NSString		*contentHeaders;
+@property (nonatomic, strong, readonly) NSInputStream	*contentStream;
+@property (nonatomic, assign, readonly) unsigned long long	contentLength;
 
 
 /*!

@@ -72,7 +72,7 @@
 - (NSString *)nxoauth2_URLDecodedString;
 {
     CFStringRef cfResult = CFURLCreateStringByReplacingPercentEscapesUsingEncoding(kCFAllocatorDefault,
-                                                                                 (CFStringRef)self,
+                                                                                 (__bridge CFStringRef)self,
                                                                                  CFSTR(""),
                                                                                  kCFStringEncodingUTF8);
     __autoreleasing NSString *result = (__bridge_transfer NSString *)cfResult;
