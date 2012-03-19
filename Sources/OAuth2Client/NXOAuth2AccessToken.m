@@ -82,6 +82,11 @@
 
 - (id)initWithAccessToken:(NSString *)anAccessToken refreshToken:(NSString *)aRefreshToken expiresAt:(NSDate *)anExpiryDate scope:(NSSet *)aScope responseBody:(NSString *)aResponseBody;
 {
+	// a token object without an actual token is not what we want!
+	if (anAccessToken == nil) {
+		return nil;
+	}
+	
 	self = [super init];
 	if (self) {
 		accessToken  = [anAccessToken copy];
@@ -142,9 +147,16 @@
 
 - (id)initWithCoder:(NSCoder *)aDecoder
 {
+	NSString *decodedAccessToken = [aDecoder decodeObjectForKey:@"accessToken"];
+	
+	// a token object without an actual token is not what we want!
+	if (decodedAccessToken == nil) {
+		return nil;
+	}
+	
     self = [super init];
 	if (self) {
-		accessToken = [[aDecoder decodeObjectForKey:@"accessToken"] copy];
+		accessToken = [decodedAccessToken copy];
 		refreshToken = [[aDecoder decodeObjectForKey:@"refreshToken"] copy];
 		expiresAt = [[aDecoder decodeObjectForKey:@"expiresAt"] copy];
         scope = [[aDecoder decodeObjectForKey:@"scope"] copy];
