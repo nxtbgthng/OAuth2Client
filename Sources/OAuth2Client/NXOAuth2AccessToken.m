@@ -22,21 +22,30 @@
 
 + (id)tokenWithResponseBody:(NSString *)theResponseBody;
 {
-	// do we really need a JSON dependency? We can easily split this up ourselfs
-	NSString *normalizedRsponseBody = [[[theResponseBody stringByReplacingOccurrencesOfString:@"{" withString:@""]
-                                        stringByReplacingOccurrencesOfString:@"}" withString:@""]
-                                       stringByReplacingOccurrencesOfString:@"\"" withString:@""];
-	NSMutableDictionary *jsonDict = [NSMutableDictionary dictionary];
-	for (NSString *keyValuePair in [normalizedRsponseBody componentsSeparatedByString:@","]) {
-		NSArray *keyAndValue = [keyValuePair componentsSeparatedByString:@":"];
-		if (keyAndValue.count == 2) {
-			NSString *key = [keyAndValue objectAtIndex:0];
-			NSString *value = [keyAndValue objectAtIndex:1];
-			key = [key stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
-			value = [value stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
-		    [jsonDict setObject:value forKey:key];
-		}
-	}
+    NSDictionary *jsonDict = nil;
+    Class jsonSerializationClass = NSClassFromString(@"NSJSONSerialization");
+    if (jsonSerializationClass) {
+        NSError *error = nil;
+        NSData *data = [theResponseBody dataUsingEncoding:NSUTF8StringEncoding];
+        jsonDict = [jsonSerializationClass JSONObjectWithData:data options:0 error:&error];
+    } else {
+        // do we really need a JSON dependency? We can easily split this up ourselfs
+        NSString *normalizedResponseBody = [[[theResponseBody stringByReplacingOccurrencesOfString:@"{" withString:@""]
+                                             stringByReplacingOccurrencesOfString:@"}" withString:@""]
+                                            stringByReplacingOccurrencesOfString:@"\"" withString:@""];
+        NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+        for (NSString *keyValuePair in [normalizedResponseBody componentsSeparatedByString:@","]) {
+            NSArray *keyAndValue = [keyValuePair componentsSeparatedByString:@":"];
+            if (keyAndValue.count == 2) {
+                NSString *key = [keyAndValue objectAtIndex:0];
+                NSString *value = [keyAndValue objectAtIndex:1];
+                key = [key stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+                value = [value stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+                [dict setObject:value forKey:key];
+            }
+        }
+        jsonDict = dict;
+    }
 	NSString *expiresIn = [jsonDict objectForKey:@"expires_in"];
 	NSString *anAccessToken = [jsonDict objectForKey:@"access_token"];
 	NSString *aRefreshToken = [jsonDict objectForKey:@"refresh_token"];
@@ -83,6 +92,7 @@
 - (id)initWithAccessToken:(NSString *)anAccessToken refreshToken:(NSString *)aRefreshToken expiresAt:(NSDate *)anExpiryDate scope:(NSSet *)aScope responseBody:(NSString *)aResponseBody;
 {
 	// a token object without an actual token is not what we want!
+    NSAssert1(anAccessToken, @"No token from token response: %@", aResponseBody);
 	if (anAccessToken == nil) {
 		return nil;
 	}
