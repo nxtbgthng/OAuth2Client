@@ -22,7 +22,7 @@
 /*!
  *	The connection
  *	
- *	NXOAuth2Connection is a wrapper around NXURLConnection.
+ *	NXOAuth2Connection is a wrapper around NSURLConnection.
  *	It's main purpose is to simplify the delegates & to provide a context
  *	ivar that can be used to put a connection object in a certain context.
  *	The context may be compared to a tag.
