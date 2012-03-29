@@ -4,10 +4,10 @@
 //
 //  Created by Ullrich Schäfer on 27.08.10.
 //
-//  Copyright 2010 nxtbgthng. All rights reserved. 
+//  Copyright 2010 nxtbgthng. All rights reserved.
 //
 //  Licenced under the new BSD-licence.
-//  See README.md in this repository for 
+//  See README.md in this repository for
 //  the full licence.
 //
 
@@ -16,13 +16,13 @@
 
 
 @interface NXOAuth2PostBodyStream : NSInputStream {
-	NSString		*boundary;
-	
-    NSArray			*contentStreams;
-    NSInputStream	*currentStream;	// assigned (is retained by contentStreams)
-    NSUInteger		streamIndex;
-	
-	unsigned long long numBytesTotal;
+    NSString        *boundary;
+    
+    NSArray            *contentStreams;
+    NSInputStream    *currentStream;    // assigned (is retained by contentStreams)
+    NSUInteger        streamIndex;
+    
+    unsigned long long numBytesTotal;
 }
 
 - (id)initWithParameters:(NSDictionary *)postParameters;

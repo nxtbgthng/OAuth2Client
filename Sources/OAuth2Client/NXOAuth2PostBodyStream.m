@@ -4,10 +4,10 @@
 //
 //  Created by Ullrich Schäfer on 27.08.10.
 //
-//  Copyright 2010 nxtbgthng. All rights reserved. 
+//  Copyright 2010 nxtbgthng. All rights reserved.
 //
 //  Licenced under the new BSD-licence.
-//  See README.md in this repository for 
+//  See README.md in this repository for
 //  the full licence.
 //
 
@@ -28,20 +28,20 @@
 
 - (id)initWithParameters:(NSDictionary *)postParameters;
 {
-	self = [self init];
-	if (self) {
-		srandom(time(NULL));
-		boundary = [[NSString alloc] initWithFormat:@"------------nx-oauth2%d", rand()];
-		numBytesTotal = 0;
-		streamIndex = 0;
-		
-		if (postParameters) {
-			contentStreams = [self streamsForParameters:postParameters contentLength:&numBytesTotal];
-		} else {
-			contentStreams = [[NSArray alloc] init];
-		}
-	}
-	return self;
+    self = [self init];
+    if (self) {
+        srandom(time(NULL));
+        boundary = [[NSString alloc] initWithFormat:@"------------nx-oauth2%d", rand()];
+        numBytesTotal = 0;
+        streamIndex = 0;
+        
+        if (postParameters) {
+            contentStreams = [self streamsForParameters:postParameters contentLength:&numBytesTotal];
+        } else {
+            contentStreams = [[NSArray alloc] init];
+        }
+    }
+    return self;
 }
 
 
@@ -56,35 +56,35 @@
 
 - (NSArray *)partsForParameters:(NSDictionary *)parameters;
 {
-	NSMutableArray *parts = [NSMutableArray array];
-	for (NSString *key in parameters) {
-		id value = [parameters valueForKey:key];
-		if ([value isKindOfClass:[NSArray class]]) {
-			NSArray *contentArray = (NSArray *)value;
-			for (id content in contentArray) {
-				NXOAuth2PostBodyPart *part = [[NXOAuth2PostBodyPart alloc] initWithName:key content:content];
-				[parts addObject:part];
-			}
-		} else {
-			NXOAuth2PostBodyPart *part = [[NXOAuth2PostBodyPart alloc] initWithName:key content:value];
-			[parts addObject:part];
-		}
-	}
-	return parts;
+    NSMutableArray *parts = [NSMutableArray array];
+    for (NSString *key in parameters) {
+        id value = [parameters valueForKey:key];
+        if ([value isKindOfClass:[NSArray class]]) {
+            NSArray *contentArray = (NSArray *)value;
+            for (id content in contentArray) {
+                NXOAuth2PostBodyPart *part = [[NXOAuth2PostBodyPart alloc] initWithName:key content:content];
+                [parts addObject:part];
+            }
+        } else {
+            NXOAuth2PostBodyPart *part = [[NXOAuth2PostBodyPart alloc] initWithName:key content:value];
+            [parts addObject:part];
+        }
+    }
+    return parts;
 }
 
 - (NSArray *)streamsForParameters:(NSDictionary *)parameters contentLength:(unsigned long long *)contentLength;
 {
-	NSArray *parts = [self partsForParameters:parameters];
-	NSMutableArray *streams = [NSMutableArray array];
-	
-	NSString *firstDelimiter = [NSString stringWithFormat: @"--%@\r\n", boundary];
+    NSArray *parts = [self partsForParameters:parameters];
+    NSMutableArray *streams = [NSMutableArray array];
+    
+    NSString *firstDelimiter = [NSString stringWithFormat: @"--%@\r\n", boundary];
     NSString *middleDelimiter = [NSString stringWithFormat: @"\r\n--%@\r\n", boundary];
     NSString *finalDelimiter = [NSString stringWithFormat: @"\r\n--%@--\r\n", boundary];
-	
+    
     NSString *delimiter = firstDelimiter;
     for (NXOAuth2PostBodyPart *part in parts) {
-		@autoreleasepool {
+        @autoreleasepool {
             NSData *delimiterData = [delimiter dataUsingEncoding:NSUTF8StringEncoding];
             NSData *contentHeaderData = [[part contentHeaders] dataUsingEncoding:NSUTF8StringEncoding];
             
@@ -101,15 +101,15 @@
             *contentLength += [part contentLength];
             
             delimiter = middleDelimiter;
-		}
+        }
     }
     
     NSData *finalDelimiterData = [finalDelimiter dataUsingEncoding:NSUTF8StringEncoding];
     NSInputStream *finalDelimiterStream = [NSInputStream inputStreamWithData:finalDelimiterData];
     [streams addObject:finalDelimiterStream];
     *contentLength += [finalDelimiterData length];
-	
-	return streams;
+    
+    return streams;
 }
 
 #pragma mark NSInputStream subclassing
@@ -122,68 +122,68 @@
     }
     [contentStreams makeObjectsPerformSelector:@selector(open)];
     currentStream = nil;
-	streamIndex = 0;
+    streamIndex = 0;
     if (contentStreams.count > 0)
         currentStream = [contentStreams objectAtIndex: streamIndex];
 }
 
 - (void)close;
 {
-	[contentStreams makeObjectsPerformSelector:@selector(close)];
-	contentStreams = nil;
-	boundary = nil;
-	currentStream = nil;
+    [contentStreams makeObjectsPerformSelector:@selector(close)];
+    contentStreams = nil;
+    boundary = nil;
+    currentStream = nil;
 }
 
 - (BOOL)hasBytesAvailable;
 {
-	// returns YES if the stream has bytes available or if it impossible to tell without actually doing the read.
-	return YES;
+    // returns YES if the stream has bytes available or if it impossible to tell without actually doing the read.
+    return YES;
 }
 
 - (NSInteger)read:(uint8_t *)buffer maxLength:(NSUInteger)len;
 {
-	if (currentStream == nil)
+    if (currentStream == nil)
         return 0;
-	
+    
     int result = [currentStream read:buffer maxLength:len];
-	
+    
     if (result == 0) {
-		if (streamIndex < contentStreams.count - 1) {
-			streamIndex++;
-			currentStream = [contentStreams objectAtIndex:streamIndex];
-			result = [self read:buffer maxLength:len];
-		} else {
-			currentStream = nil;
-		}
-	}
+        if (streamIndex < contentStreams.count - 1) {
+            streamIndex++;
+            currentStream = [contentStreams objectAtIndex:streamIndex];
+            result = [self read:buffer maxLength:len];
+        } else {
+            currentStream = nil;
+        }
+    }
     return result;
 }
 
 - (BOOL)getBuffer:(uint8_t **)buffer length:(NSUInteger *)len;
 {
-	return NO;
+    return NO;
 }
 
 - (NSStreamStatus)streamStatus;
 {
-	NSStreamStatus status = NSStreamStatusNotOpen;
-	
-	if (currentStream != nil) {
-		status = [currentStream streamStatus];
-		if ((status == NSStreamStatusAtEnd || status == NSStreamStatusClosed)
-			&& streamIndex < [contentStreams count] - 1)
-			status = NSStreamStatusReading;
-	}
-	
-	return status;
+    NSStreamStatus status = NSStreamStatusNotOpen;
+    
+    if (currentStream != nil) {
+        status = [currentStream streamStatus];
+        if ((status == NSStreamStatusAtEnd || status == NSStreamStatusClosed)
+            && streamIndex < [contentStreams count] - 1)
+            status = NSStreamStatusReading;
+    }
+    
+    return status;
 }
 
 - (NSError *)streamError;
 {
-	if(currentStream)
-		return [currentStream streamError];
-	return nil;
+    if(currentStream)
+        return [currentStream streamError];
+    return nil;
 }
 
 
@@ -191,12 +191,12 @@
 
 - (void)scheduleInRunLoop:(NSRunLoop *)runLoop forMode:(NSString *)mode;
 {
-	[super scheduleInRunLoop:runLoop forMode:mode];
+    [super scheduleInRunLoop:runLoop forMode:mode];
 }
 
 - (void)removeFromRunLoop:(NSRunLoop *)runLoop forMode:(NSString *)mode;
 {
-	[super removeFromRunLoop:runLoop forMode:mode];
+    [super removeFromRunLoop:runLoop forMode:mode];
 }
 
 
@@ -205,15 +205,15 @@
 - (void)_scheduleInCFRunLoop:(NSRunLoop *)inRunLoop forMode:(id)inMode;
 {
     // Safe to ignore this?
-	// maybe call this on all child streams?
+    // maybe call this on all child streams?
 }
 
 - (void)_setCFClientFlags:(CFOptionFlags)inFlags
-				 callback:(CFReadStreamClientCallBack)inCallback
-				  context:(CFStreamClientContext)inContext;
+                 callback:(CFReadStreamClientCallBack)inCallback
+                  context:(CFStreamClientContext)inContext;
 {
     // Safe to ignore this?
-	// maybe call this on all child streams?
+    // maybe call this on all child streams?
 }
 
 @end

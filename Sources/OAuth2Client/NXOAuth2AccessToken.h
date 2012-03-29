@@ -4,10 +4,10 @@
 //
 //  Created by Ullrich Schäfer on 27.08.10.
 //
-//  Copyright 2010 nxtbgthng. All rights reserved. 
+//  Copyright 2010 nxtbgthng. All rights reserved.
 //
 //  Licenced under the new BSD-licence.
-//  See README.md in this repository for 
+//  See README.md in this repository for
 //  the full licence.
 //
 
@@ -17,10 +17,10 @@
 
 @interface NXOAuth2AccessToken : NSObject <NSCoding> {
 @private
-	NSString *accessToken;
-	NSString *refreshToken;
-	NSDate *expiresAt;
-	NSSet *scope;
+    NSString *accessToken;
+    NSString *refreshToken;
+    NSDate *expiresAt;
+    NSSet *scope;
     NSString *responseBody;
 }
 @property (nonatomic, readonly) NSString *accessToken;

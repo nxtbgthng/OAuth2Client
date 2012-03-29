@@ -7,7 +7,7 @@
 //  Copyright 2011 nxtbgthng. All rights reserved.
 //
 //  Licenced under the new BSD-licence.
-//  See README.md in this repository for 
+//  See README.md in this repository for
 //  the full licence.
 //
 
@@ -173,21 +173,21 @@ NSString * const NXOAuth2AccountDidFailToGetAccessTokenNotification = @"NXOAuth2
 
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
-	[aCoder encodeObject:identifier forKey:@"identifier"];
+    [aCoder encodeObject:identifier forKey:@"identifier"];
     [aCoder encodeObject:accountType forKey:@"accountType"];
-	[aCoder encodeObject:accessToken forKey:@"accessToken"];
+    [aCoder encodeObject:accessToken forKey:@"accessToken"];
     [aCoder encodeObject:userData forKey:@"userData"];
 }
 
 - (id)initWithCoder:(NSCoder *)aDecoder
 {
-	if (self = [super init]) {
+    if (self = [super init]) {
         userData = [aDecoder decodeObjectForKey:@"userData"];
         accessToken = [aDecoder decodeObjectForKey:@"accessToken"];
-		accountType = [[aDecoder decodeObjectForKey:@"accountType"] copy];
+        accountType = [[aDecoder decodeObjectForKey:@"accountType"] copy];
         identifier = [[aDecoder decodeObjectForKey:@"identifier"] copy];
-	}
-	return self;
+    }
+    return self;
 }
 
 @end

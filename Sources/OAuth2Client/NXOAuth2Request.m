@@ -7,7 +7,7 @@
 //  Copyright 2011 nxtbgthng. All rights reserved.
 //
 //  Licenced under the new BSD-licence.
-//  See README.md in this repository for 
+//  See README.md in this repository for
 //  the full licence.
 //
 
@@ -154,22 +154,22 @@
 
 - (void)applyParameters:(NSDictionary *)someParameters onRequest:(NSMutableURLRequest *)aRequest;
 {
-	if (!someParameters) return;
-	
-	NSString *httpMethod = [aRequest HTTPMethod];
-	if ([httpMethod caseInsensitiveCompare:@"POST"] != NSOrderedSame
-		&& [httpMethod caseInsensitiveCompare:@"PUT"] != NSOrderedSame) {
-		aRequest.URL = [aRequest.URL nxoauth2_URLByAddingParameters:someParameters];
-	} else {
-		NSInputStream *postBodyStream = [[NXOAuth2PostBodyStream alloc] initWithParameters:parameters];
-		
-		NSString *contentType = [NSString stringWithFormat:@"multipart/form-data; boundary=%@", [(NXOAuth2PostBodyStream *)postBodyStream boundary]];
-		NSString *contentLength = [NSString stringWithFormat:@"%d", [(NXOAuth2PostBodyStream *)postBodyStream length]];
-		[aRequest setValue:contentType forHTTPHeaderField:@"Content-Type"];
-		[aRequest setValue:contentLength forHTTPHeaderField:@"Content-Length"];
-		
-		[aRequest setHTTPBodyStream:postBodyStream];
-	}
+    if (!someParameters) return;
+    
+    NSString *httpMethod = [aRequest HTTPMethod];
+    if ([httpMethod caseInsensitiveCompare:@"POST"] != NSOrderedSame
+        && [httpMethod caseInsensitiveCompare:@"PUT"] != NSOrderedSame) {
+        aRequest.URL = [aRequest.URL nxoauth2_URLByAddingParameters:someParameters];
+    } else {
+        NSInputStream *postBodyStream = [[NXOAuth2PostBodyStream alloc] initWithParameters:parameters];
+        
+        NSString *contentType = [NSString stringWithFormat:@"multipart/form-data; boundary=%@", [(NXOAuth2PostBodyStream *)postBodyStream boundary]];
+        NSString *contentLength = [NSString stringWithFormat:@"%d", [(NXOAuth2PostBodyStream *)postBodyStream length]];
+        [aRequest setValue:contentType forHTTPHeaderField:@"Content-Type"];
+        [aRequest setValue:contentLength forHTTPHeaderField:@"Content-Length"];
+        
+        [aRequest setHTTPBodyStream:postBodyStream];
+    }
 }
 
 @end

@@ -7,7 +7,7 @@
 //  Copyright 2011 nxtbgthng. All rights reserved.
 //
 //  Licenced under the new BSD-licence.
-//  See README.md in this repository for 
+//  See README.md in this repository for
 //  the full licence.
 //
 
@@ -18,7 +18,7 @@
 @class NXOAuth2Account;
 
 @interface NXOAuth2Request : NSObject {
-@private    
+@private
     NSDictionary *parameters;
     NSURL *resource;
     NSString *requestMethod;

@@ -4,10 +4,10 @@
 //
 //  Created by Ullrich Schäfer on 27.08.10.
 //
-//  Copyright 2010 nxtbgthng. All rights reserved. 
+//  Copyright 2010 nxtbgthng. All rights reserved.
 //
 //  Licenced under the new BSD-licence.
-//  See README.md in this repository for 
+//  See README.md in this repository for
 //  the full licence.
 //
 
@@ -34,26 +34,26 @@ extern NSString * const NXOAuth2ClientConnectionContextTokenRefresh;
 @interface NXOAuth2Client : NSObject <NXOAuth2ConnectionDelegate> {
 @protected
     BOOL authenticating;
-	BOOL persistent;
+    BOOL persistent;
 
-	NSString	*clientId;
-	NSString	*clientSecret;
-	
+    NSString    *clientId;
+    NSString    *clientSecret;
+    
     NSSet       *desiredScope;
-	NSString	*userAgent;
-	
-	// server information
-	NSURL		*authorizeURL;
-	NSURL		*tokenURL;
-	
-	// token exchange
-	NXOAuth2Connection	*authConnection;
-	NXOAuth2AccessToken	*accessToken;
-	NSMutableArray	*waitingConnections; //for connections that are waiting for successful authorisation
-	NSInteger		refreshConnectionDidRetryCount;
-	
-	// delegates
-	NSObject<NXOAuth2ClientDelegate>*	__unsafe_unretained delegate;	// assigned
+    NSString    *userAgent;
+    
+    // server information
+    NSURL        *authorizeURL;
+    NSURL        *tokenURL;
+    
+    // token exchange
+    NXOAuth2Connection    *authConnection;
+    NXOAuth2AccessToken    *accessToken;
+    NSMutableArray    *waitingConnections; //for connections that are waiting for successful authorisation
+    NSInteger        refreshConnectionDidRetryCount;
+    
+    // delegates
+    NSObject<NXOAuth2ClientDelegate>*    __unsafe_unretained delegate;    // assigned
 }
 
 @property (nonatomic, readonly, getter = isAuthenticating) BOOL authenticating;
@@ -64,8 +64,8 @@ extern NSString * const NXOAuth2ClientConnectionContextTokenRefresh;
 @property (nonatomic, copy) NSSet *desiredScope;
 @property (nonatomic, copy) NSString *userAgent;
 
-@property (nonatomic, strong) NXOAuth2AccessToken	*accessToken;
-@property (nonatomic, unsafe_unretained) NSObject<NXOAuth2ClientDelegate>*	delegate;
+@property (nonatomic, strong) NXOAuth2AccessToken    *accessToken;
+@property (nonatomic, unsafe_unretained) NSObject<NXOAuth2ClientDelegate>*    delegate;
 
 /*!
  * If set to NO, the access token is not stored any keychain, will be removed if it was.
@@ -77,15 +77,15 @@ extern NSString * const NXOAuth2ClientConnectionContextTokenRefresh;
  * Initializes the Client
  */
 - (id)initWithClientID:(NSString *)clientId
-		  clientSecret:(NSString *)clientSecret
-		  authorizeURL:(NSURL *)authorizeURL
-			  tokenURL:(NSURL *)tokenURL
+          clientSecret:(NSString *)clientSecret
+          authorizeURL:(NSURL *)authorizeURL
+              tokenURL:(NSURL *)tokenURL
               delegate:(NSObject<NXOAuth2ClientDelegate> *)delegate;
 
 - (id)initWithClientID:(NSString *)clientId
-		  clientSecret:(NSString *)clientSecret
-		  authorizeURL:(NSURL *)authorizeURL
-			  tokenURL:(NSURL *)tokenURL
+          clientSecret:(NSString *)clientSecret
+          authorizeURL:(NSURL *)authorizeURL
+              tokenURL:(NSURL *)tokenURL
            accessToken:(NXOAuth2AccessToken *)accessToken
             persistent:(BOOL)shouldPersist
               delegate:(NSObject<NXOAuth2ClientDelegate> *)delegate;
@@ -108,7 +108,7 @@ extern NSString * const NXOAuth2ClientConnectionContextTokenRefresh;
 /*!
  * Authenticate with username & password (User Credentials Flow)
  */
-- (void)authenticateWithUsername:(NSString *)username password:(NSString *)password;	
+- (void)authenticateWithUsername:(NSString *)username password:(NSString *)password;
 
 #pragma mark Public
 

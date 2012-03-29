@@ -4,10 +4,10 @@
 //
 //  Created by Thomas Kollbach on 18.05.11
 //
-//  Copyright 2011 nxtbgthng. All rights reserved. 
+//  Copyright 2011 nxtbgthng. All rights reserved.
 //
 //  Licenced under the new BSD-licence.
-//  See README.md in this repository for 
+//  See README.md in this repository for
 //  the full licence.
 //
 
