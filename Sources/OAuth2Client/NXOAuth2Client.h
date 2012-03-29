@@ -53,7 +53,7 @@ extern NSString * const NXOAuth2ClientConnectionContextTokenRefresh;
 	NSInteger		refreshConnectionDidRetryCount;
 	
 	// delegates
-	NSObject<NXOAuth2ClientDelegate>*	delegate;	// assigned
+	NSObject<NXOAuth2ClientDelegate>*	__unsafe_unretained delegate;	// assigned
 }
 
 @property (nonatomic, readonly, getter = isAuthenticating) BOOL authenticating;
@@ -64,8 +64,8 @@ extern NSString * const NXOAuth2ClientConnectionContextTokenRefresh;
 @property (nonatomic, copy) NSSet *desiredScope;
 @property (nonatomic, copy) NSString *userAgent;
 
-@property (nonatomic, retain) NXOAuth2AccessToken	*accessToken;
-@property (nonatomic, assign) NSObject<NXOAuth2ClientDelegate>*	delegate;
+@property (nonatomic, strong) NXOAuth2AccessToken	*accessToken;
+@property (nonatomic, unsafe_unretained) NSObject<NXOAuth2ClientDelegate>*	delegate;
 
 /*!
  * If set to NO, the access token is not stored any keychain, will be removed if it was.

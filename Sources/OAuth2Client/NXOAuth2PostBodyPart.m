@@ -29,7 +29,7 @@
 
 + (id)partWithName:(NSString *)name content:(id)content;
 {
-	return [[[self alloc] initWithName:name content:content] autorelease];
+	return [[self alloc] initWithName:name content:content];
 }
 
 - (id)initWithName:(NSString *)name content:(id)content;
@@ -107,18 +107,11 @@
 {
 	self = [super init];
     if(self) {
-		contentHeaders = [headers retain];
-		contentStream = [stream retain];
+		contentHeaders = headers;
+		contentStream = stream;
 		contentLength  = length;
 	}    
     return self;
-}
-
-- (void)dealloc;
-{
-    [contentHeaders release];
-    [contentStream release];
-    [super dealloc];
 }
 
 

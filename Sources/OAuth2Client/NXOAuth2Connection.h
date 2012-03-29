@@ -65,7 +65,7 @@ typedef void(^NXOAuth2ConnectionSendingProgressHandler)(unsigned long long bytes
 	
 	NXOAuth2Client		*client;
 	
-	NSObject<NXOAuth2ConnectionDelegate>	*delegate;	// assigned
+	NSObject<NXOAuth2ConnectionDelegate>	*__unsafe_unretained delegate;	// assigned
     
     NXOAuth2ConnectionResponseHandler responseHandler;
     NXOAuth2ConnectionSendingProgressHandler sendingProgressHandler;
@@ -77,15 +77,15 @@ typedef void(^NXOAuth2ConnectionSendingProgressHandler)(unsigned long long bytes
 #endif
 }
 
-@property (assign) NSObject<NXOAuth2ConnectionDelegate>	*delegate;
-@property (readonly) NSData *data;
-@property (assign) BOOL savesData;
-@property (readonly) long long expectedContentLength;
-@property (readonly) NSURLResponse *response;
-@property (readonly) NSInteger statusCode;
-@property (retain) id context;
-@property (retain) NSDictionary *userInfo;
-@property (readonly) NXOAuth2Client *client;
+@property (nonatomic, unsafe_unretained) NSObject<NXOAuth2ConnectionDelegate>	*delegate;
+@property (nonatomic, strong, readonly) NSData *data;
+@property (nonatomic, assign) BOOL savesData;
+@property (nonatomic, assign, readonly) long long expectedContentLength;
+@property (nonatomic, strong, readonly) NSURLResponse *response;
+@property (nonatomic, assign, readonly) NSInteger statusCode;
+@property (nonatomic, strong) id context;
+@property (nonatomic, strong) NSDictionary *userInfo;
+@property (nonatomic, strong, readonly) NXOAuth2Client *client;
 
 - (id) initWithRequest:(NSMutableURLRequest *)request
      requestParameters:(NSDictionary *)requestParameters
