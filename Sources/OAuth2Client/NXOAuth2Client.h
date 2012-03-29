@@ -39,6 +39,7 @@ extern NSString * const NXOAuth2ClientConnectionContextTokenRefresh;
 	NSString	*clientId;
 	NSString	*clientSecret;
 	
+    NSSet       *desiredScope;
 	NSString	*userAgent;
 	
 	// server information
@@ -60,6 +61,7 @@ extern NSString * const NXOAuth2ClientConnectionContextTokenRefresh;
 @property (nonatomic, copy, readonly) NSString *clientId;
 @property (nonatomic, copy, readonly) NSString *clientSecret;
 
+@property (nonatomic, copy) NSSet *desiredScope;
 @property (nonatomic, copy) NSString *userAgent;
 
 @property (nonatomic, strong) NXOAuth2AccessToken	*accessToken;

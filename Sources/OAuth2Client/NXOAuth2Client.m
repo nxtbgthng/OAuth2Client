@@ -85,7 +85,9 @@ NSString * const NXOAuth2ClientConnectionContextTokenRefresh = @"tokenRefresh";
 
 #pragma mark Accessors
 
-@synthesize clientId, clientSecret, userAgent, delegate, persistent, accessToken, authenticating;
+@synthesize clientId, clientSecret;
+@synthesize desiredScope, userAgent;
+@synthesize delegate, persistent, accessToken, authenticating;
 
 - (void)setPersistent:(BOOL)shouldPersist;
 {
@@ -246,14 +248,18 @@ NSString * const NXOAuth2ClientConnectionContextTokenRefresh = @"tokenRefresh";
 
     self.authenticating = YES;
 
+    NSMutableDictionary *parameters = [NSMutableDictionary dictionaryWithObjectsAndKeys:
+                                       @"authorization_code", @"grant_type",
+                                       clientId, @"client_id",
+                                       clientSecret, @"client_secret",
+                                       [redirectURL absoluteString], @"redirect_uri",
+                                       authGrant, @"code",
+                                       nil];
+    if (self.desiredScope) {
+        [parameters setObject:[[self.desiredScope allObjects] componentsJoinedByString:@" "] forKey:@"scope"];
+    }
 	authConnection = [[NXOAuth2Connection alloc] initWithRequest:tokenRequest
-											   requestParameters:[NSDictionary dictionaryWithObjectsAndKeys:
-																  @"authorization_code", @"grant_type",
-																  clientId, @"client_id",
-																  clientSecret, @"client_secret",
-																  [redirectURL absoluteString], @"redirect_uri",
-																  authGrant, @"code",
-																  nil]
+											   requestParameters:parameters
 													 oauthClient:self
 														delegate:self];
 	authConnection.context = NXOAuth2ClientConnectionContextTokenRequest;
@@ -271,14 +277,18 @@ NSString * const NXOAuth2ClientConnectionContextTokenRefresh = @"tokenRefresh";
 
     self.authenticating = YES;
 
+    NSMutableDictionary *parameters = [NSMutableDictionary dictionaryWithObjectsAndKeys:
+                                       @"password", @"grant_type",
+                                       clientId, @"client_id",
+                                       clientSecret, @"client_secret",
+                                       username, @"username",
+                                       password, @"password",
+                                       nil];
+    if (self.desiredScope) {
+        [parameters setObject:[[self.desiredScope allObjects] componentsJoinedByString:@" "] forKey:@"scope"];
+    }
 	authConnection = [[NXOAuth2Connection alloc] initWithRequest:tokenRequest
-											   requestParameters:[NSDictionary dictionaryWithObjectsAndKeys:
-																  @"password", @"grant_type",
-																  clientId, @"client_id",
-																  clientSecret, @"client_secret",
-																  username, @"username",
-																  password, @"password",
-																  nil]
+											   requestParameters:parameters
 													 oauthClient:self
 														delegate:self];
 	authConnection.context = NXOAuth2ClientConnectionContextTokenRequest;
@@ -302,14 +312,19 @@ NSString * const NXOAuth2ClientConnectionContextTokenRefresh = @"tokenRefresh";
 		NSAssert((accessToken.refreshToken != nil), @"invalid state");
 		NSMutableURLRequest *tokenRequest = [NSMutableURLRequest requestWithURL:tokenURL];
 		[tokenRequest setHTTPMethod:@"POST"];
-		[authConnection cancel];  // not needed, but looks more clean to me :)
+		[authConnection cancel]; // not needed, but looks more clean to me :)
+        
+        NSMutableDictionary *parameters = [NSMutableDictionary dictionaryWithObjectsAndKeys:
+                                           @"refresh_token", @"grant_type",
+                                           clientId, @"client_id",
+                                           clientSecret, @"client_secret",
+                                           accessToken.refreshToken, @"refresh_token",
+                                           nil];
+        if (self.desiredScope) {
+            [parameters setObject:[[self.desiredScope allObjects] componentsJoinedByString:@" "] forKey:@"scope"];
+        }
 		authConnection = [[NXOAuth2Connection alloc] initWithRequest:tokenRequest
-												   requestParameters:[NSDictionary dictionaryWithObjectsAndKeys:
-																	  @"refresh_token", @"grant_type",
-																	  clientId, @"client_id",
-																	  clientSecret, @"client_secret",
-																	  accessToken.refreshToken, @"refresh_token",
-																	  nil]
+												   requestParameters:parameters
 														 oauthClient:self
 															delegate:self];
 		authConnection.context = NXOAuth2ClientConnectionContextTokenRefresh;
