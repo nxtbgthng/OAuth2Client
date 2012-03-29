@@ -538,7 +538,7 @@
 					Foundation,
 				);
 				PRODUCT_NAME = OAuth2Client;
-				SDKROOT = macosx10.7;
+				SDKROOT = macosx;
 			};
 			name = Debug;
 		};
@@ -569,7 +569,7 @@
 					Foundation,
 				);
 				PRODUCT_NAME = OAuth2Client;
-				SDKROOT = macosx10.7;
+				SDKROOT = macosx;
 				ZERO_LINK = NO;
 			};
 			name = Release;
