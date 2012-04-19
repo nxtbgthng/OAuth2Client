@@ -41,7 +41,7 @@ to your targets *Link Binary With Libraries*)
 *Using the library as a framework in desktop applications is fairly untested. Please
 [report any issues](http://github.com/nxtbgthng/OAuth2Client/issues) and help in making the library better.*
 
-### Adding the libary to your project using CococPods
+### Adding the libary to your project using CocoaPods
 [CocoaPods](http://cocoapods.org/) is a dependency manager for Xcode projects. It manages the above
 installation steps automatically.
 
