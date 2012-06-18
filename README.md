@@ -18,7 +18,7 @@ authentication flow.
 Getting the sources is as easy as doing a:  
 `git clone git://github.com/nxtbgthng/OAuth2Client.git`
 
-### Include the library in your Xcode project
+### Manually including the library in your Xcode project
 
 #### iOS projects
 
@@ -41,6 +41,15 @@ to your targets *Link Binary With Libraries*)
 *Using the library as a framework in desktop applications is fairly untested. Please
 [report any issues](http://github.com/nxtbgthng/OAuth2Client/issues) and help in making the library better.*
 
+### Adding the libary to your project using CocoaPods
+[CocoaPods](http://cocoapods.org/) is a dependency manager for Xcode projects. It manages the above
+installation steps automatically.
+
+In order to install the library this way add the following line to your `Podfile`:
+
+```dependency 'NXOAuth2Client','1.1.0'```
+
+and run the following command `pod install`.
 
 ## Using the OAuth2Client
 
