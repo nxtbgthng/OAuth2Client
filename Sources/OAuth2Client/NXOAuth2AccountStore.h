@@ -7,7 +7,7 @@
 //  Copyright 2011 nxtbgthng. All rights reserved.
 //
 //  Licenced under the new BSD-licence.
-//  See README.md in this repository for 
+//  See README.md in this repository for
 //  the full licence.
 //
 
@@ -22,6 +22,8 @@
 
 extern NSString * const NXOAuth2AccountStoreDidFailToRequestAccessNotification;
 extern NSString * const NXOAuth2AccountStoreAccountsDidChangeNotification;
+
+extern NSString * const NXOAuth2AccountStoreNewAccountUserInfoKey;
 
 #pragma mark Configuration
 
@@ -59,7 +61,7 @@ typedef void(^NXOAuth2PreparedAuthorizationURLHandler)(NSURL *preparedURL);
 
 #pragma mark Accessors
 
-@property(nonatomic, readonly) NSArray *accounts;
+@property(nonatomic, strong, readonly) NSArray *accounts;
 - (NSArray *)accountsWithAccountType:(NSString *)accountType;
 - (NXOAuth2Account *)accountWithIdentifier:(NSString *)identifier;
 

@@ -7,7 +7,7 @@
 //  Copyright 2011 nxtbgthng. All rights reserved.
 //
 //  Licenced under the new BSD-licence.
-//  See README.md in this repository for 
+//  See README.md in this repository for
 //  the full licence.
 //
 
@@ -18,10 +18,10 @@
 @class NXOAuth2Account;
 
 @interface NXOAuth2Request : NSObject {
-@private    
+@private
     NSDictionary *parameters;
     NSURL *resource;
-    NSString * requestMethod;
+    NSString *requestMethod;
     NXOAuth2Account *account;
     NXOAuth2Connection *connection;
     NXOAuth2Request *me;
@@ -45,11 +45,11 @@
 
 #pragma mark Accessors
 
-@property (nonatomic, readwrite, retain) NXOAuth2Account *account;
+@property (nonatomic, strong, readwrite) NXOAuth2Account *account;
 
-@property (nonatomic, readwrite, retain) NSString *requestMethod;
-@property (nonatomic, readwrite, retain) NSURL *resource;
-@property (nonatomic, readwrite, retain) NSDictionary *parameters;
+@property (nonatomic, strong, readwrite) NSString *requestMethod;
+@property (nonatomic, strong, readwrite) NSURL *resource;
+@property (nonatomic, strong, readwrite) NSDictionary *parameters;
 
 
 #pragma mark Signed NSURLRequest

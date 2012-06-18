@@ -47,7 +47,7 @@ installation steps automatically.
 
 In order to install the library this way add the following line to your `Podfile`:
 
-```dependency 'NXOAuth2Client','1.0.1'```
+```dependency 'NXOAuth2Client','1.1.0'```
 
 and run the following command `pod install`.
 
@@ -107,6 +107,7 @@ After a successful authentication, a new `NXOAuth2Account` object is in the list
                                                     // Update your UI
                                               }];
 </pre>
+If an account was added the `userInfo` dictionary of the notification will contain the new account at the `NXOAuth2AccountStoreNewAccountUserInfoKey`. Note though that this notification can be triggered on other events (e.g. account removal). In that case this key will not be set.
 
 #### On Failure
 

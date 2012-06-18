@@ -7,7 +7,7 @@
 //  Copyright 2011 nxtbgthng. All rights reserved.
 //
 //  Licenced under the new BSD-licence.
-//  See README.md in this repository for 
+//  See README.md in this repository for
 //  the full licence.
 //
 
@@ -36,11 +36,11 @@ extern NSString * const NXOAuth2AccountDidFailToGetAccessTokenNotification;
 
 #pragma mark Accessors
 
-@property (nonatomic, readonly) NSString *accountType;
-@property (nonatomic, readonly) NSString *identifier;
+@property (nonatomic, copy, readonly) NSString *accountType;
+@property (nonatomic, copy, readonly) NSString *identifier;
 @property (nonatomic, copy) id <NSObject, NSCoding, NSCopying> userData;
 
-@property (nonatomic, readonly) NXOAuth2Client *oauthClient;
-@property (nonatomic, readonly) NXOAuth2AccessToken *accessToken;
+@property (nonatomic, strong, readonly) NXOAuth2Client *oauthClient;
+@property (nonatomic, strong, readonly) NXOAuth2AccessToken *accessToken;
 
 @end

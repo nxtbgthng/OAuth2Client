@@ -4,10 +4,10 @@
 //
 //  Created by Ullrich Schäfer on 27.08.10.
 //
-//  Copyright 2010 nxtbgthng. All rights reserved. 
+//  Copyright 2010 nxtbgthng. All rights reserved.
 //
 //  Licenced under the new BSD-licence.
-//  See README.md in this repository for 
+//  See README.md in this repository for
 //  the full licence.
 //
 
@@ -15,11 +15,11 @@
 
 
 @interface NXOAuth2FileStreamWrapper : NSObject {
-	NSInputStream		*stream;
-	unsigned long long	contentLength;
-	NSString			*fileName;
+    NSInputStream        *stream;
+    unsigned long long    contentLength;
+    NSString            *fileName;
 }
-@property (nonatomic, retain, readonly) NSInputStream *stream;
+@property (nonatomic, strong, readonly) NSInputStream *stream;
 @property (nonatomic, assign, readonly) unsigned long long contentLength;
 @property (nonatomic, copy, readonly) NSString *fileName;
 

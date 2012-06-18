@@ -7,7 +7,7 @@
 //  Copyright 2011 nxtbgthng. All rights reserved.
 //
 //  Licenced under the new BSD-licence.
-//  See README.md in this repository for 
+//  See README.md in this repository for
 //  the full licence.
 //
 
@@ -15,6 +15,7 @@
 
 #import "NXOAuth2ClientDelegate.h"
 #import "NXOAuth2TrustDelegate.h"
+#import "NXOAuth2AccessToken.h"
 
 #import "NXOAuth2Client.h"
 #import "NXOAuth2AccountStore.h"
@@ -38,20 +39,23 @@ NSString * const NXOAuth2AccountDidFailToGetAccessTokenNotification = @"NXOAuth2
 
 @implementation NXOAuth2Account (Private)
 
+#pragma mark Lifecycle
+
 - (id)initAccountWithOAuthClient:(NXOAuth2Client *)anOAuthClient accountType:(NSString *)anAccountType;
 {
     self = [super init];
     if (self) {
-        accountType = [anAccountType retain];
-        oauthClient = [anOAuthClient retain];
-        accessToken = [oauthClient.accessToken retain];
+        accountType = anAccountType;
+        oauthClient = anOAuthClient;
+        accessToken = oauthClient.accessToken;
         oauthClient.delegate = self;
-        identifier = [[NSString nxoauth2_stringWithUUID] retain];
+        identifier = [NSString nxoauth2_stringWithUUID];
     }
     return self;
 }
 
 @end
+
 
 #pragma mark -
 
@@ -62,19 +66,6 @@ NSString * const NXOAuth2AccountDidFailToGetAccessTokenNotification = @"NXOAuth2
 @synthesize userData;
 @synthesize oauthClient;
 @synthesize accessToken;
-
-
-#pragma mark Lifecycle
-
-- (void)dealloc;
-{
-    [accountType release];
-    [oauthClient release];
-    [accessToken release];
-    [userData release];
-    [identifier release];
-    [super dealloc];
-}
 
 
 #pragma mark Accessors
@@ -106,7 +97,7 @@ NSString * const NXOAuth2AccountDidFailToGetAccessTokenNotification = @"NXOAuth2
 {
     if (userData != someUserData) {
         @synchronized (userData) {
-            [userData release]; userData = [someUserData retain];
+            userData = someUserData;
             [[NSNotificationCenter defaultCenter] postNotificationName:NXOAuth2AccountDidChangeUserDataNotification
                                                                 object:self];
         }
@@ -148,15 +139,13 @@ NSString * const NXOAuth2AccountDidFailToGetAccessTokenNotification = @"NXOAuth2
 
 - (void)oauthClientDidGetAccessToken:(NXOAuth2Client *)client;
 {
-    [accessToken release];
-    accessToken = [oauthClient.accessToken retain];
+    accessToken = oauthClient.accessToken;
     [[NSNotificationCenter defaultCenter] postNotificationName:NXOAuth2AccountDidChangeAccessTokenNotification
                                                         object:self];
 }
 
 - (void)oauthClientDidLoseAccessToken:(NXOAuth2Client *)client;
 {
-    [accessToken release];
     accessToken = nil;
     [[NSNotificationCenter defaultCenter] postNotificationName:NXOAuth2AccountDidLoseAccessTokenNotification
                                                         object:self];
@@ -164,15 +153,13 @@ NSString * const NXOAuth2AccountDidFailToGetAccessTokenNotification = @"NXOAuth2
 
 - (void)oauthClientDidRefreshAccessToken:(NXOAuth2Client *)client;
 {
-    [accessToken release];
-    accessToken = [oauthClient.accessToken retain];
+    accessToken = oauthClient.accessToken;
     [[NSNotificationCenter defaultCenter] postNotificationName:NXOAuth2AccountDidChangeAccessTokenNotification
                                                         object:self];
 }
 
 - (void)oauthClient:(NXOAuth2Client *)client didFailToGetAccessTokenWithError:(NSError *)error;
 {
-    [accessToken release];
     accessToken = nil;
     NSDictionary *userInfo = [NSDictionary dictionaryWithObject:error
                                                          forKey:NXOAuth2AccountStoreErrorKey];
@@ -186,21 +173,21 @@ NSString * const NXOAuth2AccountDidFailToGetAccessTokenNotification = @"NXOAuth2
 
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
-	[aCoder encodeObject:identifier forKey:@"identifier"];
+    [aCoder encodeObject:identifier forKey:@"identifier"];
     [aCoder encodeObject:accountType forKey:@"accountType"];
-	[aCoder encodeObject:accessToken forKey:@"accessToken"];
+    [aCoder encodeObject:accessToken forKey:@"accessToken"];
     [aCoder encodeObject:userData forKey:@"userData"];
 }
 
 - (id)initWithCoder:(NSCoder *)aDecoder
 {
-	if (self = [super init]) {
-        userData = [[aDecoder decodeObjectForKey:@"userData"] retain];
-        accessToken = [[aDecoder decodeObjectForKey:@"accessToken"] retain];
-		accountType = [[aDecoder decodeObjectForKey:@"accountType"] copy];
+    if (self = [super init]) {
+        userData = [aDecoder decodeObjectForKey:@"userData"];
+        accessToken = [aDecoder decodeObjectForKey:@"accessToken"];
+        accountType = [[aDecoder decodeObjectForKey:@"accountType"] copy];
         identifier = [[aDecoder decodeObjectForKey:@"identifier"] copy];
-	}
-	return self;
+    }
+    return self;
 }
 
 @end
