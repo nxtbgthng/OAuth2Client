@@ -169,11 +169,17 @@ NSString * const NXOAuth2ClientConnectionContextTokenRefresh = @"tokenRefresh";
 
 - (NSURL *)authorizationURLWithRedirectURL:(NSURL *)redirectURL;
 {
-    return [authorizeURL nxoauth2_URLByAddingParameters:[NSDictionary dictionaryWithObjectsAndKeys:
-                                                         @"code", @"response_type",
-                                                         clientId, @"client_id",
-                                                         [redirectURL absoluteString], @"redirect_uri",
-                                                         nil]];
+    NSMutableDictionary *parameters = [NSMutableDictionary dictionaryWithObjectsAndKeys:
+                                       @"code", @"response_type",
+                                       clientId, @"client_id",
+                                       [redirectURL absoluteString], @"redirect_uri",
+                                       nil];
+    
+    if (self.desiredScope.count > 0) {
+        [parameters setObject:[[self.desiredScope allObjects] componentsJoinedByString:@" "] forKey:@"scope"];
+    }
+    
+    return [authorizeURL nxoauth2_URLByAddingParameters:parameters];
 }
 
 
@@ -363,6 +369,10 @@ NSString * const NXOAuth2ClientConnectionContextTokenRefresh = @"tokenRefresh";
 
 - (void)oauthConnection:(NXOAuth2Connection *)connection didFailWithError:(NSError *)error;
 {
+    NSString *body = [[NSString alloc] initWithData:connection.data encoding:NSUTF8StringEncoding];
+    NSLog(@"oauthConnection Error: %@", body);
+    
+    
     if (connection == authConnection) {
         self.authenticating = NO;
 
