@@ -368,7 +368,7 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
                                                      delegate:self];
             client.persistent = NO;
             
-            if (scope) {
+            if (scope != nil) {
                 client.desiredScope = scope;
             }
             

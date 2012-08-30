@@ -157,6 +157,15 @@ NSString * const NXOAuth2ClientConnectionContextTokenRefresh = @"tokenRefresh";
     }
 }
 
+- (void)setDesiredScope:(NSSet *)aDesiredScope;
+{
+    if (desiredScope == aDesiredScope) {
+        return;
+    }
+    
+    desiredScope = [aDesiredScope copy];
+}
+
 
 #pragma mark Flow
 
