@@ -41,6 +41,7 @@
 - (id)initWithAccessToken:(NSString *)accessToken refreshToken:(NSString *)refreshToken expiresAt:(NSDate *)expiryDate scope:(NSSet *)scope responseBody:(NSString *)responseBody;
 - (id)initWithAccessToken:(NSString *)accessToken refreshToken:(NSString *)refreshToken expiresAt:(NSDate *)expiryDate scope:(NSSet *)scope responseBody:(NSString *)responseBody tokenType:(NSString*)tokenType; // designated
 
+- (void)restoreWithOldToken:(NXOAuth2AccessToken *)oldToken;
 
 #pragma mark Keychain Support
 

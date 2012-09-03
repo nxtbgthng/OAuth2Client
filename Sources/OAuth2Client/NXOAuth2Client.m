@@ -363,6 +363,9 @@ NSString * const NXOAuth2ClientConnectionContextTokenRefresh = @"tokenRefresh";
         NSString *result = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
         NXOAuth2AccessToken *newToken = [NXOAuth2AccessToken tokenWithResponseBody:result];
         NSAssert(newToken != nil, @"invalid response?");
+        
+        [newToken restoreWithOldToken:self.accessToken];
+        
         self.accessToken = newToken;
         
         for (NXOAuth2Connection *retryConnection in waitingConnections) {

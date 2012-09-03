@@ -121,6 +121,12 @@
     return self;
 }
 
+- (void)restoreWithOldToken:(NXOAuth2AccessToken *)oldToken;
+{
+    if (self.refreshToken == nil) {
+        self.refreshToken = oldToken.refreshToken;
+    }
+}
 
 
 #pragma mark Accessors
@@ -155,7 +161,6 @@
 {
     return ([[NSDate date] earlierDate:expiresAt] == expiresAt);
 }
-
 
 - (NSString *)description;
 {
