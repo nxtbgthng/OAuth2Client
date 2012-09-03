@@ -124,7 +124,7 @@
 - (void)restoreWithOldToken:(NXOAuth2AccessToken *)oldToken;
 {
     if (self.refreshToken == nil) {
-        self.refreshToken = oldToken.refreshToken;
+        refreshToken = oldToken.refreshToken;
     }
 }
 
