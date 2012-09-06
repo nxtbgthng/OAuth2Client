@@ -144,11 +144,13 @@
 
 - (NSString*)tokenType
 {
-    // I added this as our OAuth server wasn't case insensitive
-    // in the OAuth 2.0 spec the server should be so this may not be needed
-    // if you are getting errors then comment this function out and try again.
-    
-    if ([tokenType isEqualToString:@"bearer"]) {
+    if ([tokenType isEqualToString:@""]) {
+        //If not set fallback to OAuth
+        return @"OAuth";
+    } else if ([tokenType isEqualToString:@"bearer"]) {
+        // I added this as our OAuth server wasn't case insensitive
+        // in the OAuth 2.0 spec the server should be so this may not be needed
+        // if you are getting errors then comment this function out and try again.
         return @"Bearer";
     } else {
         return tokenType;
