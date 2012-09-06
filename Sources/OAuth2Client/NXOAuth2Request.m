@@ -88,7 +88,7 @@
     }
     
     if (self.account) {
-        NSString *oauthAuthorizationHeader = [NSString stringWithFormat:@"OAuth %@", self.account.accessToken.accessToken];
+        NSString *oauthAuthorizationHeader = [NSString stringWithFormat:@"%@ %@", self.account.accessToken.tokenType, self.account.accessToken.accessToken];
         [request setValue:oauthAuthorizationHeader forHTTPHeaderField:@"Authorization"];
     }
     
