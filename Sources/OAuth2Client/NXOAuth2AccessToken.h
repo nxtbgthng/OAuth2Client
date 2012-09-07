@@ -19,12 +19,14 @@
 @private
     NSString *accessToken;
     NSString *refreshToken;
+    NSString *tokenType;
     NSDate *expiresAt;
     NSSet *scope;
     NSString *responseBody;
 }
 @property (nonatomic, readonly) NSString *accessToken;
 @property (nonatomic, readonly) NSString *refreshToken;
+@property (nonatomic, readonly) NSString *tokenType;
 @property (nonatomic, readonly) NSDate *expiresAt;
 @property (nonatomic, readonly) BOOL doesExpire;
 @property (nonatomic, readonly) BOOL hasExpired;
@@ -36,7 +38,8 @@
 - (id)initWithAccessToken:(NSString *)accessToken;
 - (id)initWithAccessToken:(NSString *)accessToken refreshToken:(NSString *)refreshToken expiresAt:(NSDate *)expiryDate;
 - (id)initWithAccessToken:(NSString *)accessToken refreshToken:(NSString *)refreshToken expiresAt:(NSDate *)expiryDate scope:(NSSet *)scope;
-- (id)initWithAccessToken:(NSString *)accessToken refreshToken:(NSString *)refreshToken expiresAt:(NSDate *)expiryDate scope:(NSSet *)scope responseBody:(NSString *)responseBody; // designated
+- (id)initWithAccessToken:(NSString *)accessToken refreshToken:(NSString *)refreshToken expiresAt:(NSDate *)expiryDate scope:(NSSet *)scope responseBody:(NSString *)responseBody;
+- (id)initWithAccessToken:(NSString *)accessToken refreshToken:(NSString *)refreshToken expiresAt:(NSDate *)expiryDate scope:(NSSet *)scope responseBody:(NSString *)responseBody tokenType:(NSString*)tokenType; // designated
 
 
 #pragma mark Keychain Support
