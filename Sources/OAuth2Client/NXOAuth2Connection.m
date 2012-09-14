@@ -175,7 +175,15 @@ sendingProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)aSendingProgres
             return nil;
         }
         
-        oauthAuthorizationHeader = [NSString stringWithFormat:@"%@ %@", client.accessToken.tokenType, client.accessToken.accessToken];
+        NSString *tokenType = client.accessToken.tokenType;
+        if (tokenType == nil) {
+            tokenType = client.tokenType;
+        }
+        if (tokenType == nil) {
+            tokenType = @"OAuth";
+        }
+        
+        oauthAuthorizationHeader = [NSString stringWithFormat:@"%@ %@", tokenType, client.accessToken.accessToken];
     }
     
     NSMutableURLRequest *startRequest = [request mutableCopy];

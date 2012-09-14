@@ -45,6 +45,7 @@ extern NSString * const NXOAuth2ClientConnectionContextTokenRefresh;
     // server information
     NSURL        *authorizeURL;
     NSURL        *tokenURL;
+    NSString     *tokenType;
     
     // token exchange
     NXOAuth2Connection    *authConnection;
@@ -60,6 +61,7 @@ extern NSString * const NXOAuth2ClientConnectionContextTokenRefresh;
 
 @property (nonatomic, copy, readonly) NSString *clientId;
 @property (nonatomic, copy, readonly) NSString *clientSecret;
+@property (nonatomic, copy, readonly) NSString *tokenType;
 
 @property (nonatomic, copy) NSSet *desiredScope;
 @property (nonatomic, copy) NSString *userAgent;
@@ -87,6 +89,15 @@ extern NSString * const NXOAuth2ClientConnectionContextTokenRefresh;
           authorizeURL:(NSURL *)authorizeURL
               tokenURL:(NSURL *)tokenURL
            accessToken:(NXOAuth2AccessToken *)accessToken
+            persistent:(BOOL)shouldPersist
+              delegate:(NSObject<NXOAuth2ClientDelegate> *)delegate;
+
+- (id)initWithClientID:(NSString *)clientId
+          clientSecret:(NSString *)clientSecret
+          authorizeURL:(NSURL *)authorizeURL
+              tokenURL:(NSURL *)tokenURL
+           accessToken:(NXOAuth2AccessToken *)accessToken
+             tokenType:(NSString *)tokenType
             persistent:(BOOL)shouldPersist
               delegate:(NSObject<NXOAuth2ClientDelegate> *)delegate;
 

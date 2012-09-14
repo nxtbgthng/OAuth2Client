@@ -60,6 +60,25 @@ NSString * const NXOAuth2ClientConnectionContextTokenRefresh = @"tokenRefresh";
             persistent:(BOOL)shouldPersist
               delegate:(NSObject<NXOAuth2ClientDelegate> *)aDelegate;
 {
+    return [self initWithClientID:aClientId
+                     clientSecret:aClientSecret
+                     authorizeURL:anAuthorizeURL
+                         tokenURL:aTokenURL
+                      accessToken:anAccessToken
+                        tokenType:nil
+                       persistent:shouldPersist
+                         delegate:aDelegate];
+}
+
+- (id)initWithClientID:(NSString *)aClientId
+          clientSecret:(NSString *)aClientSecret
+          authorizeURL:(NSURL *)anAuthorizeURL
+              tokenURL:(NSURL *)aTokenURL
+           accessToken:(NXOAuth2AccessToken *)anAccessToken
+             tokenType:(NSString *)aTokenType
+            persistent:(BOOL)shouldPersist
+              delegate:(NSObject<NXOAuth2ClientDelegate> *)aDelegate;
+{
     NSAssert(aTokenURL != nil && anAuthorizeURL != nil, @"No token or no authorize URL");
     self = [super init];
     if (self) {
@@ -69,6 +88,7 @@ NSString * const NXOAuth2ClientConnectionContextTokenRefresh = @"tokenRefresh";
         clientSecret = [aClientSecret copy];
         authorizeURL = [anAuthorizeURL copy];
         tokenURL = [aTokenURL copy];
+        tokenType = [aTokenType copy];
         accessToken = anAccessToken;
         
         self.persistent = shouldPersist;
@@ -85,7 +105,7 @@ NSString * const NXOAuth2ClientConnectionContextTokenRefresh = @"tokenRefresh";
 
 #pragma mark Accessors
 
-@synthesize clientId, clientSecret;
+@synthesize clientId, clientSecret, tokenType;
 @synthesize desiredScope, userAgent;
 @synthesize delegate, persistent, accessToken, authenticating;
 

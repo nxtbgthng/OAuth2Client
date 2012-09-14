@@ -164,7 +164,7 @@
 
 - (NSString *)description;
 {
-    return [NSString stringWithFormat:@"<NXOAuth2Token token:%@ refreshToken:%@ expiresAt:%@>", self.accessToken, self.refreshToken, self.expiresAt];
+    return [NSString stringWithFormat:@"<NXOAuth2Token token:%@ refreshToken:%@ expiresAt:%@ tokenType: %@>", self.accessToken, self.refreshToken, self.expiresAt, self.tokenType];
 }
 
 
@@ -177,6 +177,9 @@
     [aCoder encodeObject:expiresAt forKey:@"expiresAt"];
     [aCoder encodeObject:scope forKey:@"scope"];
     [aCoder encodeObject:responseBody forKey:@"responseBody"];
+    if (tokenType) {
+        [aCoder encodeObject:tokenType forKey:@"tokenType"];
+    }
 }
 
 - (id)initWithCoder:(NSCoder *)aDecoder
@@ -195,6 +198,7 @@
         expiresAt = [[aDecoder decodeObjectForKey:@"expiresAt"] copy];
         scope = [[aDecoder decodeObjectForKey:@"scope"] copy];
         responseBody = [[aDecoder decodeObjectForKey:@"responseBody"] copy];
+        tokenType = [[aDecoder decodeObjectForKey:@"tokenType"] copy];
     }
     return self;
 }
