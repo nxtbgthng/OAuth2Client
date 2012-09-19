@@ -134,7 +134,7 @@
 
 - (NSString*)tokenType
 {
-    if ([tokenType isEqualToString:@""]) {
+    if (tokenType == nil || [tokenType isEqualToString:@""]) {
         //fall back on OAuth if token type not set
         return @"OAuth";
     } else if ([tokenType isEqualToString:@"bearer"]) {
