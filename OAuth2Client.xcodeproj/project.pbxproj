@@ -445,7 +445,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = (
-					armv7,
+					"$(inherited)",
 					armv6,
 				);
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -472,7 +472,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = (
-					armv7,
+					"$(inherited)",
 					armv6,
 				);
 				CLANG_ENABLE_OBJC_ARC = YES;
