@@ -41,6 +41,7 @@ extern NSString * const NXOAuth2ClientConnectionContextTokenRefresh;
     
     NSSet       *desiredScope;
     NSString    *userAgent;
+    NSString    *assertion;
     
     // server information
     NSURL        *authorizeURL;
