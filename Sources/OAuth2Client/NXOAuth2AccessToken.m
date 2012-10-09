@@ -22,6 +22,11 @@
 
 + (id)tokenWithResponseBody:(NSString *)theResponseBody;
 {
+    return [self tokenWithResponseBody:theResponseBody tokenType:nil];
+}
+
++ (id)tokenWithResponseBody:(NSString *)theResponseBody tokenType:(NSString *)tokenType;
+{
     NSDictionary *jsonDict = nil;
     Class jsonSerializationClass = NSClassFromString(@"NSJSONSerialization");
     if (jsonSerializationClass) {
@@ -50,7 +55,11 @@
     NSString *anAccessToken = [jsonDict objectForKey:@"access_token"];
     NSString *aRefreshToken = [jsonDict objectForKey:@"refresh_token"];
     NSString *scopeString = [jsonDict objectForKey:@"scope"];
-    NSString *tokenType = [jsonDict objectForKey:@"token_type"];
+    
+    // if the response overrides token_type we take it from the response
+    if ([jsonDict objectForKey:@"token_type"]) {
+        tokenType = [jsonDict objectForKey:@"token_type"];
+    }
     
     NSSet *scope = nil;
     if (scopeString) {

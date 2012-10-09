@@ -34,6 +34,7 @@
 @property (nonatomic, readonly) NSString *responseBody;
 
 + (id)tokenWithResponseBody:(NSString *)responseBody;
++ (id)tokenWithResponseBody:(NSString *)responseBody tokenType:(NSString *)tokenType;
 
 - (id)initWithAccessToken:(NSString *)accessToken;
 - (id)initWithAccessToken:(NSString *)accessToken refreshToken:(NSString *)refreshToken expiresAt:(NSDate *)expiryDate;
