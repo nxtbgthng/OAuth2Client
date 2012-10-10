@@ -32,6 +32,8 @@ extern NSString * const kNXOAuth2AccountStoreConfigurationSecret;
 extern NSString * const kNXOAuth2AccountStoreConfigurationAuthorizeURL;
 extern NSString * const kNXOAuth2AccountStoreConfigurationTokenURL;
 extern NSString * const kNXOAuth2AccountStoreConfigurationRedirectURL;
+extern NSString * const kNXOAuth2AccountStoreConfigurationScope;
+extern NSString * const kNXOAuth2AccountStoreConfigurationTokenType;
 
 
 #pragma mark Account Type
@@ -73,6 +75,23 @@ typedef void(^NXOAuth2PreparedAuthorizationURLHandler)(NSURL *preparedURL);
    authorizationURL:(NSURL *)anAuthorizationURL
            tokenURL:(NSURL *)aTokenURL
         redirectURL:(NSURL *)aRedirectURL
+     forAccountType:(NSString *)anAccountType;
+
+- (void)setClientID:(NSString *)aClientID
+             secret:(NSString *)aSecret
+              scope:(NSSet *)theScope
+   authorizationURL:(NSURL *)anAuthorizationURL
+           tokenURL:(NSURL *)aTokenURL
+        redirectURL:(NSURL *)aRedirectURL
+     forAccountType:(NSString *)anAccountType;
+
+- (void)setClientID:(NSString *)aClientID
+             secret:(NSString *)aSecret
+              scope:(NSSet *)theScope
+   authorizationURL:(NSURL *)anAuthorizationURL
+           tokenURL:(NSURL *)aTokenURL
+        redirectURL:(NSURL *)aRedirectURL
+          tokenType:(NSString *)aTokenType
      forAccountType:(NSString *)anAccountType;
 
 - (void)setConfiguration:(NSDictionary *)configuration forAccountType:(NSString *)accountType;

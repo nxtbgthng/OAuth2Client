@@ -80,12 +80,14 @@ NSString * const NXOAuth2AccountDidFailToGetAccessTokenNotification = @"NXOAuth2
             NSString *clientSecret = [configuration objectForKey:kNXOAuth2AccountStoreConfigurationSecret];
             NSURL *authorizeURL = [configuration objectForKey:kNXOAuth2AccountStoreConfigurationAuthorizeURL];
             NSURL *tokenURL = [configuration objectForKey:kNXOAuth2AccountStoreConfigurationTokenURL];
+            NSString *tokenType = [configuration objectForKey:kNXOAuth2AccountStoreConfigurationTokenType];
             
             oauthClient = [[NXOAuth2Client alloc] initWithClientID:clientID
                                                       clientSecret:clientSecret
                                                       authorizeURL:authorizeURL
                                                           tokenURL:tokenURL
                                                        accessToken:self.accessToken
+                                                         tokenType:tokenType
                                                         persistent:NO
                                                           delegate:self];
         }
