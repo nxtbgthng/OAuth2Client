@@ -196,6 +196,12 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
     [client authenticateWithUsername:username password:password];
 }
 
+- (void)requestClientCredentialsAccessWithType:(NSString *)accountType;
+{
+    NXOAuth2Client *client = [self pendingOAuthClientForAccountType:accountType];
+    [client authenticateWithClientCredentials];
+}
+
 - (void)removeAccount:(NXOAuth2Account *)account;
 {
     if (account) {
