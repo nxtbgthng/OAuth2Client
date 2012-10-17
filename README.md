@@ -24,6 +24,7 @@ Getting the sources is as easy as doing a:
 
 - drag the OAuth2Client.xcodeproj into your project
 - add OAuth2Client as a build dependency
+- add the Security.framework as a build dependency
 - add `OAuth2Client/**` to your user header search path in the build settings
 - link your target against OAuth2Client (drag the OAuth2Client product from OAuth2Client.xcodeproj to your
 targets *Link Binary With Libraries*)
@@ -33,6 +34,7 @@ targets *Link Binary With Libraries*)
 
 - drag the OAuth2Client.xcodeproj into your project
 - add OAuth2Client.framework as a build dependency
+- add the Security.framework as a build dependency
 - add `$(CONFIGURATION_BUILD_DIR)/$(CONTENTS_FOLDER_PATH)/Frameworks` to your targets Framework Search Path
 - link your target against OAuth2Client (drag the OAuth2Client.framework product from OAuth2Client.xcodeproj
 to your targets *Link Binary With Libraries*)
