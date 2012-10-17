@@ -22,6 +22,11 @@
 
 + (id)tokenWithResponseBody:(NSString *)theResponseBody;
 {
+    return [self tokenWithResponseBody:theResponseBody tokenType:nil];
+}
+
++ (id)tokenWithResponseBody:(NSString *)theResponseBody tokenType:(NSString *)tokenType;
+{
     NSDictionary *jsonDict = nil;
     Class jsonSerializationClass = NSClassFromString(@"NSJSONSerialization");
     if (jsonSerializationClass) {
@@ -50,7 +55,11 @@
     NSString *anAccessToken = [jsonDict objectForKey:@"access_token"];
     NSString *aRefreshToken = [jsonDict objectForKey:@"refresh_token"];
     NSString *scopeString = [jsonDict objectForKey:@"scope"];
-    NSString *tokenType = [jsonDict objectForKey:@"token_type"];
+    
+    // if the response overrides token_type we take it from the response
+    if ([jsonDict objectForKey:@"token_type"]) {
+        tokenType = [jsonDict objectForKey:@"token_type"];
+    }
     
     NSSet *scope = nil;
     if (scopeString) {
@@ -121,6 +130,12 @@
     return self;
 }
 
+- (void)restoreWithOldToken:(NXOAuth2AccessToken *)oldToken;
+{
+    if (self.refreshToken == nil) {
+        refreshToken = oldToken.refreshToken;
+    }
+}
 
 
 #pragma mark Accessors
@@ -156,10 +171,9 @@
     return ([[NSDate date] earlierDate:expiresAt] == expiresAt);
 }
 
-
 - (NSString *)description;
 {
-    return [NSString stringWithFormat:@"<NXOAuth2Token token:%@ refreshToken:%@ expiresAt:%@>", self.accessToken, self.refreshToken, self.expiresAt];
+    return [NSString stringWithFormat:@"<NXOAuth2Token token:%@ refreshToken:%@ expiresAt:%@ tokenType: %@>", self.accessToken, self.refreshToken, self.expiresAt, self.tokenType];
 }
 
 
@@ -172,6 +186,9 @@
     [aCoder encodeObject:expiresAt forKey:@"expiresAt"];
     [aCoder encodeObject:scope forKey:@"scope"];
     [aCoder encodeObject:responseBody forKey:@"responseBody"];
+    if (tokenType) {
+        [aCoder encodeObject:tokenType forKey:@"tokenType"];
+    }
 }
 
 - (id)initWithCoder:(NSCoder *)aDecoder
@@ -190,6 +207,7 @@
         expiresAt = [[aDecoder decodeObjectForKey:@"expiresAt"] copy];
         scope = [[aDecoder decodeObjectForKey:@"scope"] copy];
         responseBody = [[aDecoder decodeObjectForKey:@"responseBody"] copy];
+        tokenType = [[aDecoder decodeObjectForKey:@"tokenType"] copy];
     }
     return self;
 }
