@@ -293,6 +293,7 @@ NSString * const NXOAuth2ClientConnectionContextTokenRefresh = @"tokenRefresh";
     if (self.desiredScope) {
         [parameters setObject:[[self.desiredScope allObjects] componentsJoinedByString:@" "] forKey:@"scope"];
     }
+    
     authConnection = [[NXOAuth2Connection alloc] initWithRequest:tokenRequest
                                                requestParameters:parameters
                                                      oauthClient:self
@@ -329,6 +330,35 @@ NSString * const NXOAuth2ClientConnectionContextTokenRefresh = @"tokenRefresh";
     authConnection.context = NXOAuth2ClientConnectionContextTokenRequest;
 }
 
+// Assertion
+- (void)authenticateWithAssertionType:(NSURL *)assertionType assertion:(NSString *)assertion;
+{
+    NSAssert1(!authConnection, @"authConnection already running with: %@", authConnection);
+    NSParameterAssert(assertionType);
+    NSParameterAssert(assertion);
+    
+    NSMutableURLRequest *tokenRequest = [NSMutableURLRequest requestWithURL:tokenURL];
+    [tokenRequest setHTTPMethod:@"POST"];
+    [authConnection cancel];  // just to be sure
+    
+    self.authenticating = YES;
+    
+    NSMutableDictionary *parameters = [NSMutableDictionary dictionaryWithObjectsAndKeys:
+                                       @"assertion", @"grant_type",
+                                       clientId, @"client_id",
+                                       clientSecret, @"client_secret",
+                                       assertionType.absoluteString, @"assertion_type",
+                                       assertion, @"assertion",
+                                       nil];
+    if (self.desiredScope) {
+        [parameters setObject:[[self.desiredScope allObjects] componentsJoinedByString:@" "] forKey:@"scope"];
+    }
+    authConnection = [[NXOAuth2Connection alloc] initWithRequest:tokenRequest
+                                               requestParameters:parameters
+                                                     oauthClient:self
+                                                        delegate:self];
+    authConnection.context = NXOAuth2ClientConnectionContextTokenRequest;
+}
 
 #pragma mark Public
 

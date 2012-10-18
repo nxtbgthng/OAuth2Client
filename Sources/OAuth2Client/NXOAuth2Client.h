@@ -41,6 +41,7 @@ extern NSString * const NXOAuth2ClientConnectionContextTokenRefresh;
     
     NSSet       *desiredScope;
     NSString    *userAgent;
+    NSString    *assertion;
     
     // server information
     NSURL        *authorizeURL;
@@ -120,6 +121,12 @@ extern NSString * const NXOAuth2ClientConnectionContextTokenRefresh;
  * Authenticate with username & password (User Credentials Flow)
  */
 - (void)authenticateWithUsername:(NSString *)username password:(NSString *)password;
+
+/*!
+ * Authenticate with assertion (Assertion Flow)
+ */
+- (void)authenticateWithAssertionType:(NSURL *)assertionType assertion:(NSString *)assertion;
+
 
 #pragma mark Public
 
