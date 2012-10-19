@@ -15,19 +15,22 @@ authentication flow.
 
 ### Get the sources
 
-Getting the sources is as easy as doing a:  
+Getting the sources is as easy as doing a:
 `git clone git://github.com/nxtbgthng/OAuth2Client.git`
 
 ### Manually including the library in your Xcode project
 
 #### iOS projects
 
-- drag the OAuth2Client.xcodeproj into your project
-- add OAuth2Client as a build dependency
-- add `OAuth2Client/**` to your user header search path in the build settings
-- link your target against OAuth2Client (drag the OAuth2Client product from OAuth2Client.xcodeproj to your
-targets *Link Binary With Libraries*)
-- `#import "NXOAuth2.h"`
+* Place the _OAuth2Client_ folder within your source root
+* Drag the _OAuth2Client.xcodeproj_ into your project
+* Under your build target, select the _Build Phases_ tab.
+    * Under _Target Dependencies_ add _OAuth2Client_
+    * Under _Link Binary With Libraries_, add _libOAuth2Client.a_
+* Under _Build Settings_,
+    * Add `$(SRCROOT)/path/to/OAuth2Client` _Header Search Paths_, set as _recursive_
+    * Add `-ObjC` to _Other Linker Flags_
+* `#import "NXOAuth2.h"`
 
 #### Desktop Mac projects
 
@@ -84,7 +87,7 @@ Once you have configured your client you are ready to request access to one of t
  <pre>
  [[NXOAuth2AccountStore sharedStore] requestAccessToAccountWithType:@"myFancyService"];
  </pre>
-  
+
  If you are using an external browser, your application needs to handle the URL you have registered as an redirect URL for the account type. The service will redirect to that URL after the authentication process.
 
 - Provide an Authorization URL Handler
@@ -128,11 +131,11 @@ The authenticated accounts can be accessed via the `NXOAuth2AccountStore`. Eithe
 
 <pre>
 for (NXOAuth2Account *account in [[NXOAuth2AccountStore sharedStore] accounts]) {
-    // Do something with the account	
+    // Do something with the account
 };
 
 for (NXOAuth2Account *account in [[NXOAuth2AccountStore sharedStore] accountsWithAccountType:@"myFancyService"]) {
-    // Do something with the account	
+    // Do something with the account
 };
 
 NXOAuth2Account *account = [[NXOAuth2AccountStore sharedStore] accountWithIdentifier:@"...cached account id..."];
@@ -171,7 +174,7 @@ NXOAuth2Request *theRequest = [[NXOAuth2Request alloc] initWithResource:[NSURL U
 									                             method:@"GET"
 								                             parameters:nil];
 theRequest.account = // ... an account
-                               
+
 NSURLRequest *sigendRequest = [theRequest signedURLRequest];
 
 [theRequest release];
@@ -179,7 +182,7 @@ NSURLRequest *sigendRequest = [theRequest signedURLRequest];
 // Invoke the request with you preferd method
 </pre>
 
-## BSD License 
+## BSD License
 
 Copyright © 2012, nxtbgthng GmbH
 
