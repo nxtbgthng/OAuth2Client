@@ -181,7 +181,7 @@ NSURLRequest *sigendRequest = [theRequest signedURLRequest];
 
 ## BSD License 
 
-Copyright © 2010, nxtbgthng
+Copyright © 2012, nxtbgthng GmbH
 
 All rights reserved.
 
