@@ -331,11 +331,11 @@ NSString * const NXOAuth2ClientConnectionContextTokenRefresh = @"tokenRefresh";
 }
 
 // Assertion
-- (void)authenticateWithAssertionType:(NSURL *)assertionType assertion:(NSString *)assertion;
+- (void)authenticateWithAssertionType:(NSURL *)anAssertionType assertion:(NSString *)anAssertion;
 {
     NSAssert1(!authConnection, @"authConnection already running with: %@", authConnection);
-    NSParameterAssert(assertionType);
-    NSParameterAssert(assertion);
+    NSParameterAssert(anAssertionType);
+    NSParameterAssert(anAssertion);
     
     NSMutableURLRequest *tokenRequest = [NSMutableURLRequest requestWithURL:tokenURL];
     [tokenRequest setHTTPMethod:@"POST"];
@@ -347,8 +347,8 @@ NSString * const NXOAuth2ClientConnectionContextTokenRefresh = @"tokenRefresh";
                                        @"assertion", @"grant_type",
                                        clientId, @"client_id",
                                        clientSecret, @"client_secret",
-                                       assertionType.absoluteString, @"assertion_type",
-                                       assertion, @"assertion",
+                                       anAssertionType.absoluteString, @"assertion_type",
+                                       anAssertion, @"assertion",
                                        nil];
     if (self.desiredScope) {
         [parameters setObject:[[self.desiredScope allObjects] componentsJoinedByString:@" "] forKey:@"scope"];
