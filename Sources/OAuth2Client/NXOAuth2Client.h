@@ -41,10 +41,12 @@ extern NSString * const NXOAuth2ClientConnectionContextTokenRefresh;
     
     NSSet       *desiredScope;
     NSString    *userAgent;
+    NSString    *assertion;
     
     // server information
     NSURL        *authorizeURL;
     NSURL        *tokenURL;
+    NSString     *tokenType;
     
     // token exchange
     NXOAuth2Connection    *authConnection;
@@ -60,6 +62,7 @@ extern NSString * const NXOAuth2ClientConnectionContextTokenRefresh;
 
 @property (nonatomic, copy, readonly) NSString *clientId;
 @property (nonatomic, copy, readonly) NSString *clientSecret;
+@property (nonatomic, copy, readonly) NSString *tokenType;
 
 @property (nonatomic, copy) NSSet *desiredScope;
 @property (nonatomic, copy) NSString *userAgent;
@@ -90,6 +93,15 @@ extern NSString * const NXOAuth2ClientConnectionContextTokenRefresh;
             persistent:(BOOL)shouldPersist
               delegate:(NSObject<NXOAuth2ClientDelegate> *)delegate;
 
+- (id)initWithClientID:(NSString *)clientId
+          clientSecret:(NSString *)clientSecret
+          authorizeURL:(NSURL *)authorizeURL
+              tokenURL:(NSURL *)tokenURL
+           accessToken:(NXOAuth2AccessToken *)accessToken
+             tokenType:(NSString *)tokenType
+            persistent:(BOOL)shouldPersist
+              delegate:(NSObject<NXOAuth2ClientDelegate> *)delegate;
+
 - (BOOL)openRedirectURL:(NSURL *)URL;
 
 
@@ -109,6 +121,12 @@ extern NSString * const NXOAuth2ClientConnectionContextTokenRefresh;
  * Authenticate with username & password (User Credentials Flow)
  */
 - (void)authenticateWithUsername:(NSString *)username password:(NSString *)password;
+
+/*!
+ * Authenticate with assertion (Assertion Flow)
+ */
+- (void)authenticateWithAssertionType:(NSURL *)assertionType assertion:(NSString *)assertion;
+
 
 #pragma mark Public
 

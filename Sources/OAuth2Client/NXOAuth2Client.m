@@ -60,6 +60,25 @@ NSString * const NXOAuth2ClientConnectionContextTokenRefresh = @"tokenRefresh";
             persistent:(BOOL)shouldPersist
               delegate:(NSObject<NXOAuth2ClientDelegate> *)aDelegate;
 {
+    return [self initWithClientID:aClientId
+                     clientSecret:aClientSecret
+                     authorizeURL:anAuthorizeURL
+                         tokenURL:aTokenURL
+                      accessToken:anAccessToken
+                        tokenType:nil
+                       persistent:shouldPersist
+                         delegate:aDelegate];
+}
+
+- (id)initWithClientID:(NSString *)aClientId
+          clientSecret:(NSString *)aClientSecret
+          authorizeURL:(NSURL *)anAuthorizeURL
+              tokenURL:(NSURL *)aTokenURL
+           accessToken:(NXOAuth2AccessToken *)anAccessToken
+             tokenType:(NSString *)aTokenType
+            persistent:(BOOL)shouldPersist
+              delegate:(NSObject<NXOAuth2ClientDelegate> *)aDelegate;
+{
     NSAssert(aTokenURL != nil && anAuthorizeURL != nil, @"No token or no authorize URL");
     self = [super init];
     if (self) {
@@ -69,6 +88,7 @@ NSString * const NXOAuth2ClientConnectionContextTokenRefresh = @"tokenRefresh";
         clientSecret = [aClientSecret copy];
         authorizeURL = [anAuthorizeURL copy];
         tokenURL = [aTokenURL copy];
+        tokenType = [aTokenType copy];
         accessToken = anAccessToken;
         
         self.persistent = shouldPersist;
@@ -85,7 +105,7 @@ NSString * const NXOAuth2ClientConnectionContextTokenRefresh = @"tokenRefresh";
 
 #pragma mark Accessors
 
-@synthesize clientId, clientSecret;
+@synthesize clientId, clientSecret, tokenType;
 @synthesize desiredScope, userAgent;
 @synthesize delegate, persistent, accessToken, authenticating;
 
@@ -157,6 +177,15 @@ NSString * const NXOAuth2ClientConnectionContextTokenRefresh = @"tokenRefresh";
     }
 }
 
+- (void)setDesiredScope:(NSSet *)aDesiredScope;
+{
+    if (desiredScope == aDesiredScope) {
+        return;
+    }
+    
+    desiredScope = [aDesiredScope copy];
+}
+
 
 #pragma mark Flow
 
@@ -169,11 +198,17 @@ NSString * const NXOAuth2ClientConnectionContextTokenRefresh = @"tokenRefresh";
 
 - (NSURL *)authorizationURLWithRedirectURL:(NSURL *)redirectURL;
 {
-    return [authorizeURL nxoauth2_URLByAddingParameters:[NSDictionary dictionaryWithObjectsAndKeys:
-                                                         @"code", @"response_type",
-                                                         clientId, @"client_id",
-                                                         [redirectURL absoluteString], @"redirect_uri",
-                                                         nil]];
+    NSMutableDictionary *parameters = [NSMutableDictionary dictionaryWithObjectsAndKeys:
+                                       @"code", @"response_type",
+                                       clientId, @"client_id",
+                                       [redirectURL absoluteString], @"redirect_uri",
+                                       nil];
+    
+    if (self.desiredScope.count > 0) {
+        [parameters setObject:[[self.desiredScope allObjects] componentsJoinedByString:@" "] forKey:@"scope"];
+    }
+    
+    return [authorizeURL nxoauth2_URLByAddingParameters:parameters];
 }
 
 
@@ -258,6 +293,7 @@ NSString * const NXOAuth2ClientConnectionContextTokenRefresh = @"tokenRefresh";
     if (self.desiredScope) {
         [parameters setObject:[[self.desiredScope allObjects] componentsJoinedByString:@" "] forKey:@"scope"];
     }
+    
     authConnection = [[NXOAuth2Connection alloc] initWithRequest:tokenRequest
                                                requestParameters:parameters
                                                      oauthClient:self
@@ -294,6 +330,35 @@ NSString * const NXOAuth2ClientConnectionContextTokenRefresh = @"tokenRefresh";
     authConnection.context = NXOAuth2ClientConnectionContextTokenRequest;
 }
 
+// Assertion
+- (void)authenticateWithAssertionType:(NSURL *)assertionType assertion:(NSString *)assertion;
+{
+    NSAssert1(!authConnection, @"authConnection already running with: %@", authConnection);
+    NSParameterAssert(assertionType);
+    NSParameterAssert(assertion);
+    
+    NSMutableURLRequest *tokenRequest = [NSMutableURLRequest requestWithURL:tokenURL];
+    [tokenRequest setHTTPMethod:@"POST"];
+    [authConnection cancel];  // just to be sure
+    
+    self.authenticating = YES;
+    
+    NSMutableDictionary *parameters = [NSMutableDictionary dictionaryWithObjectsAndKeys:
+                                       @"assertion", @"grant_type",
+                                       clientId, @"client_id",
+                                       clientSecret, @"client_secret",
+                                       assertionType.absoluteString, @"assertion_type",
+                                       assertion, @"assertion",
+                                       nil];
+    if (self.desiredScope) {
+        [parameters setObject:[[self.desiredScope allObjects] componentsJoinedByString:@" "] forKey:@"scope"];
+    }
+    authConnection = [[NXOAuth2Connection alloc] initWithRequest:tokenRequest
+                                               requestParameters:parameters
+                                                     oauthClient:self
+                                                        delegate:self];
+    authConnection.context = NXOAuth2ClientConnectionContextTokenRequest;
+}
 
 #pragma mark Public
 
@@ -346,8 +411,12 @@ NSString * const NXOAuth2ClientConnectionContextTokenRefresh = @"tokenRefresh";
         self.authenticating = NO;
 
         NSString *result = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-        NXOAuth2AccessToken *newToken = [NXOAuth2AccessToken tokenWithResponseBody:result];
+        NXOAuth2AccessToken *newToken = [NXOAuth2AccessToken tokenWithResponseBody:result tokenType:self.tokenType
+                                         ];
         NSAssert(newToken != nil, @"invalid response?");
+        
+        [newToken restoreWithOldToken:self.accessToken];
+        
         self.accessToken = newToken;
         
         for (NXOAuth2Connection *retryConnection in waitingConnections) {
@@ -363,6 +432,10 @@ NSString * const NXOAuth2ClientConnectionContextTokenRefresh = @"tokenRefresh";
 
 - (void)oauthConnection:(NXOAuth2Connection *)connection didFailWithError:(NSError *)error;
 {
+    NSString *body = [[NSString alloc] initWithData:connection.data encoding:NSUTF8StringEncoding];
+    NSLog(@"oauthConnection Error: %@", body);
+    
+    
     if (connection == authConnection) {
         self.authenticating = NO;
 

@@ -22,6 +22,11 @@
 
 + (id)tokenWithResponseBody:(NSString *)theResponseBody;
 {
+    return [self tokenWithResponseBody:theResponseBody tokenType:nil];
+}
+
++ (id)tokenWithResponseBody:(NSString *)theResponseBody tokenType:(NSString *)tokenType;
+{
     NSDictionary *jsonDict = nil;
     Class jsonSerializationClass = NSClassFromString(@"NSJSONSerialization");
     if (jsonSerializationClass) {
@@ -51,6 +56,11 @@
     NSString *aRefreshToken = [jsonDict objectForKey:@"refresh_token"];
     NSString *scopeString = [jsonDict objectForKey:@"scope"];
     
+    // if the response overrides token_type we take it from the response
+    if ([jsonDict objectForKey:@"token_type"]) {
+        tokenType = [jsonDict objectForKey:@"token_type"];
+    }
+    
     NSSet *scope = nil;
     if (scopeString) {
         scope = [NSSet setWithArray:[scopeString componentsSeparatedByCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]]];
@@ -61,10 +71,11 @@
         expiryDate = [NSDate dateWithTimeIntervalSinceNow:[expiresIn integerValue]];
     }
     return [[[self class] alloc] initWithAccessToken:anAccessToken
-                                         refreshToken:aRefreshToken
-                                            expiresAt:expiryDate
-                                                scope:scope
-                                         responseBody:theResponseBody];
+                                        refreshToken:aRefreshToken
+                                           expiresAt:expiryDate
+                                               scope:scope
+                                        responseBody:theResponseBody
+                                           tokenType:tokenType];
 }
 
 - (id)initWithAccessToken:(NSString *)anAccessToken;
@@ -91,6 +102,16 @@
 
 - (id)initWithAccessToken:(NSString *)anAccessToken refreshToken:(NSString *)aRefreshToken expiresAt:(NSDate *)anExpiryDate scope:(NSSet *)aScope responseBody:(NSString *)aResponseBody;
 {
+    return [[[self class] alloc] initWithAccessToken:anAccessToken
+                                        refreshToken:aRefreshToken
+                                           expiresAt:anExpiryDate
+                                               scope:aScope
+                                        responseBody:aResponseBody
+                                           tokenType:nil];
+}
+
+- (id)initWithAccessToken:(NSString *)anAccessToken refreshToken:(NSString *)aRefreshToken expiresAt:(NSDate *)anExpiryDate scope:(NSSet *)aScope responseBody:(NSString *)aResponseBody tokenType:(NSString *)aTokenType
+{
     // a token object without an actual token is not what we want!
     NSAssert1(anAccessToken, @"No token from token response: %@", aResponseBody);
     if (anAccessToken == nil) {
@@ -104,10 +125,17 @@
         expiresAt    = [anExpiryDate copy];
         scope        = aScope ? [aScope copy] : [[NSSet alloc] init];
         responseBody = [aResponseBody copy];
+        tokenType    = [aTokenType copy];
     }
     return self;
 }
 
+- (void)restoreWithOldToken:(NXOAuth2AccessToken *)oldToken;
+{
+    if (self.refreshToken == nil) {
+        refreshToken = oldToken.refreshToken;
+    }
+}
 
 
 #pragma mark Accessors
@@ -117,6 +145,21 @@
 @synthesize expiresAt;
 @synthesize scope;
 @synthesize responseBody;
+@synthesize tokenType;
+
+- (NSString*)tokenType
+{
+    if (tokenType == nil || [tokenType isEqualToString:@""]) {
+        //fall back on OAuth if token type not set
+        return @"OAuth";
+    } else if ([tokenType isEqualToString:@"bearer"]) {
+        //this is for out case sensitive server
+        //oauth server should be case insensitive so this should make no difference
+        return @"Bearer";
+    } else {
+        return tokenType;
+    }
+}
 
 - (BOOL)doesExpire;
 {
@@ -128,10 +171,9 @@
     return ([[NSDate date] earlierDate:expiresAt] == expiresAt);
 }
 
-
 - (NSString *)description;
 {
-    return [NSString stringWithFormat:@"<NXOAuth2Token token:%@ refreshToken:%@ expiresAt:%@>", self.accessToken, self.refreshToken, self.expiresAt];
+    return [NSString stringWithFormat:@"<NXOAuth2Token token:%@ refreshToken:%@ expiresAt:%@ tokenType: %@>", self.accessToken, self.refreshToken, self.expiresAt, self.tokenType];
 }
 
 
@@ -144,6 +186,9 @@
     [aCoder encodeObject:expiresAt forKey:@"expiresAt"];
     [aCoder encodeObject:scope forKey:@"scope"];
     [aCoder encodeObject:responseBody forKey:@"responseBody"];
+    if (tokenType) {
+        [aCoder encodeObject:tokenType forKey:@"tokenType"];
+    }
 }
 
 - (id)initWithCoder:(NSCoder *)aDecoder
@@ -162,6 +207,7 @@
         expiresAt = [[aDecoder decodeObjectForKey:@"expiresAt"] copy];
         scope = [[aDecoder decodeObjectForKey:@"scope"] copy];
         responseBody = [[aDecoder decodeObjectForKey:@"responseBody"] copy];
+        tokenType = [[aDecoder decodeObjectForKey:@"tokenType"] copy];
     }
     return self;
 }
