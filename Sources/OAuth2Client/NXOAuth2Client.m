@@ -121,7 +121,11 @@ NSString * const NXOAuth2ClientConnectionContextTokenRefresh = @"tokenRefresh";
                                 @"assertion_type", @"assertion" ];
     
     for (id key in value) {
-        NSAssert1([forbiddenKeys containsObject:key] == NO, @"The key %@ may not be used in additionalAuthenticationParameters", key);
+        if ([forbiddenKeys containsObject:key]) {
+            [[NSException exceptionWithName:NSInvalidArgumentException
+                                     reason:[NSString stringWithFormat:@"'%@' is not allowed as a key for additionalAuthenticationParameters", key]
+                                   userInfo:nil] raise];
+        }
     }
     
     additionalAuthenticationParameters = value;
