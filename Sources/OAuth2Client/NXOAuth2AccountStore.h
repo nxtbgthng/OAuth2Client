@@ -36,6 +36,15 @@ extern NSString * const kNXOAuth2AccountStoreConfigurationScope;
 extern NSString * const kNXOAuth2AccountStoreConfigurationTokenType;
 
 
+/* 
+ * Requires a NSDictionary as a value.
+ * They are passed onto the authentication request as additional query parameters.
+ * The dictionary may not contain the keys "grant_type", "client_id", "client_secret",
+ * "username", "password", "redirect_uri", "code", "assertion_type" and "assertion" are not allowed.
+ */
+extern NSString * const kNXOAuth2AccountStoreConfigurationAdditionalAuthenticationParameters;
+
+
 #pragma mark Account Type
 
 extern NSString * const kNXOAuth2AccountStoreAccountType;
