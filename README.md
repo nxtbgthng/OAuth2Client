@@ -22,13 +22,15 @@ Getting the sources is as easy as doing a:
 
 #### iOS projects
 
-- drag the OAuth2Client.xcodeproj into your project
-- add OAuth2Client as a build dependency
-- add the Security.framework as a build dependency
-- add `OAuth2Client/**` to your user header search path in the build settings
-- link your target against OAuth2Client (drag the OAuth2Client product from OAuth2Client.xcodeproj to your
-targets *Link Binary With Libraries*)
-- `#import "NXOAuth2.h"`
+* Place the _OAuth2Client_ folder within your source root
+* Drag the _OAuth2Client.xcodeproj_ into your project
+* Under your build target, select the _Build Phases_ tab.
+    * Under _Target Dependencies_ add _OAuth2Client_
+    * Under _Link Binary With Libraries_, add _libOAuth2Client.a_
+* Under _Build Settings_,
+    * Add `$(SRCROOT)/path/to/OAuth2Client` _Header Search Paths_, set as _recursive_
+    * Add `-ObjC` to _Other Linker Flags_
+* `#import "NXOAuth2.h"`
 
 #### Desktop Mac projects
 
@@ -130,11 +132,11 @@ The authenticated accounts can be accessed via the `NXOAuth2AccountStore`. Eithe
 
 <pre>
 for (NXOAuth2Account *account in [[NXOAuth2AccountStore sharedStore] accounts]) {
-    // Do something with the account	
+    // Do something with the account
 };
 
 for (NXOAuth2Account *account in [[NXOAuth2AccountStore sharedStore] accountsWithAccountType:@"myFancyService"]) {
-    // Do something with the account	
+    // Do something with the account
 };
 
 NXOAuth2Account *account = [[NXOAuth2AccountStore sharedStore] accountWithIdentifier:@"...cached account id..."];
@@ -181,7 +183,7 @@ NSURLRequest *sigendRequest = [theRequest signedURLRequest];
 // Invoke the request with you preferd method
 </pre>
 
-## BSD License 
+## BSD License
 
 Copyright © 2012, nxtbgthng GmbH
 
