@@ -4,10 +4,10 @@
 //
 //  Created by Ullrich Schäfer on 07.10.09.
 //
-//  Copyright 2010 nxtbgthng. All rights reserved. 
+//  Copyright 2010 nxtbgthng. All rights reserved.
 //
 //  Licenced under the new BSD-licence.
-//  See README.md in this reprository for 
+//  See README.md in this repository for
 //  the full licence.
 //
 
@@ -16,66 +16,61 @@
 
 @implementation NSString (NXOAuth2)
 
-+ (NSString *)stringWithUUID;
++ (NSString *)nxoauth2_stringWithUUID;
 {
-	CFUUIDRef theUUID = CFUUIDCreate(NULL);
-    CFStringRef string = CFUUIDCreateString(NULL, theUUID);
-	CFRelease(theUUID);
-	
-    return [(NSString *)string autorelease];
+    CFUUIDRef theUUID = CFUUIDCreate(kCFAllocatorDefault);
+    NSString *result = (__bridge_transfer NSString *)CFUUIDCreateString(kCFAllocatorDefault, theUUID);
+    CFRelease(theUUID);
+    return result;
 }
 
 
 #pragma mark Query String Helpers
 
-+ (NSString *)stringWithEncodedQueryParameters:(NSDictionary *)parameters;
++ (NSString *)nxoauth2_stringWithEncodedQueryParameters:(NSDictionary *)parameters;
 {
-	
-	NSMutableArray *parameterPairs = [NSMutableArray array];
-	for (NSString *key in [parameters allKeys]) {
-		NSString *pair = [NSString stringWithFormat:@"%@=%@", [key URLEncodedString], [[parameters objectForKey:key] URLEncodedString]];
-		[parameterPairs addObject:pair];
-	}
-	return [parameterPairs componentsJoinedByString:@"&"];
+    
+    NSMutableArray *parameterPairs = [NSMutableArray array];
+    for (NSString *key in [parameters allKeys]) {
+        NSString *pair = [NSString stringWithFormat:@"%@=%@", [key nxoauth2_URLEncodedString], [[parameters objectForKey:key] nxoauth2_URLEncodedString]];
+        [parameterPairs addObject:pair];
+    }
+    return [parameterPairs componentsJoinedByString:@"&"];
 }
 
-- (NSDictionary *)parametersFromEncodedQueryString;
+- (NSDictionary *)nxoauth2_parametersFromEncodedQueryString;
 {
-	NSArray *encodedParameterPairs = [self componentsSeparatedByString:@"&"];
+    NSArray *encodedParameterPairs = [self componentsSeparatedByString:@"&"];
     NSMutableDictionary *requestParameters = [NSMutableDictionary dictionary];
     
     for (NSString *encodedPair in encodedParameterPairs) {
         NSArray *encodedPairElements = [encodedPair componentsSeparatedByString:@"="];
-		if (encodedPairElements.count == 2) {
-			[requestParameters setValue:[[encodedPairElements objectAtIndex:1] URLDecodedString]
-								 forKey:[[encodedPairElements objectAtIndex:0] URLDecodedString]];
-		}
+        if (encodedPairElements.count == 2) {
+            [requestParameters setValue:[[encodedPairElements objectAtIndex:1] nxoauth2_URLDecodedString]
+                                 forKey:[[encodedPairElements objectAtIndex:0] nxoauth2_URLDecodedString]];
+        }
     }
-	return requestParameters;
+    return requestParameters;
 }
 
 
 #pragma mark URLEncoding
 
-- (NSString *)URLEncodedString 
+- (NSString *)nxoauth2_URLEncodedString;
 {
-    NSString *result = (NSString *)CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault,
-                                                                           (CFStringRef)self,
-                                                                           NULL,
-																		   CFSTR("!*'();:@&=+$,/?%#[]"),
-                                                                           kCFStringEncodingUTF8);
-    [result autorelease];
-	return result;
+    return (__bridge_transfer NSString *) CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault, //Allocator
+                                                                                  (__bridge CFStringRef)self, //Original String
+                                                                                  NULL, //Characters to leave unescaped
+                                                                                  CFSTR("!*'();:@&=+$,/?%#[]"), //Legal Characters to be escaped
+                                                                                  kCFStringEncodingUTF8); //Encoding
 }
 
-- (NSString*)URLDecodedString
+- (NSString *)nxoauth2_URLDecodedString;
 {
-	NSString *result = (NSString *)CFURLCreateStringByReplacingPercentEscapesUsingEncoding(kCFAllocatorDefault,
-																						   (CFStringRef)self,
-																						   CFSTR(""),
-																						   kCFStringEncodingUTF8);
-    [result autorelease];
-	return result;	
+    return (__bridge_transfer NSString *) CFURLCreateStringByReplacingPercentEscapesUsingEncoding(kCFAllocatorDefault,
+                                                                                                  (__bridge CFStringRef)self,
+                                                                                                  CFSTR(""),
+                                                                                                  kCFStringEncodingUTF8);
 }
 
 @end

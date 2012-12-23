@@ -3,9 +3,11 @@
 //  OAuth2Client
 //
 //  Created by Ullrich Schäfer on 27.08.10.
-//  Copyright 2010 nxtbgthng. All rights reserved. 
+//
+//  Copyright 2010 nxtbgthng. All rights reserved.
+//
 //  Licenced under the new BSD-licence.
-//  See README.md in this reprository for 
+//  See README.md in this repository for
 //  the full licence.
 //
 
@@ -14,32 +16,49 @@
 
 @implementation NXOAuth2FileStreamWrapper
 
+#pragma mark Class Methods
+
++ (id)wrapperWithStream:(NSInputStream *)aStream contentLength:(unsigned long long)aContentLength;
+{
+    return [self wrapperWithStream:aStream contentLength:aContentLength fileName:nil];
+}
+
++ (id)wrapperWithStream:(NSInputStream *)aStream contentLength:(unsigned long long)aContentLength fileName:(NSString *)aFileName;
+{
+    return [[self alloc] initWithStream:aStream contentLength:aContentLength fileName:aFileName];
+}
+
+
 #pragma mark Lifecycle
 
-+ (id)wrapperWithStream:(NSInputStream *)theStream contentLength:(unsigned long long)theContentLength;
+- (id)init;
 {
-	return [[[self alloc] initWithStream:theStream contentLength:theContentLength] autorelease];
+    NSAssert(NO, @"-init should not be used in the NXOAuth2FileStreamWrapper");
+    return nil;
 }
 
 - (id)initWithStream:(NSInputStream *)theStream contentLength:(unsigned long long)theContentLength;
 {
-	if (self = [super init]) {
-		stream = [theStream retain];
-		contentLength = theContentLength;
-	}
-	return self;
+    return [self initWithStream:theStream contentLength:theContentLength fileName:nil];
 }
 
-- (void)dealloc;
+- (id)initWithStream:(NSInputStream *)aStream contentLength:(unsigned long long)aContentLength fileName:(NSString *)aFileName;
 {
-	[stream release];
-	[super dealloc];
+    if (!aFileName) aFileName = @"unknown";
+    
+    self = [super init];
+    if (self) {
+        stream = aStream;
+        contentLength = aContentLength;
+        fileName = [aFileName copy];
+    }
+    return self;
 }
 
 
 #pragma mark Accessors
 
-@synthesize stream, contentLength;
+@synthesize stream, contentLength, fileName;
 
 
 @end

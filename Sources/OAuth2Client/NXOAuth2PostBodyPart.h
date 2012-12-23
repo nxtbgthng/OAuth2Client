@@ -3,9 +3,11 @@
 //  OAuth2Client
 //
 //  Created by Ullrich Schäfer on 27.08.10.
-//  Copyright 2010 nxtbgthng. All rights reserved. 
+//
+//  Copyright 2010 nxtbgthng. All rights reserved.
+//
 //  Licenced under the new BSD-licence.
-//  See README.md in this reprository for 
+//  See README.md in this repository for
 //  the full licence.
 //
 
@@ -13,30 +15,30 @@
 
 
 @interface NXOAuth2PostBodyPart : NSObject {
-	NSString		*contentHeaders;
-	NSInputStream	*contentStream;
-	unsigned long long	contentLength;
+    NSString        *contentHeaders;
+    NSInputStream    *contentStream;
+    unsigned long long    contentLength;
 }
 
-@property (readonly) NSString		*contentHeaders;
-@property (readonly) NSInputStream	*contentStream;
-@property (readonly) unsigned long long	contentLength;
+@property (nonatomic, strong, readonly) NSString        *contentHeaders;
+@property (nonatomic, strong, readonly) NSInputStream    *contentStream;
+@property (nonatomic, assign, readonly) unsigned long long    contentLength;
 
 
 /*!
- *	Convenience methods
+ *    Convenience methods
  *
- *	Note: possible types for content are
- *	- NSString
- *	- NSURL (local file URL)
- *	- NSData
- *	- NXOAuth2FileStreamWrapper
+ *    Note: possible types for content are
+ *    - NSString
+ *    - NSURL (local file URL)
+ *    - NSData
+ *    - NXOAuth2FileStreamWrapper
  */
-+ partWithName:(NSString *)name content:(id)content;
++ (id)partWithName:(NSString *)name content:(id)content;
 - (id)initWithName:(NSString *)name content:(id)content;
 
 - (id)initWithHeaders:(NSString *)headers dataContent:(NSData *)data;
-- (id)initWithName:(NSString *)name streamContent:(NSInputStream *)stream streamLength:(unsigned long long)streamLength;
+- (id)initWithName:(NSString *)name streamContent:(NSInputStream *)stream streamLength:(unsigned long long)streamLength fileName:(NSString *)fileName;
 
 - (id)initWithHeaders:(NSString *)headers streamContent:(NSInputStream *)stream length:(unsigned long long)length; //designated initializer
 
