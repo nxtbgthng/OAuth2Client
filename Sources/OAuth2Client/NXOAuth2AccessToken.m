@@ -67,7 +67,7 @@
     }
 
     NSDate *expiryDate = nil;
-    if (expiresIn) {
+    if (expiresIn != nil && expiresIn != [NSNull null]) {
         expiryDate = [NSDate dateWithTimeIntervalSinceNow:[expiresIn integerValue]];
     }
     return [[[self class] alloc] initWithAccessToken:anAccessToken
