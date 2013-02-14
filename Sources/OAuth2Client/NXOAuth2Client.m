@@ -333,6 +333,31 @@ NSString * const NXOAuth2ClientConnectionContextTokenRefresh = @"tokenRefresh";
     authConnection.context = NXOAuth2ClientConnectionContextTokenRequest;
 }
 
+// Client Credential Flow
+- (void)authenticateWithClientCredentials;
+{
+    NSAssert1(!authConnection, @"authConnection already running with: %@", authConnection);
+    
+    NSMutableURLRequest *tokenRequest = [NSMutableURLRequest requestWithURL:tokenURL];
+    [tokenRequest setHTTPMethod:@"POST"];
+    [authConnection cancel];  // just to be sure
+    
+    self.authenticating = YES;
+    
+    NSMutableDictionary *parameters = [NSMutableDictionary dictionaryWithObjectsAndKeys:
+                                       @"client_credentials", @"grant_type",
+                                       clientId, @"client_id",
+                                       clientSecret, @"client_secret",
+                                       nil];
+    if (self.desiredScope) {
+        [parameters setObject:[[self.desiredScope allObjects] componentsJoinedByString:@" "] forKey:@"scope"];
+    }
+    authConnection = [[NXOAuth2Connection alloc] initWithRequest:tokenRequest
+                                               requestParameters:parameters
+                                                     oauthClient:self
+                                                        delegate:self];
+    authConnection.context = NXOAuth2ClientConnectionContextTokenRequest;
+}
 
 // User Password Flow Only
 - (void)authenticateWithUsername:(NSString *)username password:(NSString *)password;
