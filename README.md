@@ -52,7 +52,7 @@ installation steps automatically.
 
 In order to install the library this way add the following line to your `Podfile`:
 
-```dependency 'NXOAuth2Client','1.2.2'```
+```pod 'NXOAuth2Client', '~> 1.2.2'```
 
 and run the following command `pod install`.
 
