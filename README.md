@@ -31,6 +31,7 @@ Getting the sources is as easy as doing a:
     * Add `$(SRCROOT)/path/to/OAuth2Client` _Header Search Paths_, set as _recursive_
     * Add `-ObjC` to _Other Linker Flags_
 * `#import "NXOAuth2.h"`
+* add the Security.framework as a build dependency
 
 #### Desktop Mac projects
 
