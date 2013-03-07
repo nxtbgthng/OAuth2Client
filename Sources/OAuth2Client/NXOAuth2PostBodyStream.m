@@ -65,6 +65,8 @@
                 NXOAuth2PostBodyPart *part = [[NXOAuth2PostBodyPart alloc] initWithName:key content:content];
                 [parts addObject:part];
             }
+        } else if ([value isKindOfClass:[NSDictionary class]]) {
+            [parts addObjectsFromArray:[self partsForParameters:value]];
         } else {
             NXOAuth2PostBodyPart *part = [[NXOAuth2PostBodyPart alloc] initWithName:key content:value];
             [parts addObject:part];
