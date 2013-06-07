@@ -91,6 +91,8 @@ NSString * const NXOAuth2ClientConnectionContextTokenRefresh = @"tokenRefresh";
         tokenType = [aTokenType copy];
         accessToken = anAccessToken;
         
+        self.acceptType = @"application/json";
+        
         self.persistent = shouldPersist;
         self.delegate = aDelegate;
     }
