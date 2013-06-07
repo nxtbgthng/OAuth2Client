@@ -67,6 +67,7 @@ extern NSString * const NXOAuth2ClientConnectionContextTokenRefresh;
 
 @property (nonatomic, copy) NSSet *desiredScope;
 @property (nonatomic, copy) NSString *userAgent;
+@property (nonatomic, copy) NSString *acceptType; // defaults to application/json
 
 @property (nonatomic, strong) NXOAuth2AccessToken    *accessToken;
 @property (nonatomic, unsafe_unretained) NSObject<NXOAuth2ClientDelegate>*    delegate;
@@ -122,6 +123,7 @@ extern NSString * const NXOAuth2ClientConnectionContextTokenRefresh;
 /*!
  * Authenticate with username & password (User Credentials Flow)
  */
+- (void)authenticateWithClientCredentials;
 - (void)authenticateWithUsername:(NSString *)username password:(NSString *)password;
 
 /*!
