@@ -59,7 +59,7 @@
 
 #pragma mark Accessors
 
-@synthesize stream, contentLength, fileName;
+@synthesize stream, contentLength, fileName, contentType;
 
 
 @end
