@@ -106,4 +106,4 @@ typedef enum  {
 
 
 extern NSString * const NXOAuth2AccountStoreErrorKey;
-
+extern NSString * const NXOAuth2ErrorResponseDataKey;

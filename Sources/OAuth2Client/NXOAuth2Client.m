@@ -499,6 +499,12 @@ NSString * const NXOAuth2ClientConnectionContextTokenRefresh = @"tokenRefresh";
     NSString *body = [[NSString alloc] initWithData:connection.data encoding:NSUTF8StringEncoding];
     NSLog(@"oauthConnection Error: %@", body);
     
+    NSMutableDictionary *userInfo = [NSMutableDictionary dictionaryWithDictionary:error.userInfo];
+    if (connection.data) {
+        [userInfo setObject:connection.data forKey:NXOAuth2ErrorResponseDataKey];
+    }
+    
+    NSError *updatedError = [NSError errorWithDomain:error.domain code:error.code userInfo:[NSDictionary dictionaryWithDictionary:userInfo]];
     
     if (connection == authConnection) {
         self.authenticating = NO;
@@ -539,7 +545,7 @@ NSString * const NXOAuth2ClientConnectionContextTokenRefresh = @"tokenRefresh";
             }
             
             if ([delegate respondsToSelector:@selector(oauthClient:didFailToGetAccessTokenWithError:)]) {
-                [delegate oauthClient:self didFailToGetAccessTokenWithError:error];
+                [delegate oauthClient:self didFailToGetAccessTokenWithError:updatedError];
             }
         }
     }
