@@ -62,7 +62,7 @@
     }
     
     NSSet *scope = nil;
-    if (scopeString) {
+    if (scopeString && ![scopeString isEqual:[NSNull null]]) {
         scope = [NSSet setWithArray:[scopeString componentsSeparatedByCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]]];
     }
 
