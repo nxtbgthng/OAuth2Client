@@ -10,7 +10,6 @@
 //  See README.md in this repository for
 //  the full licence.
 //
-
 #import "NSURL+NXOAuth2.h"
 #import "NSData+NXOAuth2.h"
 
@@ -233,6 +232,7 @@ sendingProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)aSendingProgres
         && [httpMethod caseInsensitiveCompare:@"PUT"] != NSOrderedSame) {
         aRequest.URL = [aRequest.URL nxoauth2_URLByAddingParameters:parameters];
     } else {
+#if 0
         NSInputStream *postBodyStream = [[NXOAuth2PostBodyStream alloc] initWithParameters:parameters];
         
         NSString *contentType = [NSString stringWithFormat:@"multipart/form-data; boundary=%@", [(NXOAuth2PostBodyStream *)postBodyStream boundary]];
@@ -241,6 +241,17 @@ sendingProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)aSendingProgres
         [aRequest setValue:contentLength forHTTPHeaderField:@"Content-Length"];
         
         [aRequest setHTTPBodyStream:postBodyStream];
+#else
+        NSString * get = @"";
+        for (id key in [parameters allKeys]) {
+            get = [NSString stringWithFormat:@"%@%@%@=%@", get, [get length]?@"&":@"", key, parameters[key]];
+        }
+        NSData *getData = [get dataUsingEncoding:NSUTF8StringEncoding allowLossyConversion:NO];
+        NSString *getLength = [NSString stringWithFormat:@"%lu", (unsigned long)[getData length]];
+        [aRequest setValue:getLength forHTTPHeaderField:@"Content-Length"];
+        [aRequest setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
+        [aRequest setHTTPBody:getData];
+#endif
     }
 }
 
