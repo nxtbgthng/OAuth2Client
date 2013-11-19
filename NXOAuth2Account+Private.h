@@ -14,5 +14,8 @@
 #import "NXOAuth2Account.h"
 
 @interface NXOAuth2Account (Private)
+
 - (id)initAccountWithOAuthClient:(NXOAuth2Client *)oauthClient accountType:(NSString *)accountType;
+- (id)initAccountWithAccessToken:(NXOAuth2AccessToken *)accessToken accountType:(NSString *)accountType;
+
 @end

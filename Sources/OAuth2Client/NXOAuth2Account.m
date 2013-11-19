@@ -43,11 +43,20 @@ NSString * const NXOAuth2AccountDidFailToGetAccessTokenNotification = @"NXOAuth2
 
 - (id)initAccountWithOAuthClient:(NXOAuth2Client *)anOAuthClient accountType:(NSString *)anAccountType;
 {
+    self = [self initAccountWithAccessToken:anOAuthClient.accessToken
+                                accountType:anAccountType];
+    if (self) {
+        oauthClient = anOAuthClient;
+    }
+    return self;
+}
+
+- (id)initAccountWithAccessToken:(NXOAuth2AccessToken *)anAccessToken accountType:(NSString *)anAccountType;
+{
     self = [super init];
     if (self) {
         accountType = anAccountType;
-        oauthClient = anOAuthClient;
-        accessToken = oauthClient.accessToken;
+        accessToken = anAccessToken;
         oauthClient.delegate = self;
         identifier = [NSString nxoauth2_stringWithUUID];
     }
