@@ -307,11 +307,8 @@ NSString * const NXOAuth2ClientConnectionContextTokenRefresh = @"tokenRefresh";
 {
     NSAssert1(!authConnection, @"authConnection already running with: %@", authConnection);
     
-    NSMutableURLRequest *tokenRequest = [NSMutableURLRequest requestWithURL:tokenURL];
-    [tokenRequest setHTTPMethod:@"POST"];
-    [authConnection cancel];  // just to be sure
+    
 
-    self.authenticating = YES;
 
     NSMutableDictionary *parameters = [NSMutableDictionary dictionaryWithObjectsAndKeys:
                                        @"authorization_code", @"grant_type",
@@ -320,6 +317,22 @@ NSString * const NXOAuth2ClientConnectionContextTokenRefresh = @"tokenRefresh";
                                        [redirectURL absoluteString], @"redirect_uri",
                                        authGrant, @"code",
                                        nil];
+    
+    NSString *url = tokenURL.absoluteString;
+    url = [url stringByAppendingString:@"?"];
+    for(id key in parameters) {
+        url = [url stringByAppendingString:key];
+        url = [url stringByAppendingString:@"="];
+        url = [url stringByAppendingString:[parameters objectForKey:key]];
+        url = [url stringByAppendingString:@"&"];
+    }
+        
+    NSMutableURLRequest *tokenRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url]];
+    [tokenRequest setHTTPMethod:@"POST"];
+    [authConnection cancel];  // just to be sure
+    
+    self.authenticating = YES;
+    
     if (self.desiredScope) {
         [parameters setObject:[[self.desiredScope allObjects] componentsJoinedByString:@" "] forKey:@"scope"];
     }
