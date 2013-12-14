@@ -25,6 +25,7 @@
 @interface NXOAuth2Request () <NXOAuth2ConnectionDelegate>
 @property (nonatomic,  strong, readwrite) NXOAuth2Connection *connection;
 @property (nonatomic,  strong, readwrite) NXOAuth2Request *me;
+@property NSTimeInterval timeout;
 #pragma mark Apply Parameters
 - (void)applyParameters:(NSDictionary *)someParameters onRequest:(NSMutableURLRequest *)aRequest;
 @end
@@ -41,20 +42,46 @@
   sendProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)progressHandler
       responseHandler:(NXOAuth2ConnectionResponseHandler)responseHandler;
 {
-    NXOAuth2Request *request = [[NXOAuth2Request alloc] initWithResource:aResource
-                                                                  method:aMethod
-                                                              parameters:someParameters];
-    request.account = anAccount;
+    [self performMethod:aMethod
+             onResource:aResource
+        usingParameters:someParameters
+            withAccount:anAccount
+    sendProgressHandler:progressHandler
+        responseHandler:responseHandler
+        timeoutinterval:NXOAuth2DefaultTimeOut];
+
+}
+
+
++(void) performMethod:(NSString *)method
+           onResource:(NSURL *)resource
+      usingParameters:(NSDictionary *)parameters
+          withAccount:(NXOAuth2Account *)account
+  sendProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)progressHandler
+      responseHandler:(NXOAuth2ConnectionResponseHandler)responseHandler
+      timeoutinterval:(NSTimeInterval )time{
+    NXOAuth2Request *request = [[NXOAuth2Request alloc] initWithResource:resource
+                                                                  method:method
+                                                              parameters:parameters
+                                                                 timeout:time];
+    request.account = account;
     [request performRequestWithSendingProgressHandler:progressHandler responseHandler:responseHandler];
+    
+    
 }
 
 
 #pragma mark Lifecycle
 
-- (id)initWithResource:(NSURL *)aResource method:(NSString *)aMethod parameters:(NSDictionary *)someParameters;
+-(id) initWithResource:(NSURL *)url method:(NSString *)method parameters:(NSDictionary *)parameter{
+    return [self initWithResource:url method:method parameters:parameters timeout:NXOAuth2DefaultTimeOut];
+}
+
+- (id)initWithResource:(NSURL *)aResource method:(NSString *)aMethod parameters:(NSDictionary *)someParameters timeout:(NSTimeInterval ) time;
 {
     self = [super init];
     if (self) {
+        timeout = time;
         resource = aResource;
         parameters = someParameters;
         requestMethod = aMethod;
@@ -68,6 +95,7 @@
 @synthesize parameters;
 @synthesize resource;
 @synthesize requestMethod;
+@synthesize timeout;
 @synthesize account;
 @synthesize connection;
 @synthesize me;
@@ -80,7 +108,7 @@
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:self.resource];
     
     [request setHTTPMethod:self.requestMethod];
-    
+    if(self.timeout) [request setTimeoutInterval:self.timeout];
     [self applyParameters:self.parameters onRequest:request];
     
     if (self.account.oauthClient.userAgent && ![request valueForHTTPHeaderField:@"User-Agent"]) {
