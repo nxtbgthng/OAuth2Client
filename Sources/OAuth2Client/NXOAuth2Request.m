@@ -48,7 +48,7 @@
             withAccount:anAccount
     sendProgressHandler:progressHandler
         responseHandler:responseHandler
-        timeoutinterval:NXOAuth2DefaultTimeOut];
+        timeoutinterval:0];
 
 }
 
@@ -74,7 +74,7 @@
 #pragma mark Lifecycle
 
 -(id) initWithResource:(NSURL *)url method:(NSString *)method parameters:(NSDictionary *)parameter{
-    return [self initWithResource:url method:method parameters:parameters timeout:NXOAuth2DefaultTimeOut];
+    return [self initWithResource:url method:method parameters:parameters timeout:0];
 }
 
 - (id)initWithResource:(NSURL *)aResource method:(NSString *)aMethod parameters:(NSDictionary *)someParameters timeout:(NSTimeInterval ) time;
@@ -108,7 +108,7 @@
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:self.resource];
     
     [request setHTTPMethod:self.requestMethod];
-    if(self.timeout) [request setTimeoutInterval:self.timeout];
+    if(self.timeout && timeout > 0) [request setTimeoutInterval:self.timeout];
     [self applyParameters:self.parameters onRequest:request];
     
     if (self.account.oauthClient.userAgent && ![request valueForHTTPHeaderField:@"User-Agent"]) {

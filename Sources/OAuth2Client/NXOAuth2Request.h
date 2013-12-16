@@ -15,7 +15,6 @@
 
 #import "NXOAuth2Connection.h"
 
-#define NXOAuth2DefaultTimeOut 30
 
 @class NXOAuth2Account;
 
