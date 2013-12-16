@@ -35,7 +35,7 @@ Pod::Spec.new do |s|
   s.summary  = 'Client library for OAuth2 (currently built against draft 10 of the OAuth2 spec).'
   s.homepage = 'https://github.com/nxtbgthng/OAuth2Client'
   s.author   = { 'nxtbgthng' => 'team@nxtbgthng.com'}
-  s.source   = { :git => 'https://github.com/chrbongardt/OAuth2Client.git', :tag => "v#{s.version}" }
+  s.source   = { :git => 'https://github.com/chrbongardt/OAuth2Client.git' }
   s.source_files = 'NXOAuth2Account+Private.h', 'Sources/', 'Sources/OAuth2Client/'
   s.frameworks = 'Security'
   s.requires_arc = true
