@@ -42,9 +42,9 @@
            onResource:(NSURL *)resource
       usingParameters:(NSDictionary *)parameters
           withAccount:(NXOAuth2Account *)account
+              timeout:(NSTimeInterval ) time
   sendProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)progressHandler
-      responseHandler:(NXOAuth2ConnectionResponseHandler)responseHandler
-      timeoutinterval:(NSTimeInterval ) time;
+      responseHandler:(NXOAuth2ConnectionResponseHandler)responseHandler;
 
 #pragma mark Lifecycle
 

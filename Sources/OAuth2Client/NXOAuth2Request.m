@@ -46,10 +46,10 @@
              onResource:aResource
         usingParameters:someParameters
             withAccount:anAccount
+                timeout:0
     sendProgressHandler:progressHandler
-        responseHandler:responseHandler
-        timeoutinterval:0];
-
+        responseHandler:responseHandler];
+    
 }
 
 
@@ -57,9 +57,10 @@
            onResource:(NSURL *)resource
       usingParameters:(NSDictionary *)parameters
           withAccount:(NXOAuth2Account *)account
+              timeout:(NSTimeInterval )time
   sendProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)progressHandler
       responseHandler:(NXOAuth2ConnectionResponseHandler)responseHandler
-      timeoutinterval:(NSTimeInterval )time{
+{
     NXOAuth2Request *request = [[NXOAuth2Request alloc] initWithResource:resource
                                                                   method:method
                                                               parameters:parameters
@@ -107,8 +108,11 @@
 {
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:self.resource];
     
+    
     [request setHTTPMethod:self.requestMethod];
-    if(self.timeout && timeout > 0) [request setTimeoutInterval:self.timeout];
+    if(timeout > 0) {
+        [request setTimeoutInterval:self.timeout];
+    }
     [self applyParameters:self.parameters onRequest:request];
     
     if (self.account.oauthClient.userAgent && ![request valueForHTTPHeaderField:@"User-Agent"]) {
@@ -132,6 +136,9 @@
     NSAssert(self.me == nil, @"This object an only perform one request at the same time.");
     
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:self.resource];
+    if(timeout > 0){
+        [request setTimeoutInterval:timeout];
+    }
     [request setHTTPMethod:self.requestMethod];
     self.connection = [[NXOAuth2Connection alloc] initWithRequest:request
                                                 requestParameters:self.parameters
