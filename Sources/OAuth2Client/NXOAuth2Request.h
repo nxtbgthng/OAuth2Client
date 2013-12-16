@@ -15,6 +15,7 @@
 
 #import "NXOAuth2Connection.h"
 
+
 @class NXOAuth2Account;
 
 @interface NXOAuth2Request : NSObject {
@@ -37,10 +38,24 @@
   sendProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)progressHandler
       responseHandler:(NXOAuth2ConnectionResponseHandler)responseHandler;
 
++ (void)performMethod:(NSString *)method
+           onResource:(NSURL *)resource
+      usingParameters:(NSDictionary *)parameters
+          withAccount:(NXOAuth2Account *)account
+              timeout:(NSTimeInterval ) time
+  sendProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)progressHandler
+      responseHandler:(NXOAuth2ConnectionResponseHandler)responseHandler;
 
 #pragma mark Lifecycle
 
-- (id)initWithResource:(NSURL *)url method:(NSString *)method parameters:(NSDictionary *)parameter;
+- (id)initWithResource:(NSURL *)url
+                method:(NSString *)method
+            parameters:(NSDictionary *)parameter;
+
+- (id)initWithResource:(NSURL *)url
+                method:(NSString *)method
+            parameters:(NSDictionary *)parameter
+               timeout:(NSTimeInterval ) time;
 
 
 #pragma mark Accessors
