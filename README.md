@@ -55,6 +55,7 @@ In order to install the library this way add the following line to your `Podfile
 ```pod 'NXOAuth2Client', '~> 1.2.2'```
 
 and run the following command `pod install`.
+(if not done previously run `pod setup` or the `pod install` command be stuck)
 
 ## Using the OAuth2Client
 
