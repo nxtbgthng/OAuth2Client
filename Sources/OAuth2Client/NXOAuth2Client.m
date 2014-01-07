@@ -426,7 +426,7 @@ NSString * const NXOAuth2ClientConnectionContextTokenRefresh = @"tokenRefresh";
 
 #pragma mark Public
 
-- (void)refreshAccessToken;
+- (void)refreshAccessToken
 {
     [self refreshAccessTokenAndRetryConnection:nil];
 }
