@@ -184,6 +184,30 @@ NSURLRequest *sigendRequest = [theRequest signedURLRequest];
 // Invoke the request with you preferd method
 </pre>
 
+#### Fully Parametrized File Upload
+
+<pre>
+// Get fileSize
+NSDictionary *fileAttributes = [[NSFileManager defaultManager] attributesOfItemAtPath:uploadFile.localDataFilePath error:nil];
+NSNumber *fileSize = [fileAttributes valueForKey:NSFileSize];
+    
+// Create a stream wrapper for the upload file
+NXOAuth2FileStreamWrapper* w =[NXOAuth2FileStreamWrapper
+    wrapperWithStream:[NSInputStream inputStreamWithFileAtPath:uploadFile.localDataFilePath]
+        contentLength:[fileSize unsignedLongLongValue]
+             fileName:uploadFile.remoteFilename];
+
+if([uploadFile.remoteFilename hasSuffix:@".json"])
+    w.contentType = @"application/json";
+else
+    if([uploadFile.remoteFilename hasSuffix:@".jpg"])
+        w.contentType = @"image/jpeg";
+
+// POST Content-Disposition: form-data; name="file"; filename=uploadFile.remoteFilename
+[NXOAuth2Request performMethod:@"POST" onResource:uploadFile.uploadURL usingParameters:@{@"file": w} withAccount:account
+           sendProgressHandler:... responseHandler: ...];
+</pre>
+               
 ## BSD License
 
 Copyright © 2012, nxtbgthng GmbH
