@@ -11,6 +11,7 @@
 //  the full licence.
 //
 
+#import "NSString+NXOAuth2.h"
 #import "NSURL+NXOAuth2.h"
 #import "NSData+NXOAuth2.h"
 
