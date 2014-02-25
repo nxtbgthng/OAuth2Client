@@ -305,7 +305,7 @@ NSString * const NXOAuth2ClientConnectionContextTokenRefresh = @"tokenRefresh";
 // Web Server Flow only
 - (void)requestTokenWithAuthGrant:(NSString *)authGrant redirectURL:(NSURL *)redirectURL;
 {
-    NSAssert1(!authConnection, @"authConnection already running with: %@", authConnection);
+    //NSAssert1(!authConnection, @"authConnection already running with: %@", authConnection);
     
     NSMutableURLRequest *tokenRequest = [NSMutableURLRequest requestWithURL:tokenURL];
     [tokenRequest setHTTPMethod:@"POST"];
@@ -338,7 +338,7 @@ NSString * const NXOAuth2ClientConnectionContextTokenRefresh = @"tokenRefresh";
 // Client Credential Flow
 - (void)authenticateWithClientCredentials;
 {
-    NSAssert1(!authConnection, @"authConnection already running with: %@", authConnection);
+    //NSAssert1(!authConnection, @"authConnection already running with: %@", authConnection);
     
     NSMutableURLRequest *tokenRequest = [NSMutableURLRequest requestWithURL:tokenURL];
     [tokenRequest setHTTPMethod:@"POST"];
@@ -364,7 +364,7 @@ NSString * const NXOAuth2ClientConnectionContextTokenRefresh = @"tokenRefresh";
 // User Password Flow Only
 - (void)authenticateWithUsername:(NSString *)username password:(NSString *)password;
 {
-    NSAssert1(!authConnection, @"authConnection already running with: %@", authConnection);
+    //NSAssert1(!authConnection, @"authConnection already running with: %@", authConnection);
     
     NSMutableURLRequest *tokenRequest = [NSMutableURLRequest requestWithURL:tokenURL];
     [tokenRequest setHTTPMethod:@"POST"];
@@ -397,7 +397,7 @@ NSString * const NXOAuth2ClientConnectionContextTokenRefresh = @"tokenRefresh";
 // Assertion
 - (void)authenticateWithAssertionType:(NSURL *)anAssertionType assertion:(NSString *)anAssertion;
 {
-    NSAssert1(!authConnection, @"authConnection already running with: %@", authConnection);
+    //NSAssert1(!authConnection, @"authConnection already running with: %@", authConnection);
     NSParameterAssert(anAssertionType);
     NSParameterAssert(anAssertion);
     
