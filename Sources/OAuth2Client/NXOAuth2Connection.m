@@ -225,14 +225,18 @@ sendingProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)aSendingProgres
         && [httpMethod caseInsensitiveCompare:@"PUT"] != NSOrderedSame) {
         aRequest.URL = [aRequest.URL nxoauth2_URLByAddingParameters:parameters];
     } else {
-        NSInputStream *postBodyStream = [[NXOAuth2PostBodyStream alloc] initWithParameters:parameters];
+        /*NSInputStream *postBodyStream = [[NXOAuth2PostBodyStream alloc] initWithParameters:parameters];
         
         NSString *contentType = [NSString stringWithFormat:@"multipart/form-data; boundary=%@", [(NXOAuth2PostBodyStream *)postBodyStream boundary]];
         NSString *contentLength = [NSString stringWithFormat:@"%lld", [(NXOAuth2PostBodyStream *)postBodyStream length]];
         [aRequest setValue:contentType forHTTPHeaderField:@"Content-Type"];
         [aRequest setValue:contentLength forHTTPHeaderField:@"Content-Length"];
         
-        [aRequest setHTTPBodyStream:postBodyStream];
+        [aRequest setHTTPBodyStream:postBodyStream];*/
+        
+        NSString *contentType = @"application/x-www-form-urlencoded";
+        [aRequest setValue:contentType forHTTPHeaderField:@"Content-Type"];
+        [aRequest setHTTPBody:[[NSString nxoauth2_stringWithEncodedQueryParameters:parameters] dataUsingEncoding:NSUTF8StringEncoding]];
     }
 }
 
