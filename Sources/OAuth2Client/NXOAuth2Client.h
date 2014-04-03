@@ -66,6 +66,7 @@ extern NSString * const NXOAuth2ClientConnectionContextTokenRefresh;
 @property (nonatomic, strong, readwrite) NSDictionary *additionalAuthenticationParameters;
 
 @property (nonatomic, copy) NSSet *desiredScope;
+@property (nonatomic, copy) NSString *tokenRequestHTTPMethod; // defaults to POST
 @property (nonatomic, copy) NSString *userAgent;
 @property (nonatomic, copy) NSString *acceptType; // defaults to application/json
 
