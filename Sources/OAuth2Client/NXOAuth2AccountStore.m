@@ -42,6 +42,7 @@ NSString * const kNXOAuth2AccountStoreConfigurationTokenURL = @"kNXOAuth2Account
 NSString * const kNXOAuth2AccountStoreConfigurationRedirectURL = @"kNXOAuth2AccountStoreConfigurationRedirectURL";
 NSString * const kNXOAuth2AccountStoreConfigurationScope = @"kNXOAuth2AccountStoreConfigurationScope";
 NSString * const kNXOAuth2AccountStoreConfigurationTokenType = @"kNXOAuth2AccountStoreConfigurationTokenType";
+NSString * const kNXOAuth2AccountStoreConfigurationKeyChainGroup = @"kNXOAuth2AccountStoreConfigurationKeyChainGroup";
 NSString * const kNXOAuth2AccountStoreConfigurationAdditionalAuthenticationParameters = @"kNXOAuth2AccountStoreConfigurationAdditionalAuthenticationParameters";
 
 #pragma mark Account Type
@@ -246,6 +247,7 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
    authorizationURL:(NSURL *)anAuthorizationURL
            tokenURL:(NSURL *)aTokenURL
         redirectURL:(NSURL *)aRedirectURL
+      keyChainGroup:(NSString *)aKeyChainGroup
      forAccountType:(NSString *)anAccountType;
 {
     [self setConfiguration:[NSDictionary dictionaryWithObjectsAndKeys:
@@ -254,6 +256,7 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
                             theScope, kNXOAuth2AccountStoreConfigurationScope,
                             anAuthorizationURL, kNXOAuth2AccountStoreConfigurationAuthorizeURL,
                             aTokenURL, kNXOAuth2AccountStoreConfigurationTokenURL,
+                            aKeyChainGroup, kNXOAuth2AccountStoreConfigurationKeyChainGroup,
                             aRedirectURL, kNXOAuth2AccountStoreConfigurationRedirectURL, nil]
             forAccountType:anAccountType];
 }
@@ -264,6 +267,7 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
    authorizationURL:(NSURL *)anAuthorizationURL
            tokenURL:(NSURL *)aTokenURL
         redirectURL:(NSURL *)aRedirectURL
+      keyChainGroup:(NSString *)aKeyChainGroup
           tokenType:(NSString *)aTokenType
      forAccountType:(NSString *)anAccountType;
 {
@@ -274,6 +278,7 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
                             anAuthorizationURL, kNXOAuth2AccountStoreConfigurationAuthorizeURL,
                             aTokenURL, kNXOAuth2AccountStoreConfigurationTokenURL,
                             aTokenType, kNXOAuth2AccountStoreConfigurationTokenType,
+                            aKeyChainGroup, kNXOAuth2AccountStoreConfigurationKeyChainGroup,
                             aRedirectURL, kNXOAuth2AccountStoreConfigurationRedirectURL, nil]
             forAccountType:anAccountType];
 }
@@ -395,6 +400,7 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
             NSURL *authorizeURL = [configuration objectForKey:kNXOAuth2AccountStoreConfigurationAuthorizeURL];
             NSURL *tokenURL = [configuration objectForKey:kNXOAuth2AccountStoreConfigurationTokenURL];
             NSString *tokenType = [configuration objectForKey:kNXOAuth2AccountStoreConfigurationTokenType];
+            NSString *keychainGroup = [configuration objectForKey:kNXOAuth2AccountStoreConfigurationKeyChainGroup];
             NSDictionary *additionalAuthenticationParameters = [configuration objectForKey:kNXOAuth2AccountStoreConfigurationAdditionalAuthenticationParameters];
             
             client = [[NXOAuth2Client alloc] initWithClientID:clientID
@@ -403,6 +409,7 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
                                                      tokenURL:tokenURL
                                                   accessToken:nil
                                                     tokenType:tokenType
+                                                keyChainGroup:keychainGroup
                                                    persistent:YES
                                                      delegate:self];
             

@@ -238,7 +238,8 @@
     result = (__bridge_transfer NSDictionary *)cfResult;
     
     if (status != noErr) {
-        NSAssert1(status == errSecItemNotFound, @"unexpected error while fetching token from keychain: %ld", status);
+        // Crashes on iOS8
+        //NSAssert1(status == errSecItemNotFound, @"unexpected error while fetching token from keychain: %ld", status);
         return nil;
     }
     

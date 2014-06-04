@@ -42,6 +42,7 @@ extern NSString * const NXOAuth2ClientConnectionContextTokenRefresh;
     NSSet       *desiredScope;
     NSString    *userAgent;
     NSString    *assertion;
+    NSString    *keyChainGroup;
     
     // server information
     NSURL        *authorizeURL;
@@ -93,6 +94,7 @@ extern NSString * const NXOAuth2ClientConnectionContextTokenRefresh;
           authorizeURL:(NSURL *)authorizeURL
               tokenURL:(NSURL *)tokenURL
            accessToken:(NXOAuth2AccessToken *)accessToken
+         keyChainGroup:(NSString *)keyChainGroup
             persistent:(BOOL)shouldPersist
               delegate:(NSObject<NXOAuth2ClientDelegate> *)delegate;
 
@@ -102,6 +104,7 @@ extern NSString * const NXOAuth2ClientConnectionContextTokenRefresh;
               tokenURL:(NSURL *)tokenURL
            accessToken:(NXOAuth2AccessToken *)accessToken
              tokenType:(NSString *)tokenType
+         keyChainGroup:(NSString *)keyChainGroup
             persistent:(BOOL)shouldPersist
               delegate:(NSObject<NXOAuth2ClientDelegate> *)delegate;
 
