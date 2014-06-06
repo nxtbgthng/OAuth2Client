@@ -227,17 +227,20 @@ sendingProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)aSendingProgres
         aRequest.URL = [aRequest.URL nxoauth2_URLByAddingParameters:parameters];
     } else {
         /*NSInputStream *postBodyStream = [[NXOAuth2PostBodyStream alloc] initWithParameters:parameters];
-        
-        NSString *contentType = [NSString stringWithFormat:@"multipart/form-data; boundary=%@", [(NXOAuth2PostBodyStream *)postBodyStream boundary]];
-        NSString *contentLength = [NSString stringWithFormat:@"%lld", [(NXOAuth2PostBodyStream *)postBodyStream length]];
-        [aRequest setValue:contentType forHTTPHeaderField:@"Content-Type"];
-        [aRequest setValue:contentLength forHTTPHeaderField:@"Content-Length"];
-        
-        [aRequest setHTTPBodyStream:postBodyStream];*/
+         
+         NSString *contentType = [NSString stringWithFormat:@"multipart/form-data; boundary=%@", [(NXOAuth2PostBodyStream *)postBodyStream boundary]];
+         NSString *contentLength = [NSString stringWithFormat:@"%lld", [(NXOAuth2PostBodyStream *)postBodyStream length]];
+         [aRequest setValue:contentType forHTTPHeaderField:@"Content-Type"];
+         [aRequest setValue:contentLength forHTTPHeaderField:@"Content-Length"];
+         
+         [aRequest setHTTPBodyStream:postBodyStream];*/
         
         NSString *contentType = @"application/x-www-form-urlencoded";
+        NSString *content = [NSString nxoauth2_stringWithEncodedQueryParameters:parameters];
+        NSString *contentLength = [NSString stringWithFormat:@"%d", content.length];
         [aRequest setValue:contentType forHTTPHeaderField:@"Content-Type"];
-        [aRequest setHTTPBody:[[NSString nxoauth2_stringWithEncodedQueryParameters:parameters] dataUsingEncoding:NSUTF8StringEncoding]];
+        [aRequest setValue:contentLength forHTTPHeaderField:@"Content-Length"];
+        [aRequest setHTTPBody:[content dataUsingEncoding:NSUTF8StringEncoding]];
     }
 }
 
