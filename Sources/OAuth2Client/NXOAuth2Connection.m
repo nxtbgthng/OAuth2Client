@@ -11,6 +11,7 @@
 //  the full licence.
 //
 
+#import "NSString+NXOAuth2.h"
 #import "NSURL+NXOAuth2.h"
 #import "NSData+NXOAuth2.h"
 
@@ -163,9 +164,7 @@ sendingProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)aSendingProgres
         ![[requestParameters objectForKey:@"grant_type"] isEqualToString:@"refresh_token"]) {
         
         // if token is expired don't bother starting this connection.
-        NSDate *tenSecondsAgo = [NSDate dateWithTimeIntervalSinceNow:(-10)];
-        NSDate *tokenExpiresAt = client.accessToken.expiresAt;
-        if ([tenSecondsAgo earlierDate:tokenExpiresAt] == tokenExpiresAt) {
+        if (client.accessToken.hasExpired) {
             [self cancel];
             [client refreshAccessTokenAndRetryConnection:self];
             return nil;
@@ -225,14 +224,21 @@ sendingProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)aSendingProgres
         && [httpMethod caseInsensitiveCompare:@"PUT"] != NSOrderedSame) {
         aRequest.URL = [aRequest.URL nxoauth2_URLByAddingParameters:parameters];
     } else {
-        NSInputStream *postBodyStream = [[NXOAuth2PostBodyStream alloc] initWithParameters:parameters];
+        /*NSInputStream *postBodyStream = [[NXOAuth2PostBodyStream alloc] initWithParameters:parameters];
+         
+         NSString *contentType = [NSString stringWithFormat:@"multipart/form-data; boundary=%@", [(NXOAuth2PostBodyStream *)postBodyStream boundary]];
+         NSString *contentLength = [NSString stringWithFormat:@"%lld", [(NXOAuth2PostBodyStream *)postBodyStream length]];
+         [aRequest setValue:contentType forHTTPHeaderField:@"Content-Type"];
+         [aRequest setValue:contentLength forHTTPHeaderField:@"Content-Length"];
+         
+         [aRequest setHTTPBodyStream:postBodyStream];*/
         
-        NSString *contentType = [NSString stringWithFormat:@"multipart/form-data; boundary=%@", [(NXOAuth2PostBodyStream *)postBodyStream boundary]];
-        NSString *contentLength = [NSString stringWithFormat:@"%lld", [(NXOAuth2PostBodyStream *)postBodyStream length]];
+        NSString *contentType = @"application/x-www-form-urlencoded";
+        NSString *content = [NSString nxoauth2_stringWithEncodedQueryParameters:parameters];
+        NSString *contentLength = [NSString stringWithFormat:@"%d", content.length];
         [aRequest setValue:contentType forHTTPHeaderField:@"Content-Type"];
         [aRequest setValue:contentLength forHTTPHeaderField:@"Content-Length"];
-        
-        [aRequest setHTTPBodyStream:postBodyStream];
+        [aRequest setHTTPBody:[content dataUsingEncoding:NSUTF8StringEncoding]];
     }
 }
 

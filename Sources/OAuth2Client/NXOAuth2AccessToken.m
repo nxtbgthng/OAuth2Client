@@ -168,7 +168,8 @@
 
 - (BOOL)hasExpired;
 {
-    return ([[NSDate date] earlierDate:expiresAt] == expiresAt);
+    // give it a little buffer to expire date
+    return ([[NSDate dateWithTimeIntervalSinceNow:10] earlierDate:expiresAt] == expiresAt);
 }
 
 - (NSString *)description;
