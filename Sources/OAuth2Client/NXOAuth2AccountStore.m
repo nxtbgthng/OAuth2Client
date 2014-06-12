@@ -401,11 +401,8 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
             NSURL *authorizeURL = [configuration objectForKey:kNXOAuth2AccountStoreConfigurationAuthorizeURL];
             NSURL *tokenURL = [configuration objectForKey:kNXOAuth2AccountStoreConfigurationTokenURL];
             NSString *tokenType = [configuration objectForKey:kNXOAuth2AccountStoreConfigurationTokenType];
-<<<<<<< HEAD
             NSString *tokenRequestHTTPMethod = [configuration objectForKey:kNXOAuth2AccountStoreConfigurationTokenRequestHTTPMethod];
-=======
             NSString *keychainGroup = [configuration objectForKey:kNXOAuth2AccountStoreConfigurationKeyChainGroup];
->>>>>>> 13211ba... Added support for different keychain groups (multi-user)
             NSDictionary *additionalAuthenticationParameters = [configuration objectForKey:kNXOAuth2AccountStoreConfigurationAdditionalAuthenticationParameters];
 
             client = [[NXOAuth2Client alloc] initWithClientID:clientID
@@ -485,7 +482,7 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
     }
 
     NXOAuth2Account *account = [[NXOAuth2Account alloc] initAccountWithOAuthClient:client accountType:accountType];
-    
+
     [self addAccount:account];
 }
 
