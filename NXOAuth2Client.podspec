@@ -1,10 +1,10 @@
 Pod::Spec.new do |s|
   s.name     = 'NXOAuth2Client'
-  s.version  = '1.2.5'
+  s.version  = '1.2.6'
   s.license  = {
     :type => 'BSD',
     :text => <<-LICENSETEXT
-                Copyright © 2012, nxtbgthng GmbH
+                Copyright © 2012-2014, nxtbgthng GmbH
 
                 All rights reserved.
 
@@ -32,7 +32,7 @@ Pod::Spec.new do |s|
                 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     LICENSETEXT
   }
-  s.summary  = 'Client library for OAuth2 (currently built against draft 10 of the OAuth2 spec).'
+  s.summary  = 'Client library for OAuth2 (currently built against draft 10 of the OAuth2 spec) but can support several drafts.'
   s.homepage = 'https://github.com/nxtbgthng/OAuth2Client'
   s.author   = { 'nxtbgthng' => 'team@nxtbgthng.com'}
   s.source   = { :git => 'https://github.com/nxtbgthng/OAuth2Client.git', :tag => "v#{s.version}" }

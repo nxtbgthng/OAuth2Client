@@ -34,6 +34,7 @@ extern NSString * const kNXOAuth2AccountStoreConfigurationTokenURL;
 extern NSString * const kNXOAuth2AccountStoreConfigurationRedirectURL;
 extern NSString * const kNXOAuth2AccountStoreConfigurationScope;
 extern NSString * const kNXOAuth2AccountStoreConfigurationTokenType;
+extern NSString * const kNXOAuth2AccountStoreConfigurationTokenRequestHTTPMethod;
 
 
 /* 
@@ -92,6 +93,7 @@ typedef void(^NXOAuth2PreparedAuthorizationURLHandler)(NSURL *preparedURL);
    authorizationURL:(NSURL *)anAuthorizationURL
            tokenURL:(NSURL *)aTokenURL
         redirectURL:(NSURL *)aRedirectURL
+      keyChainGroup:(NSString *)aKeyChainGroup
      forAccountType:(NSString *)anAccountType;
 
 - (void)setClientID:(NSString *)aClientID
@@ -100,6 +102,7 @@ typedef void(^NXOAuth2PreparedAuthorizationURLHandler)(NSURL *preparedURL);
    authorizationURL:(NSURL *)anAuthorizationURL
            tokenURL:(NSURL *)aTokenURL
         redirectURL:(NSURL *)aRedirectURL
+      keyChainGroup:(NSString *)aKeyChainGroup
           tokenType:(NSString *)aTokenType
      forAccountType:(NSString *)anAccountType;
 
