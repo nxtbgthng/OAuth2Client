@@ -18,6 +18,18 @@ authentication flow.
 Getting the sources is as easy as doing a:  
 `git clone git://github.com/nxtbgthng/OAuth2Client.git`
 
+### Adding the library to your project using CocoaPods
+[CocoaPods](http://cocoapods.org/) is a dependency manager for Xcode projects. It manages the above
+installation steps automatically.
+
+In order to install the library this way add the following line to your `Podfile`:
+
+```pod 'NXOAuth2Client', '~> 1.2.6'```
+
+and run the following command `pod install`.
+
+*Note:* CocoaPods is now the preferred way to integrate NXOAuth2Client into XCode
+
 ### Manually including the library in your Xcode project
 
 #### iOS projects
@@ -46,15 +58,7 @@ to your targets *Link Binary With Libraries*)
 *Using the library as a framework in desktop applications is fairly untested. Please
 [report any issues](http://github.com/nxtbgthng/OAuth2Client/issues) and help in making the library better.*
 
-### Adding the libary to your project using CocoaPods
-[CocoaPods](http://cocoapods.org/) is a dependency manager for Xcode projects. It manages the above
-installation steps automatically.
 
-In order to install the library this way add the following line to your `Podfile`:
-
-```pod 'NXOAuth2Client', '~> 1.2.2'```
-
-and run the following command `pod install`.
 
 ## Using the OAuth2Client
 
@@ -183,6 +187,12 @@ NSURLRequest *sigendRequest = [theRequest signedURLRequest];
 
 // Invoke the request with you preferd method
 </pre>
+
+## Contributing & Pull Requests
+
+Patches and pull requests are welcome! We are sorry if it takes a while to review them, but sooner or later we will get to yours.
+
+Not that we are using the [git-flow](http://nvie.com/posts/a-successful-git-branching-model/) model of branching and releasing, so **please make pull requests against the develop branch** to make merging them easier.
 
 ## BSD License
 
