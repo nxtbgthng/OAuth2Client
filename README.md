@@ -78,6 +78,8 @@ The best place to configure your client is `+[UIApplicationDelegate initialize]`
 }
 </pre>
 
+Take a look at the [Wiki](https://github.com/nxtbgthng/OAuth2Client/wiki) for some examples.
+
 ### Requesting Access to a Service
 
 Once you have configured your client you are ready to request access to one of those services. The NXOAuth2AccountStore provides three different methods for this:
