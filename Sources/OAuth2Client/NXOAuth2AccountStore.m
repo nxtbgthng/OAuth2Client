@@ -511,7 +511,9 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
     NSString *accountType;
     @synchronized (self.pendingOAuthClients) {
         accountType = [self accountTypeOfPendingOAuthClient:client];
-        [self.pendingOAuthClients removeObjectForKey:accountType];
+        if (accountType) {
+            [self.pendingOAuthClients removeObjectForKey:accountType];
+        }
     }
 }
 
