@@ -219,7 +219,7 @@ else
 
 Patches and pull requests are welcome! We are sorry if it takes a while to review them, but sooner or later we will get to yours.
 
-Not that we are using the [git-flow](http://nvie.com/posts/a-successful-git-branching-model/) model of branching and releasing, so **please make pull requests against the develop branch** to make merging them easier.
+Note that we are using the [git-flow](http://nvie.com/posts/a-successful-git-branching-model/) model of branching and releasing, so **please create pull requests against the develop branch**.
 
 ## BSD License
 
