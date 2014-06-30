@@ -39,7 +39,7 @@
     } else if ([content isKindOfClass:[NSNumber class]]) {
         return [self initWithName:name stringContent:[content stringValue]];
     } else if ([content isKindOfClass:[NSURL class]] && [content isFileURL]) {
-        return [self initWithName:name fileContent:[content path]];
+        return [self initWithName:name fileContent:[(NSURL *)content path]];
     } else if ([content isKindOfClass:[NSData class]]) {
         return [self initWithName:name dataContent:content];
     } else if ([content isKindOfClass:[NXOAuth2FileStreamWrapper class]]) {
