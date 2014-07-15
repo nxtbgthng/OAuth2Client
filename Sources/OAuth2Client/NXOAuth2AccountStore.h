@@ -35,7 +35,7 @@ extern NSString * const kNXOAuth2AccountStoreConfigurationRedirectURL;
 extern NSString * const kNXOAuth2AccountStoreConfigurationScope;
 extern NSString * const kNXOAuth2AccountStoreConfigurationTokenType;
 extern NSString * const kNXOAuth2AccountStoreConfigurationTokenRequestHTTPMethod;
-
+extern NSString * const kNXOAuth2AccountStoreConfigurationCustomHeaderFields;
 
 /* 
  * Requires a NSDictionary as a value.
