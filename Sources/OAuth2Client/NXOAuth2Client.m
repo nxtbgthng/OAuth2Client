@@ -393,6 +393,10 @@ NSString * const NXOAuth2ClientConnectionContextTokenRefresh = @"tokenRefresh";
         [parameters addEntriesFromDictionary:self.additionalAuthenticationParameters];
     }
     
+    if (self.customHeaderFields) {
+        [tokenRequest setAllHTTPHeaderFields:self.customHeaderFields];
+    }
+    
     authConnection = [[NXOAuth2Connection alloc] initWithRequest:tokenRequest
                                                requestParameters:parameters
                                                      oauthClient:self
