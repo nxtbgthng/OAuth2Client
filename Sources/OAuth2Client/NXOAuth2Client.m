@@ -407,7 +407,9 @@ NSString * const NXOAuth2ClientConnectionContextTokenRefresh = @"tokenRefresh";
     }
     
     if (self.customHeaderFields) {
-        [tokenRequest setAllHTTPHeaderFields:self.customHeaderFields];
+        [self.customHeaderFields enumerateKeysAndObjectsUsingBlock:^(NSString *key, NSString *obj, BOOL *stop) {
+            [tokenRequest addValue:obj forHTTPHeaderField:key];
+        }];
     }
     
     authConnection = [[NXOAuth2Connection alloc] initWithRequest:tokenRequest
