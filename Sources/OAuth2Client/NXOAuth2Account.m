@@ -92,6 +92,7 @@ NSString * const NXOAuth2AccountDidFailToGetAccessTokenNotification = @"NXOAuth2
             NSString *tokenType = [configuration objectForKey:kNXOAuth2AccountStoreConfigurationTokenType];
             NSString *keychainGroup = [configuration objectForKey:kNXOAuth2AccountStoreConfigurationTokenType];
             NSDictionary *additionalQueryParams = [configuration objectForKey:kNXOAuth2AccountStoreConfigurationAdditionalAuthenticationParameters];
+            NSDictionary *customHeaderFields = [configuration objectForKey:kNXOAuth2AccountStoreConfigurationCustomHeaderFields];
 
             oauthClient = [[NXOAuth2Client alloc] initWithClientID:clientID
                                                       clientSecret:clientSecret
@@ -104,6 +105,10 @@ NSString * const NXOAuth2AccountDidFailToGetAccessTokenNotification = @"NXOAuth2
                                                           delegate:self];
             if (additionalQueryParams) {
                 oauthClient.additionalAuthenticationParameters = additionalQueryParams;
+            }
+            
+            if (customHeaderFields) {
+                oauthClient.customHeaderFields = customHeaderFields;
             }
             
         }
