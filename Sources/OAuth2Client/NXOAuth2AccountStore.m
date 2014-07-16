@@ -426,13 +426,12 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
                 NSAssert([additionalAuthenticationParameters isKindOfClass:[NSDictionary class]], @"additionalAuthenticationParameters have to be a NSDictionary");
                 client.additionalAuthenticationParameters = additionalAuthenticationParameters;
             }
+            if (customHeaderFields) {
+                client.customHeaderFields = customHeaderFields;
+            }
 
             if (scope != nil) {
                 client.desiredScope = scope;
-            }
-            
-            if (customHeaderFields) {
-                client.customHeaderFields = customHeaderFields;
             }
 
             [self.pendingOAuthClients setObject:client forKey:accountType];
@@ -517,7 +516,9 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
     NSString *accountType;
     @synchronized (self.pendingOAuthClients) {
         accountType = [self accountTypeOfPendingOAuthClient:client];
-        [self.pendingOAuthClients removeObjectForKey:accountType];
+        if (accountType) {
+            [self.pendingOAuthClients removeObjectForKey:accountType];
+        }
     }
 }
 
