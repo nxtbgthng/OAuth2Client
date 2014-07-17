@@ -223,7 +223,9 @@ sendingProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)aSendingProgres
     NSString *httpMethod = [aRequest HTTPMethod];
     if ([httpMethod caseInsensitiveCompare:@"POST"] != NSOrderedSame
         && [httpMethod caseInsensitiveCompare:@"PUT"] != NSOrderedSame) {
+        
         aRequest.URL = [aRequest.URL nxoauth2_URLByAddingParameters:parameters];
+        
     } else {
         
         NSString *contentType = [aRequest valueForHTTPHeaderField:@"Content-Type"];
@@ -241,7 +243,7 @@ sendingProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)aSendingProgres
             
             [aRequest setHTTPBodyStream:postBodyStream];
             
-        }else if ([contentType isEqualToString:@"application/x-www-form-urlencoded"]) {
+        } else if ([contentType isEqualToString:@"application/x-www-form-urlencoded"]) {
             
             // sends the POST/PUT request as application/x-www-form-urlencoded
             
