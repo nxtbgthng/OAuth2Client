@@ -161,7 +161,7 @@ This payload will be stored together with the accounts in the Keychain. Thus it 
 
 ### Invoking a Request
 
-An request using the authentication for a service can be invoked via `NXOAuth2Request`. The most convenient method (see below) is a class method which you pass the method, a resource and some parameters (or nil) for the request and to handlers (both optional). One for a progress and the other for the response. The account is used for authentication and can be nil. Then a normal request without authentication will be invoked.
+A request using the authentication for a service can be invoked via `NXOAuth2Request`. The most convenient method (see below) is a class method which you pass the method, a resource and some parameters (or nil) for the request and to handlers (both optional). One for a progress and the other for the response. The account is used for authentication and can be nil. Then a normal request without authentication will be invoked.
 <pre>
 [NXOAuth2Request performMethod:@"GET"
                     onResource:[NSURL URLWithString:@"https://...your service URL..."]
@@ -175,7 +175,7 @@ An request using the authentication for a service can be invoked via `NXOAuth2Re
 
 #### Getting a signed NSURLRequest
 
-In some circumstances you have to go the *god old way* and use an `NSURLConnection`. Maybe if you to download a large file. Therefor `NXOAuth2Request` gives you the possibility to get an `NSURLRequest` containing the additional information to authenticate that request.
+In some circumstances you have to go the *good old way* and use an `NSURLConnection`. Maybe if you to download a large file. Therefor `NXOAuth2Request` gives you the possibility to get an `NSURLRequest` containing the additional information to authenticate that request.
 
 <pre>
 NXOAuth2Request *theRequest = [[NXOAuth2Request alloc] initWithResource:[NSURL URLWithString:@"https://...your service URL..."]
