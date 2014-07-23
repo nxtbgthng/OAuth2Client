@@ -105,7 +105,7 @@ Once you have configured your client you are ready to request access to one of t
  	                                // Open a web view or similar
  	                            }];
  </pre>
- Using an authorization URL handler gives you the ability to open the URL in an own web view or do some fancy stuff for authentication. Therefor you pass a block to the NXOAuth2AccountStore while requesting access.
+ Using an authorization URL handler gives you the ability to open the URL in an own web view or do some fancy stuff for authentication. Therefore you pass a block to the NXOAuth2AccountStore while requesting access.
 
 #### On Success
 
@@ -175,7 +175,7 @@ An request using the authentication for a service can be invoked via `NXOAuth2Re
 
 #### Getting a signed NSURLRequest
 
-In some circumstances you have to go the *god old way* and use an `NSURLConnection`. Maybe if you to download a large file. Therefor `NXOAuth2Request` gives you the possibility to get an `NSURLRequest` containing the additional information to authenticate that request.
+In some circumstances you have to go the *god old way* and use an `NSURLConnection`. Maybe if you to download a large file. Therefore `NXOAuth2Request` gives you the possibility to get an `NSURLRequest` containing the additional information to authenticate that request.
 
 <pre>
 NXOAuth2Request *theRequest = [[NXOAuth2Request alloc] initWithResource:[NSURL URLWithString:@"https://...your service URL..."]
