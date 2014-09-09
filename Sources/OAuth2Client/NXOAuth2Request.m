@@ -37,6 +37,7 @@
 + (void)performMethod:(NSString *)aMethod
            onResource:(NSURL *)aResource
       usingParameters:(NSDictionary *)someParameters
+         headerFields:(NSDictionary *)headerFields
           withAccount:(NXOAuth2Account *)anAccount
   sendProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)progressHandler
       responseHandler:(NXOAuth2ConnectionResponseHandler)responseHandler;
@@ -45,9 +46,24 @@
                                                                   method:aMethod
                                                               parameters:someParameters];
     request.account = anAccount;
+    request.headerFields = headerFields;
     [request performRequestWithSendingProgressHandler:progressHandler responseHandler:responseHandler];
 }
 
++ (void)performMethod:(NSString *)aMethod
+           onResource:(NSURL *)aResource
+      usingParameters:(NSDictionary *)someParameters
+          withAccount:(NXOAuth2Account *)anAccount
+  sendProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)progressHandler
+      responseHandler:(NXOAuth2ConnectionResponseHandler)responseHandler;
+{
+    [self performMethod:aMethod
+             onResource:aResource
+        usingParameters:someParameters
+            withAccount:anAccount
+    sendProgressHandler:progressHandler
+        responseHandler:responseHandler];
+}
 
 #pragma mark Lifecycle
 
@@ -66,6 +82,7 @@
 #pragma mark Accessors
 
 @synthesize parameters;
+@synthesize headerFields;
 @synthesize resource;
 @synthesize requestMethod;
 @synthesize account;
@@ -105,6 +122,15 @@
     
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:self.resource];
     [request setHTTPMethod:self.requestMethod];
+    
+    if (self.headerFields) {
+        [self.headerFields enumerateKeysAndObjectsUsingBlock:^(NSString *field, NSString *value, BOOL *stop) {
+            if ([field isKindOfClass:NSString.class] && [value isKindOfClass:NSString.class]) {
+                [request setValue:value forHTTPHeaderField:field];
+            }
+        }];
+    }
+    
     self.connection = [[NXOAuth2Connection alloc] initWithRequest:request
                                                 requestParameters:self.parameters
                                                       oauthClient:self.account.oauthClient

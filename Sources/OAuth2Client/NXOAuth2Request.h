@@ -20,6 +20,7 @@
 @interface NXOAuth2Request : NSObject {
 @private
     NSDictionary *parameters;
+    NSDictionary *headerFields;
     NSURL *resource;
     NSString *requestMethod;
     NXOAuth2Account *account;
@@ -37,6 +38,14 @@
   sendProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)progressHandler
       responseHandler:(NXOAuth2ConnectionResponseHandler)responseHandler;
 
++ (void)performMethod:(NSString *)method
+           onResource:(NSURL *)resource
+      usingParameters:(NSDictionary *)parameters
+         headerFields:(NSDictionary *)headerFields
+          withAccount:(NXOAuth2Account *)account
+  sendProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)progressHandler
+      responseHandler:(NXOAuth2ConnectionResponseHandler)responseHandler;
+
 
 #pragma mark Lifecycle
 
@@ -50,6 +59,7 @@
 @property (nonatomic, strong, readwrite) NSString *requestMethod;
 @property (nonatomic, strong, readwrite) NSURL *resource;
 @property (nonatomic, strong, readwrite) NSDictionary *parameters;
+@property (nonatomic, strong, readwrite) NSDictionary *headerFields;
 
 
 #pragma mark Signed NSURLRequest
