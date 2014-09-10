@@ -191,12 +191,12 @@
 
 - (void)scheduleInRunLoop:(NSRunLoop *)runLoop forMode:(NSString *)mode;
 {
-    [super scheduleInRunLoop:runLoop forMode:mode];
+    //[super scheduleInRunLoop:runLoop forMode:mode];
 }
 
 - (void)removeFromRunLoop:(NSRunLoop *)runLoop forMode:(NSString *)mode;
 {
-    [super removeFromRunLoop:runLoop forMode:mode];
+    //[super removeFromRunLoop:runLoop forMode:mode];
 }
 
 
