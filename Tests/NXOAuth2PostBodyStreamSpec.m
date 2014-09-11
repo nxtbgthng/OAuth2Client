@@ -54,7 +54,7 @@ describe(@"NXOAuth2PostBodyStream", ^{
     });
     
     
-    xdescribe(@"NSInputStream", ^{
+    describe(@"NSInputStream", ^{
         describe(@"-scheduleInRunLoop:forMode:", ^{
             it(@"triggers no assert when called", ^{
                 NXOAuth2PostBodyStream *stream = [[NXOAuth2PostBodyStream alloc] initWithParameters:@{}];
