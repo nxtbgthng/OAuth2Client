@@ -478,6 +478,12 @@ NSString * const NXOAuth2ClientConnectionContextTokenRefresh = @"tokenRefresh";
         if (self.additionalAuthenticationParameters) {
             [parameters addEntriesFromDictionary:self.additionalAuthenticationParameters];
         }
+        
+        if (self.customHeaderFields) {
+            [self.customHeaderFields enumerateKeysAndObjectsUsingBlock:^(NSString *key, NSString *obj, BOOL *stop) {
+                [tokenRequest addValue:obj forHTTPHeaderField:key];
+            }];
+        }
 
         if (self.desiredScope) {
             [parameters setObject:[[self.desiredScope allObjects] componentsJoinedByString:@" "] forKey:@"scope"];
