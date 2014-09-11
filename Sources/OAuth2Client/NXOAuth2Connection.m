@@ -163,9 +163,7 @@ sendingProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)aSendingProgres
         ![[requestParameters objectForKey:@"grant_type"] isEqualToString:@"refresh_token"]) {
         
         // if token is expired don't bother starting this connection.
-        NSDate *tenSecondsAgo = [NSDate dateWithTimeIntervalSinceNow:(-10)];
-        NSDate *tokenExpiresAt = client.accessToken.expiresAt;
-        if (client.accessToken.refreshToken && [tenSecondsAgo earlierDate:tokenExpiresAt] == tokenExpiresAt) {
+        if (client.accessToken.refreshToken && client.accessToken.hasExpired) {
             [self cancel];
             [client refreshAccessTokenAndRetryConnection:self];
             return nil;
@@ -415,10 +413,10 @@ sendingProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)aSendingProgres
             }
         }
     }
-    if (/*self.statusCode == 401 // TODO: check for status code once the bug returning 500 is fixed
-         &&*/ client.accessToken.refreshToken != nil
-        && authenticateHeader
-        && [authenticateHeader rangeOfString:@"expired_token"].location != NSNotFound) {
+    
+    BOOL shouldRefresh = (self.statusCode == 401) && (client.accessToken.hasExpired) && (client.accessToken.refreshToken != nil);
+    
+    if (shouldRefresh) {
         [self cancel];
         [client refreshAccessTokenAndRetryConnection:self];
     } else {
