@@ -163,7 +163,7 @@
         NSInputStream *postBodyStream = [[NXOAuth2PostBodyStream alloc] initWithParameters:parameters];
         
         NSString *contentType = [NSString stringWithFormat:@"multipart/form-data; boundary=%@", [(NXOAuth2PostBodyStream *)postBodyStream boundary]];
-        NSString *contentLength = [NSString stringWithFormat:@"%llu", [(NXOAuth2PostBodyStream *)postBodyStream length]];
+        NSString *contentLength = [@([(NXOAuth2PostBodyStream *)postBodyStream length]) stringValue];
         [aRequest setValue:contentType forHTTPHeaderField:@"Content-Type"];
         [aRequest setValue:contentLength forHTTPHeaderField:@"Content-Length"];
         
