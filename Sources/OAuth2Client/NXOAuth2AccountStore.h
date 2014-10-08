@@ -36,7 +36,6 @@ extern NSString * const kNXOAuth2AccountStoreConfigurationScope;
 extern NSString * const kNXOAuth2AccountStoreConfigurationTokenType;
 extern NSString * const kNXOAuth2AccountStoreConfigurationTokenRequestHTTPMethod;
 
-
 /* 
  * Requires a NSDictionary as a value.
  * They are passed onto the authentication request as additional query parameters.
@@ -44,6 +43,13 @@ extern NSString * const kNXOAuth2AccountStoreConfigurationTokenRequestHTTPMethod
  * "username", "password", "redirect_uri", "code", "assertion_type" and "assertion" are not allowed.
  */
 extern NSString * const kNXOAuth2AccountStoreConfigurationAdditionalAuthenticationParameters;
+
+/*
+ * Requires a NSDictionary as a value.
+ * They are passed onto the HTTP Header Fields request as additional parameters.
+ * Example of a valid setup: @{ @"Content-type" : @"application/x-www-form-urlencoded" }
+ */
+extern NSString * const kNXOAuth2AccountStoreConfigurationCustomHeaderFields;
 
 
 #pragma mark Account Type

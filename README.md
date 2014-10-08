@@ -24,7 +24,7 @@ installation steps automatically.
 
 In order to install the library this way add the following line to your `Podfile`:
 
-```pod 'NXOAuth2Client', '~> 1.2.6'```
+```pod 'NXOAuth2Client', '~> 1.2.8'```
 
 and run the following command `pod install`.
 
@@ -78,6 +78,8 @@ The best place to configure your client is `+[UIApplicationDelegate initialize]`
 }
 </pre>
 
+Take a look at the [Wiki](https://github.com/nxtbgthng/OAuth2Client/wiki) for some examples.
+
 ### Requesting Access to a Service
 
 Once you have configured your client you are ready to request access to one of those services. The NXOAuth2AccountStore provides three different methods for this:
@@ -103,7 +105,7 @@ Once you have configured your client you are ready to request access to one of t
  	                                // Open a web view or similar
  	                            }];
  </pre>
- Using an authorization URL handler gives you the ability to open the URL in an own web view or do some fancy stuff for authentication. Therefor you pass a block to the NXOAuth2AccountStore while requesting access.
+ Using an authorization URL handler gives you the ability to open the URL in an own web view or do some fancy stuff for authentication. Therefore you pass a block to the NXOAuth2AccountStore while requesting access.
 
 #### On Success
 
@@ -159,7 +161,7 @@ This payload will be stored together with the accounts in the Keychain. Thus it 
 
 ### Invoking a Request
 
-An request using the authentication for a service can be invoked via `NXOAuth2Request`. The most convenient method (see below) is a class method which you pass the method, a resource and some parameters (or nil) for the request and to handlers (both optional). One for a progress and the other for the response. The account is used for authentication and can be nil. Then a normal request without authentication will be invoked.
+A request using the authentication for a service can be invoked via `NXOAuth2Request`. The most convenient method (see below) is a class method which you pass the method, a resource and some parameters (or nil) for the request and to handlers (both optional). One for a progress and the other for the response. The account is used for authentication and can be nil. Then a normal request without authentication will be invoked.
 <pre>
 [NXOAuth2Request performMethod:@"GET"
                     onResource:[NSURL URLWithString:@"https://...your service URL..."]
@@ -173,7 +175,7 @@ An request using the authentication for a service can be invoked via `NXOAuth2Re
 
 #### Getting a signed NSURLRequest
 
-In some circumstances you have to go the *god old way* and use an `NSURLConnection`. Maybe if you to download a large file. Therefor `NXOAuth2Request` gives you the possibility to get an `NSURLRequest` containing the additional information to authenticate that request.
+In some circumstances you have to go the *good old way* and use an `NSURLConnection`. Maybe if you to download a large file. Therefore `NXOAuth2Request` gives you the possibility to get an `NSURLRequest` containing the additional information to authenticate that request.
 
 <pre>
 NXOAuth2Request *theRequest = [[NXOAuth2Request alloc] initWithResource:[NSURL URLWithString:@"https://...your service URL..."]
@@ -188,11 +190,36 @@ NSURLRequest *sigendRequest = [theRequest signedURLRequest];
 // Invoke the request with you preferd method
 </pre>
 
+#### Fully Parametrized File Upload
+
+<pre>
+// Get fileSize
+NSDictionary *fileAttributes = [[NSFileManager defaultManager] attributesOfItemAtPath:uploadFile.localDataFilePath error:nil];
+NSNumber *fileSize = [fileAttributes valueForKey:NSFileSize];
+
+// Create a stream wrapper for the upload file
+NXOAuth2FileStreamWrapper* w =[NXOAuth2FileStreamWrapper
+    wrapperWithStream:[NSInputStream inputStreamWithFileAtPath:uploadFile.localDataFilePath]
+        contentLength:[fileSize unsignedLongLongValue]
+             fileName:uploadFile.remoteFilename];
+
+if([uploadFile.remoteFilename hasSuffix:@".json"])
+    w.contentType = @"application/json";
+else
+    if([uploadFile.remoteFilename hasSuffix:@".jpg"])
+        w.contentType = @"image/jpeg";
+
+// POST Content-Disposition: form-data; name="file"; filename=uploadFile.remoteFilename
+[NXOAuth2Request performMethod:@"POST" onResource:uploadFile.uploadURL usingParameters:@{@"file": w} withAccount:account
+           sendProgressHandler:... responseHandler: ...];
+</pre>
+
+
 ## Contributing & Pull Requests
 
 Patches and pull requests are welcome! We are sorry if it takes a while to review them, but sooner or later we will get to yours.
 
-Not that we are using the [git-flow](http://nvie.com/posts/a-successful-git-branching-model/) model of branching and releasing, so **please make pull requests against the develop branch** to make merging them easier.
+Note that we are using the [git-flow](http://nvie.com/posts/a-successful-git-branching-model/) model of branching and releasing, so **please create pull requests against the develop branch**.
 
 ## BSD License
 
