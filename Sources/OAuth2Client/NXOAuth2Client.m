@@ -433,10 +433,8 @@ NSString * const NXOAuth2ClientConnectionContextTokenRefresh = @"tokenRefresh";
     self.authenticating = YES;
     
     NSMutableDictionary *parameters = [NSMutableDictionary dictionaryWithObjectsAndKeys:
-                                       @"assertion", @"grant_type",
+                                       anAssertionType.absoluteString, @"grant_type",
                                        clientId, @"client_id",
-                                       clientSecret, @"client_secret",
-                                       anAssertionType.absoluteString, @"assertion_type",
                                        anAssertion, @"assertion",
                                        nil];
     if (self.desiredScope) {
