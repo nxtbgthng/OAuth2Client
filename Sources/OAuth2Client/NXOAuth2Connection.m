@@ -64,10 +64,10 @@ sendingProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)aSendingProgres
     return self;
 }
 
-- (id)initWithRequest:(NSMutableURLRequest *)aRequest
-    requestParameters:(NSDictionary *)someRequestParameters
-          oauthClient:(NXOAuth2Client *)aClient
-             delegate:(NSObject<NXOAuth2ConnectionDelegate> *)aDelegate;
+- (instancetype)initWithRequest:(NSMutableURLRequest *)aRequest
+              requestParameters:(NSDictionary *)someRequestParameters
+                    oauthClient:(NXOAuth2Client *)aClient
+                       delegate:(NSObject<NXOAuth2ConnectionDelegate> *)aDelegate;
 {
     self = [super init];
     if (self) {

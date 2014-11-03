@@ -41,7 +41,7 @@ NSString * const NXOAuth2AccountDidFailToGetAccessTokenNotification = @"NXOAuth2
 
 #pragma mark Lifecycle
 
-- (id)initAccountWithOAuthClient:(NXOAuth2Client *)anOAuthClient accountType:(NSString *)anAccountType;
+- (instancetype)initAccountWithOAuthClient:(NXOAuth2Client *)anOAuthClient accountType:(NSString *)anAccountType;
 {
     self = [self initAccountWithAccessToken:anOAuthClient.accessToken
                                 accountType:anAccountType];
@@ -51,7 +51,7 @@ NSString * const NXOAuth2AccountDidFailToGetAccessTokenNotification = @"NXOAuth2
     return self;
 }
 
-- (id)initAccountWithAccessToken:(NXOAuth2AccessToken *)anAccessToken accountType:(NSString *)anAccountType;
+- (instancetype)initAccountWithAccessToken:(NXOAuth2AccessToken *)anAccessToken accountType:(NSString *)anAccountType;
 {
     self = [super init];
     if (self) {
@@ -202,7 +202,7 @@ NSString * const NXOAuth2AccountDidFailToGetAccessTokenNotification = @"NXOAuth2
     [aCoder encodeObject:userData forKey:@"userData"];
 }
 
-- (id)initWithCoder:(NSCoder *)aDecoder
+- (instancetype)initWithCoder:(NSCoder *)aDecoder
 {
     if (self = [super init]) {
         userData = [aDecoder decodeObjectForKey:@"userData"];

@@ -20,12 +20,12 @@
 
 #pragma mark Lifecycle
 
-+ (id)tokenWithResponseBody:(NSString *)theResponseBody;
++ (instancetype)tokenWithResponseBody:(NSString *)theResponseBody;
 {
     return [self tokenWithResponseBody:theResponseBody tokenType:nil];
 }
 
-+ (id)tokenWithResponseBody:(NSString *)theResponseBody tokenType:(NSString *)tokenType;
++ (instancetype)tokenWithResponseBody:(NSString *)theResponseBody tokenType:(NSString *)tokenType;
 {
     NSDictionary *jsonDict = nil;
     Class jsonSerializationClass = NSClassFromString(@"NSJSONSerialization");
@@ -78,12 +78,12 @@
                                            tokenType:tokenType];
 }
 
-- (id)initWithAccessToken:(NSString *)anAccessToken;
+- (instancetype)initWithAccessToken:(NSString *)anAccessToken;
 {
     return [self initWithAccessToken:anAccessToken refreshToken:nil expiresAt:nil];
 }
 
-- (id)initWithAccessToken:(NSString *)anAccessToken refreshToken:(NSString *)aRefreshToken expiresAt:(NSDate *)anExpiryDate;
+- (instancetype)initWithAccessToken:(NSString *)anAccessToken refreshToken:(NSString *)aRefreshToken expiresAt:(NSDate *)anExpiryDate;
 {
     return [[[self class] alloc] initWithAccessToken:anAccessToken
                                         refreshToken:aRefreshToken
@@ -91,7 +91,7 @@
                                                scope:nil];
 }
 
-- (id)initWithAccessToken:(NSString *)anAccessToken refreshToken:(NSString *)aRefreshToken expiresAt:(NSDate *)anExpiryDate scope:(NSSet *)aScope;
+- (instancetype)initWithAccessToken:(NSString *)anAccessToken refreshToken:(NSString *)aRefreshToken expiresAt:(NSDate *)anExpiryDate scope:(NSSet *)aScope;
 {
     return [[[self class] alloc] initWithAccessToken:anAccessToken
                                         refreshToken:aRefreshToken
@@ -100,7 +100,7 @@
                                         responseBody:nil];
 }
 
-- (id)initWithAccessToken:(NSString *)anAccessToken refreshToken:(NSString *)aRefreshToken expiresAt:(NSDate *)anExpiryDate scope:(NSSet *)aScope responseBody:(NSString *)aResponseBody;
+- (instancetype)initWithAccessToken:(NSString *)anAccessToken refreshToken:(NSString *)aRefreshToken expiresAt:(NSDate *)anExpiryDate scope:(NSSet *)aScope responseBody:(NSString *)aResponseBody;
 {
     return [[[self class] alloc] initWithAccessToken:anAccessToken
                                         refreshToken:aRefreshToken
@@ -110,7 +110,7 @@
                                            tokenType:nil];
 }
 
-- (id)initWithAccessToken:(NSString *)anAccessToken refreshToken:(NSString *)aRefreshToken expiresAt:(NSDate *)anExpiryDate scope:(NSSet *)aScope responseBody:(NSString *)aResponseBody tokenType:(NSString *)aTokenType
+- (instancetype)initWithAccessToken:(NSString *)anAccessToken refreshToken:(NSString *)aRefreshToken expiresAt:(NSDate *)anExpiryDate scope:(NSSet *)aScope responseBody:(NSString *)aResponseBody tokenType:(NSString *)aTokenType
 {
     // a token object without an actual token is not what we want!
     NSAssert1(anAccessToken, @"No token from token response: %@", aResponseBody);
@@ -191,7 +191,7 @@
     }
 }
 
-- (id)initWithCoder:(NSCoder *)aDecoder
+- (instancetype)initWithCoder:(NSCoder *)aDecoder
 {
     NSString *decodedAccessToken = [aDecoder decodeObjectForKey:@"accessToken"];
     
@@ -224,7 +224,7 @@
 
 #if TARGET_OS_IPHONE
 
-+ (id)tokenFromDefaultKeychainWithServiceProviderName:(NSString *)provider;
++ (instancetype)tokenFromDefaultKeychainWithServiceProviderName:(NSString *)provider;
 {
     NSString *serviceName = [[self class] serviceNameWithProvider:provider];
     NSDictionary *result = nil;
@@ -273,7 +273,7 @@
 
 #else
 
-+ (id)tokenFromDefaultKeychainWithServiceProviderName:(NSString *)provider;
++ (instancetype)tokenFromDefaultKeychainWithServiceProviderName:(NSString *)provider;
 {
     NSString *serviceName = [[self class] serviceNameWithProvider:provider];
     

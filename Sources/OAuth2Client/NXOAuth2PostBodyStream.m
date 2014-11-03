@@ -26,7 +26,7 @@
 
 #pragma mark Lifecycle
 
-- (id)initWithParameters:(NSDictionary *)postParameters;
+- (instancetype)initWithParameters:(NSDictionary *)postParameters;
 {
     self = [self init];
     if (self) {

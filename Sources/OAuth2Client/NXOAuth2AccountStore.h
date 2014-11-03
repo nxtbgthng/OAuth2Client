@@ -75,7 +75,7 @@ typedef void(^NXOAuth2PreparedAuthorizationURLHandler)(NSURL *preparedURL);
     NSMutableDictionary *trustedCertificatesHandler;
 }
 
-+ (id)sharedStore;
++ (instancetype)sharedStore;
 
 #pragma mark Accessors
 

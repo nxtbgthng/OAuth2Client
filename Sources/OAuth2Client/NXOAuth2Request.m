@@ -51,7 +51,7 @@
 
 #pragma mark Lifecycle
 
-- (id)initWithResource:(NSURL *)aResource method:(NSString *)aMethod parameters:(NSDictionary *)someParameters;
+- (instancetype)initWithResource:(NSURL *)aResource method:(NSString *)aMethod parameters:(NSDictionary *)someParameters;
 {
     self = [super init];
     if (self) {
