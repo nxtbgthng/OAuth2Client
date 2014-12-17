@@ -62,6 +62,9 @@
 - (void)performRequestWithSendingProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)progressHandler
                                  responseHandler:(NXOAuth2ConnectionResponseHandler)responseHandler;
 
+- (void)performRequestWithProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)progressHandler
+                          responseHandler:(NXOAuth2ConnectionResponseHandler)responseHandler;
+
 
 #pragma mark Cancel
 
