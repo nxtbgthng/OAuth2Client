@@ -11,7 +11,7 @@
 //  the full licence.
 //
 
-#import "NXOAuth2Account.h"
+#import <OAuth2Client/NXOAuth2Account.h>
 
 @interface NXOAuth2Account (Private)
 
