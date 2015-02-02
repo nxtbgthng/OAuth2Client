@@ -16,6 +16,8 @@
 
 @class NXOAuth2Account;
 @class NXOAuth2Connection;
+@protocol NXApplication;
+
 
 #pragma mark Notifications
 
@@ -74,7 +76,13 @@ typedef void(^NXOAuth2PreparedAuthorizationURLHandler)(NSURL *preparedURL);
     NSMutableDictionary *trustedCertificatesHandler;
 }
 
-+ (instancetype)sharedStore;
++(instancetype)sharedStoreForApplication:(id<NXApplication>)uiApplication;
+-(instancetype)init NS_UNAVAILABLE;
++(instancetype)new NS_UNAVAILABLE;
+
+// Private API
+//-(instancetype)initWithApplication:(id<NXApplication>)uiApplication NS_DESIGNATED_INITIALIZER NS_REQUIRES_SUPER __attribute((nonnull));
+
 
 #pragma mark Accessors
 
