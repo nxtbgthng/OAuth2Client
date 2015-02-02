@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7E13366C1A7FF2050038FEBB /* NXApplication.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E13366B1A7FF2050038FEBB /* NXApplication.h */; };
 		7E769DDB1A7F792D00FC887B /* NSData+NXOAuth2.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E769DDA1A7F792D00FC887B /* NSData+NXOAuth2.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		7E769DDE1A7F794700FC887B /* NSString+NXOAuth2.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E769DDD1A7F794700FC887B /* NSString+NXOAuth2.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		7E769DE01A7F795900FC887B /* NSURL+NXOAuth2.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E769DDF1A7F795900FC887B /* NSURL+NXOAuth2.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -59,7 +60,6 @@
 		942FFD7E12315EFF00E6C65E /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 94E5AC92122C097B00C7021A /* Security.framework */; };
 		945A500D123F7BAE00A6F2EB /* NXOAuth2ClientDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 824D5A6D123F68A8001177D5 /* NXOAuth2ClientDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		94B6CE7219C1D3E400AA859B /* NXOAuth2PostBodyStreamSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = 94B6CE7119C1D3E400AA859B /* NXOAuth2PostBodyStreamSpec.m */; };
-		94B6CE8119C1EECC00AA859B /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 94B6CE8019C1EECC00AA859B /* Info.plist */; };
 		94CCDD2219C1F29E00F9F148 /* libOAuth2Client.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D2AAC07E0554694100DB518D /* libOAuth2Client.a */; };
 		94E5AC93122C097B00C7021A /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 94E5AC92122C097B00C7021A /* Security.framework */; };
 		99D8A7FF13852D3600E3073C /* NSData+NXOAuth2.m in Sources */ = {isa = PBXBuildFile; fileRef = 99D8A7FE13852D3600E3073C /* NSData+NXOAuth2.m */; };
@@ -82,6 +82,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		7E13366B1A7FF2050038FEBB /* NXApplication.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NXApplication.h; sourceTree = "<group>"; };
 		7E769DDA1A7F792D00FC887B /* NSData+NXOAuth2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSData+NXOAuth2.h"; path = "OAuth2Client/NSData+NXOAuth2.h"; sourceTree = SOURCE_ROOT; };
 		7E769DDD1A7F794700FC887B /* NSString+NXOAuth2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSString+NXOAuth2.h"; path = "OAuth2Client/NSString+NXOAuth2.h"; sourceTree = SOURCE_ROOT; };
 		7E769DDF1A7F795900FC887B /* NSURL+NXOAuth2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSURL+NXOAuth2.h"; path = "OAuth2Client/NSURL+NXOAuth2.h"; sourceTree = SOURCE_ROOT; };
@@ -213,6 +214,7 @@
 			children = (
 				F6E1A11313D7128100B6DAC3 /* Private */,
 				9404FAC1123E3A6900397DD1 /* NXOAuth2.h */,
+				7E13366B1A7FF2050038FEBB /* NXApplication.h */,
 				9429B5321226D7A600D31807 /* NXOAuth2Constants.h */,
 				7E769DE11A7F7A1500FC887B /* NXOAuth2Constants.m */,
 				F65713CC13CC87FD00C8A33A /* NXOAuth2AccountStore.h */,
@@ -307,6 +309,7 @@
 				945A500D123F7BAE00A6F2EB /* NXOAuth2ClientDelegate.h in Headers */,
 				942FFCEA12315EED00E6C65E /* NXOAuth2AccessToken.h in Headers */,
 				942FFCEB12315EED00E6C65E /* NXOAuth2Client.h in Headers */,
+				7E13366C1A7FF2050038FEBB /* NXApplication.h in Headers */,
 				7E769DDE1A7F794700FC887B /* NSString+NXOAuth2.h in Headers */,
 				942FFCEC12315EED00E6C65E /* NXOAuth2Connection.h in Headers */,
 				7E769DE01A7F795900FC887B /* NSURL+NXOAuth2.h in Headers */,
@@ -413,7 +416,7 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0460;
+				LastUpgradeCheck = 0610;
 				ORGANIZATIONNAME = nxtbgthng;
 				TargetAttributes = {
 					94B6CE6519C1D0A200AA859B = {
@@ -455,7 +458,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				94B6CE8119C1EECC00AA859B /* Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -550,7 +552,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				CLANG_ENABLE_OBJC_ARC = YES;
 				COPY_PHASE_STRIP = NO;
 				DSTROOT = /tmp/OAuth2Client.dst;
@@ -573,7 +574,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				CLANG_ENABLE_OBJC_ARC = YES;
 				DSTROOT = /tmp/OAuth2Client.dst;
 				GCC_MODEL_TUNING = G5;
@@ -592,10 +592,32 @@
 		1DEB922308733DC00010E9CD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				CLANG_WARN_ASSIGN_ENUM = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_CXX0X_EXTENSIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_ATOMIC_PROPERTIES = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_FOUR_CHARACTER_CONSTANTS = YES;
+				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
+				GCC_WARN_SIGN_COMPARE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = YES;
@@ -606,9 +628,31 @@
 		1DEB922408733DC00010E9CD /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				CLANG_WARN_ASSIGN_ENUM = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_CXX0X_EXTENSIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_ATOMIC_PROPERTIES = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				GCC_C_LANGUAGE_STANDARD = c99;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_FOUR_CHARACTER_CONSTANTS = YES;
+				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
+				GCC_WARN_SIGN_COMPARE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
@@ -620,7 +664,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				CLANG_ENABLE_OBJC_ARC = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
@@ -650,7 +693,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				CLANG_ENABLE_OBJC_ARC = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;

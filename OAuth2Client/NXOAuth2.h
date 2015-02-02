@@ -11,6 +11,8 @@
 //  the full licence.
 //
 
+
+#import <OAuth2Client/NXApplication.h>
 #import <OAuth2Client/NXOAuth2Client.h>
 #import <OAuth2Client/NXOAuth2ClientDelegate.h>
 #import <OAuth2Client/NXOAuth2AccessToken.h>
