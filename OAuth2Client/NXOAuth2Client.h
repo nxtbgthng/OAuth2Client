@@ -12,14 +12,14 @@
 //
 
 #import <Foundation/Foundation.h>
-
-#import "NXOAuth2ClientDelegate.h"
-#import "NXOAuth2ConnectionDelegate.h"
+#import <OAuth2Client/NXOAuth2ConnectionDelegate.h>
 
 extern NSString * const NXOAuth2ClientConnectionContextTokenRequest;
 extern NSString * const NXOAuth2ClientConnectionContextTokenRefresh;
 
-@class NXOAuth2Connection, NXOAuth2AccessToken;
+@class NXOAuth2Connection;
+@class NXOAuth2AccessToken;
+@protocol NXOAuth2ClientDelegate;
 
 /*!
  * The OAuth 2.0 client
