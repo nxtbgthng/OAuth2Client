@@ -13,7 +13,6 @@
 
 #import <Foundation/Foundation.h>
 
-#import "NXOAuth2TrustDelegate.h"
 
 @class NXOAuth2Account;
 @class NXOAuth2Connection;
