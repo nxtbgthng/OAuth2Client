@@ -29,18 +29,26 @@
 - (instancetype)initWithParameters:(NSDictionary *)postParameters;
 {
     self = [self init];
-    if (self) {
-        srandom(time(NULL));
-        boundary = [[NSString alloc] initWithFormat:@"------------nx-oauth2%d", rand()];
-        numBytesTotal = 0;
-        streamIndex = 0;
-        
-        if (postParameters) {
-            contentStreams = [self streamsForParameters:postParameters contentLength:&numBytesTotal];
-        } else {
-            contentStreams = [[NSArray alloc] init];
-        }
+    if (nil == self) {
+        return nil;
     }
+    
+    
+    time_t nowTime = time(NULL);
+    unsigned seed = (unsigned)nowTime;
+    srandom(seed);
+    
+    boundary = [[NSString alloc] initWithFormat:@"------------nx-oauth2%d", rand()];
+    numBytesTotal = 0;
+    streamIndex = 0;
+    
+    if (postParameters) {
+        contentStreams = [self streamsForParameters:postParameters contentLength:&numBytesTotal];
+    } else {
+        contentStreams = [[NSArray alloc] init];
+    }
+
+    
     return self;
 }
 
@@ -88,7 +96,7 @@
             NSData *delimiterData = [delimiter dataUsingEncoding:NSUTF8StringEncoding];
             NSData *contentHeaderData = [[part contentHeaders] dataUsingEncoding:NSUTF8StringEncoding];
             
-            int dataLength = delimiterData.length + contentHeaderData.length;
+            NSUInteger dataLength = delimiterData.length + contentHeaderData.length;
             NSMutableData *headerData = [NSMutableData dataWithCapacity: dataLength];
             [headerData appendData:delimiterData];
             [headerData appendData:contentHeaderData];
@@ -144,9 +152,12 @@
 - (NSInteger)read:(uint8_t *)buffer maxLength:(NSUInteger)len;
 {
     if (currentStream == nil)
+    {
         return 0;
+    }
     
-    int result = [currentStream read:buffer maxLength:len];
+    NSInteger result = [currentStream read:buffer
+                                 maxLength:len];
     
     if (result == 0) {
         if (streamIndex < contentStreams.count - 1) {
