@@ -32,6 +32,7 @@
 		7E769DFE1A7F7A8A00FC887B /* NXOAuth2PostBodyPart.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E769DFC1A7F7A8A00FC887B /* NXOAuth2PostBodyPart.h */; };
 		7E769E001A7F7A9E00FC887B /* NXOAuth2FileStreamWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E769DFF1A7F7A9E00FC887B /* NXOAuth2FileStreamWrapper.m */; };
 		7E769E011A7F7A9E00FC887B /* NXOAuth2FileStreamWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E769DFF1A7F7A9E00FC887B /* NXOAuth2FileStreamWrapper.m */; };
+		7E769E031A7F7D4700FC887B /* NXOAuth2RequestCallbacks.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E769E021A7F7D4700FC887B /* NXOAuth2RequestCallbacks.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		824D5A6E123F68A8001177D5 /* NXOAuth2ClientDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 824D5A6D123F68A8001177D5 /* NXOAuth2ClientDelegate.h */; settings = {ATTRIBUTES = (); }; };
 		9404FAC2123E3A6900397DD1 /* NXOAuth2.h in Headers */ = {isa = PBXBuildFile; fileRef = 9404FAC1123E3A6900397DD1 /* NXOAuth2.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9404FAC3123E3A6900397DD1 /* NXOAuth2.h in Headers */ = {isa = PBXBuildFile; fileRef = 9404FAC1123E3A6900397DD1 /* NXOAuth2.h */; settings = {ATTRIBUTES = (); }; };
@@ -95,6 +96,7 @@
 		7E769DF91A7F7A8300FC887B /* NXOAuth2PostBodyPart.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NXOAuth2PostBodyPart.m; path = Sources/OAuth2Client/NXOAuth2PostBodyPart.m; sourceTree = SOURCE_ROOT; };
 		7E769DFC1A7F7A8A00FC887B /* NXOAuth2PostBodyPart.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NXOAuth2PostBodyPart.h; path = Sources/OAuth2Client/NXOAuth2PostBodyPart.h; sourceTree = SOURCE_ROOT; };
 		7E769DFF1A7F7A9E00FC887B /* NXOAuth2FileStreamWrapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NXOAuth2FileStreamWrapper.m; path = Sources/OAuth2Client/NXOAuth2FileStreamWrapper.m; sourceTree = SOURCE_ROOT; };
+		7E769E021A7F7D4700FC887B /* NXOAuth2RequestCallbacks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NXOAuth2RequestCallbacks.h; sourceTree = "<group>"; };
 		824D5A6D123F68A8001177D5 /* NXOAuth2ClientDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NXOAuth2ClientDelegate.h; sourceTree = "<group>"; };
 		83DD991B6049465CB61E135B /* Pods-OAuth2ClientTests.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OAuth2ClientTests.xcconfig"; path = "Pods/Pods-OAuth2ClientTests.xcconfig"; sourceTree = "<group>"; };
 		9404FAC1123E3A6900397DD1 /* NXOAuth2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NXOAuth2.h; sourceTree = "<group>"; };
@@ -239,6 +241,7 @@
 				7E769DF91A7F7A8300FC887B /* NXOAuth2PostBodyPart.m */,
 				9429B6021227CF7700D31807 /* NXOAuth2FileStreamWrapper.h */,
 				7E769DFF1A7F7A9E00FC887B /* NXOAuth2FileStreamWrapper.m */,
+				7E769E021A7F7D4700FC887B /* NXOAuth2RequestCallbacks.h */,
 			);
 			name = Connection;
 			sourceTree = "<group>";
@@ -307,6 +310,7 @@
 				7E769DDE1A7F794700FC887B /* NSString+NXOAuth2.h in Headers */,
 				942FFCEC12315EED00E6C65E /* NXOAuth2Connection.h in Headers */,
 				7E769DE01A7F795900FC887B /* NSURL+NXOAuth2.h in Headers */,
+				7E769E031A7F7D4700FC887B /* NXOAuth2RequestCallbacks.h in Headers */,
 				942FFCED12315EED00E6C65E /* NXOAuth2ConnectionDelegate.h in Headers */,
 				942FFCEE12315EED00E6C65E /* NXOAuth2Constants.h in Headers */,
 				942FFCEF12315EED00E6C65E /* NXOAuth2FileStreamWrapper.h in Headers */,
