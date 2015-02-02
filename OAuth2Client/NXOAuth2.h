@@ -12,20 +12,20 @@
 //
 
 #import <OAuth2Client/NXOAuth2Client.h>
-#import "NXOAuth2ClientDelegate.h"
-#import "NXOAuth2AccessToken.h"
-#import "NXOAuth2Connection.h"
-#import "NXOAuth2ConnectionDelegate.h"
-#import "NXOAuth2TrustDelegate.h"
-#import "NXOAuth2Constants.h"
-#import "NXOAuth2FileStreamWrapper.h"
-#import "NXOAuth2PostBodyStream.h"
-#import "NXOAuth2AccountStore.h"
-#import "NXOAuth2Account.h"
-#import "NXOAuth2Request.h"
+#import <OAuth2Client/NXOAuth2ClientDelegate.h>
+#import <OAuth2Client/NXOAuth2AccessToken.h>
+#import <OAuth2Client/NXOAuth2Connection.h>
+#import <OAuth2Client/NXOAuth2ConnectionDelegate.h>
+#import <OAuth2Client/NXOAuth2TrustDelegate.h>
+#import <OAuth2Client/NXOAuth2Constants.h>
+#import <OAuth2Client/NXOAuth2FileStreamWrapper.h>
+#import <OAuth2Client/NXOAuth2PostBodyStream.h>
+#import <OAuth2Client/NXOAuth2AccountStore.h>
+#import <OAuth2Client/NXOAuth2Account.h>
+#import <OAuth2Client/NXOAuth2Request.h>
 
 #pragma mark Helpers
 
-#import "NSURL+NXOAuth2.h"
-#import "NSString+NXOAuth2.h"
-#import "NSData+NXOAuth2.h"
+#import <OAuth2Client/NSURL+NXOAuth2.h>
+#import <OAuth2Client/NSString+NXOAuth2.h>
+#import <OAuth2Client/NSData+NXOAuth2.h>
