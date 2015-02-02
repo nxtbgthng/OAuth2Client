@@ -76,7 +76,6 @@
 		F68B9A0913CDA5BC001CA749 /* NXOAuth2Request.h in Headers */ = {isa = PBXBuildFile; fileRef = F68B9A0613CDA5BC001CA749 /* NXOAuth2Request.h */; };
 		F6B39C7013CC8A3200B43FE0 /* NXOAuth2Account.h in Headers */ = {isa = PBXBuildFile; fileRef = F6B39C6E13CC8A3200B43FE0 /* NXOAuth2Account.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F6B39C7113CC8A3200B43FE0 /* NXOAuth2Account.h in Headers */ = {isa = PBXBuildFile; fileRef = F6B39C6E13CC8A3200B43FE0 /* NXOAuth2Account.h */; };
-		F6B39C7813CC980500B43FE0 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6B39C7713CC980500B43FE0 /* UIKit.framework */; };
 		F6B39C7A13CC981400B43FE0 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6B39C7913CC981400B43FE0 /* Cocoa.framework */; };
 		F6F2746913CEF9250090EA04 /* NXOAuth2Request.h in Headers */ = {isa = PBXBuildFile; fileRef = F68B9A0613CDA5BC001CA749 /* NXOAuth2Request.h */; settings = {ATTRIBUTES = (Public, ); }; };
 /* End PBXBuildFile section */
@@ -127,7 +126,6 @@
 		F65713CC13CC87FD00C8A33A /* NXOAuth2AccountStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NXOAuth2AccountStore.h; sourceTree = "<group>"; };
 		F68B9A0613CDA5BC001CA749 /* NXOAuth2Request.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NXOAuth2Request.h; sourceTree = "<group>"; };
 		F6B39C6E13CC8A3200B43FE0 /* NXOAuth2Account.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NXOAuth2Account.h; sourceTree = "<group>"; };
-		F6B39C7713CC980500B43FE0 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		F6B39C7913CC981400B43FE0 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 /* End PBXFileReference section */
 
@@ -155,7 +153,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F6B39C7813CC980500B43FE0 /* UIKit.framework in Frameworks */,
 				AACBBE4A0F95108600F1A2B1 /* Foundation.framework in Frameworks */,
 				94E5AC93122C097B00C7021A /* Security.framework in Frameworks */,
 			);
@@ -191,7 +188,6 @@
 			isa = PBXGroup;
 			children = (
 				F6B39C7913CC981400B43FE0 /* Cocoa.framework */,
-				F6B39C7713CC980500B43FE0 /* UIKit.framework */,
 				AACBBE490F95108600F1A2B1 /* Foundation.framework */,
 				94E5AC92122C097B00C7021A /* Security.framework */,
 				B9E2089E9E7941B7AF3D27AA /* libPods-OAuth2ClientTests.a */,
