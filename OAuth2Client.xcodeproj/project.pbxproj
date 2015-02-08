@@ -35,7 +35,6 @@
 		7E769E031A7F7D4700FC887B /* NXOAuth2RequestCallbacks.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E769E021A7F7D4700FC887B /* NXOAuth2RequestCallbacks.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		7E91AEEB1A87561B0060BD28 /* OAuth2Client-iOS-Framework.h in Headers */ = {isa = PBXBuildFile; fileRef = 7E91AEEA1A87561B0060BD28 /* OAuth2Client-iOS-Framework.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		7E91AEF11A87561B0060BD28 /* OAuth2Client.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7E91AEE61A87561B0060BD28 /* OAuth2Client.framework */; };
-		7E91AEF81A87561B0060BD28 /* OAuth2Client_iOS_FrameworkTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E91AEF71A87561B0060BD28 /* OAuth2Client_iOS_FrameworkTests.m */; };
 		7E91AEFF1A8756300060BD28 /* NXOAuth2PostBodyStreamSpec.m in Sources */ = {isa = PBXBuildFile; fileRef = 94B6CE7119C1D3E400AA859B /* NXOAuth2PostBodyStreamSpec.m */; };
 		7E91AF001A8756B60060BD28 /* NSData+NXOAuth2.m in Sources */ = {isa = PBXBuildFile; fileRef = 99D8A7FE13852D3600E3073C /* NSData+NXOAuth2.m */; };
 		7E91AF011A8756B60060BD28 /* NSString+NXOAuth2.m in Sources */ = {isa = PBXBuildFile; fileRef = 9429C4981228023D00D31807 /* NSString+NXOAuth2.m */; };
@@ -134,7 +133,6 @@
 		7E91AEEA1A87561B0060BD28 /* OAuth2Client-iOS-Framework.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "OAuth2Client-iOS-Framework.h"; sourceTree = "<group>"; };
 		7E91AEF01A87561B0060BD28 /* OAuth2Client-iOS-FrameworkTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "OAuth2Client-iOS-FrameworkTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		7E91AEF61A87561B0060BD28 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		7E91AEF71A87561B0060BD28 /* OAuth2Client_iOS_FrameworkTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OAuth2Client_iOS_FrameworkTests.m; sourceTree = "<group>"; };
 		824D5A6D123F68A8001177D5 /* NXOAuth2ClientDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NXOAuth2ClientDelegate.h; sourceTree = "<group>"; };
 		83DD991B6049465CB61E135B /* Pods-OAuth2ClientTests.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OAuth2ClientTests.xcconfig"; path = "Pods/Pods-OAuth2ClientTests.xcconfig"; sourceTree = "<group>"; };
 		9404FAC1123E3A6900397DD1 /* NXOAuth2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NXOAuth2.h; sourceTree = "<group>"; };
@@ -282,7 +280,6 @@
 		7E91AEF41A87561B0060BD28 /* OAuth2Client-iOS-FrameworkTests */ = {
 			isa = PBXGroup;
 			children = (
-				7E91AEF71A87561B0060BD28 /* OAuth2Client_iOS_FrameworkTests.m */,
 				7E91AEF51A87561B0060BD28 /* Supporting Files */,
 			);
 			path = "OAuth2Client-iOS-FrameworkTests";
@@ -680,7 +677,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7E91AEF81A87561B0060BD28 /* OAuth2Client_iOS_FrameworkTests.m in Sources */,
 				7E91AEFF1A8756300060BD28 /* NXOAuth2PostBodyStreamSpec.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -944,13 +940,14 @@
 				);
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_PREFIX_HEADER = Tests/OAuth2ClientTests.pch;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				INFOPLIST_FILE = "OAuth2Client-iOS-FrameworkTests/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -974,8 +971,9 @@
 					"$(inherited)",
 				);
 				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_PREFIX_HEADER = Tests/OAuth2ClientTests.pch;
 				INFOPLIST_FILE = "OAuth2Client-iOS-FrameworkTests/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
