@@ -54,7 +54,7 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
 
 @interface NXOAuth2AccountStore () <NXOAuth2ClientDelegate, NXOAuth2TrustDelegate>
 
--(instancetype)initWithApplication:(id<NXApplication>)uiApplication NS_DESIGNATED_INITIALIZER NS_REQUIRES_SUPER __attribute((nonnull));
+-(instancetype)initWithApplication:(id<NXApplication>)uiApplication;
 
 @property (nonatomic, strong, readwrite) NSMutableDictionary *pendingOAuthClients;
 @property (nonatomic, strong, readwrite) NSMutableDictionary *accountsDict;
