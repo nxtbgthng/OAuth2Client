@@ -20,12 +20,12 @@
 
 #pragma mark Lifecycle
 
-+ (id)tokenWithResponseBody:(NSString *)theResponseBody;
++ (instancetype)tokenWithResponseBody:(NSString *)theResponseBody;
 {
     return [self tokenWithResponseBody:theResponseBody tokenType:nil];
 }
 
-+ (id)tokenWithResponseBody:(NSString *)theResponseBody tokenType:(NSString *)tokenType;
++ (instancetype)tokenWithResponseBody:(NSString *)theResponseBody tokenType:(NSString *)tokenType;
 {
     NSDictionary *jsonDict = nil;
     Class jsonSerializationClass = NSClassFromString(@"NSJSONSerialization");
@@ -78,12 +78,12 @@
                                            tokenType:tokenType];
 }
 
-- (id)initWithAccessToken:(NSString *)anAccessToken;
+- (instancetype)initWithAccessToken:(NSString *)anAccessToken;
 {
     return [self initWithAccessToken:anAccessToken refreshToken:nil expiresAt:nil];
 }
 
-- (id)initWithAccessToken:(NSString *)anAccessToken refreshToken:(NSString *)aRefreshToken expiresAt:(NSDate *)anExpiryDate;
+- (instancetype)initWithAccessToken:(NSString *)anAccessToken refreshToken:(NSString *)aRefreshToken expiresAt:(NSDate *)anExpiryDate;
 {
     return [[[self class] alloc] initWithAccessToken:anAccessToken
                                         refreshToken:aRefreshToken
@@ -91,7 +91,7 @@
                                                scope:nil];
 }
 
-- (id)initWithAccessToken:(NSString *)anAccessToken refreshToken:(NSString *)aRefreshToken expiresAt:(NSDate *)anExpiryDate scope:(NSSet *)aScope;
+- (instancetype)initWithAccessToken:(NSString *)anAccessToken refreshToken:(NSString *)aRefreshToken expiresAt:(NSDate *)anExpiryDate scope:(NSSet *)aScope;
 {
     return [[[self class] alloc] initWithAccessToken:anAccessToken
                                         refreshToken:aRefreshToken
@@ -100,7 +100,7 @@
                                         responseBody:nil];
 }
 
-- (id)initWithAccessToken:(NSString *)anAccessToken refreshToken:(NSString *)aRefreshToken expiresAt:(NSDate *)anExpiryDate scope:(NSSet *)aScope responseBody:(NSString *)aResponseBody;
+- (instancetype)initWithAccessToken:(NSString *)anAccessToken refreshToken:(NSString *)aRefreshToken expiresAt:(NSDate *)anExpiryDate scope:(NSSet *)aScope responseBody:(NSString *)aResponseBody;
 {
     return [[[self class] alloc] initWithAccessToken:anAccessToken
                                         refreshToken:aRefreshToken
@@ -110,7 +110,7 @@
                                            tokenType:nil];
 }
 
-- (id)initWithAccessToken:(NSString *)anAccessToken refreshToken:(NSString *)aRefreshToken expiresAt:(NSDate *)anExpiryDate scope:(NSSet *)aScope responseBody:(NSString *)aResponseBody tokenType:(NSString *)aTokenType
+- (instancetype)initWithAccessToken:(NSString *)anAccessToken refreshToken:(NSString *)aRefreshToken expiresAt:(NSDate *)anExpiryDate scope:(NSSet *)aScope responseBody:(NSString *)aResponseBody tokenType:(NSString *)aTokenType
 {
     // a token object without an actual token is not what we want!
     NSAssert1(anAccessToken, @"No token from token response: %@", aResponseBody);
@@ -191,7 +191,7 @@
     }
 }
 
-- (id)initWithCoder:(NSCoder *)aDecoder
+- (instancetype)initWithCoder:(NSCoder *)aDecoder
 {
     NSString *decodedAccessToken = [aDecoder decodeObjectForKey:@"accessToken"];
     
@@ -224,7 +224,7 @@
 
 #if TARGET_OS_IPHONE
 
-+ (id)tokenFromDefaultKeychainWithServiceProviderName:(NSString *)provider;
++ (instancetype)tokenFromDefaultKeychainWithServiceProviderName:(NSString *)provider;
 {
     NSString *serviceName = [[self class] serviceNameWithProvider:provider];
     NSDictionary *result = nil;
@@ -238,7 +238,7 @@
     result = (__bridge_transfer NSDictionary *)cfResult;
     
     if (status != noErr) {
-        NSAssert1(status == errSecItemNotFound, @"unexpected error while fetching token from keychain: %ld", status);
+        NSAssert1(status == errSecItemNotFound, @"unexpected error while fetching token from keychain: %d", (int)status);
         return nil;
     }
     
@@ -257,7 +257,7 @@
                            nil];
     [self removeFromDefaultKeychainWithServiceProviderName:provider];
     OSStatus __attribute__((unused)) err = SecItemAdd((__bridge CFDictionaryRef)query, NULL);
-    NSAssert1(err == noErr, @"error while adding token to keychain: %ld", err);
+    NSAssert1(err == noErr, @"error while adding token to keychain: %d", (int)err);
 }
 
 - (void)removeFromDefaultKeychainWithServiceProviderName:(NSString *)provider;
@@ -268,12 +268,12 @@
                            serviceName, kSecAttrService,
                            nil];
     OSStatus __attribute__((unused)) err = SecItemDelete((__bridge CFDictionaryRef)query);
-    NSAssert1((err == noErr || err == errSecItemNotFound), @"error while deleting token from keychain: %ld", err);
+    NSAssert1((err == noErr || err == errSecItemNotFound), @"error while deleting token from keychain: %d", (int)err);
 }
 
 #else
 
-+ (id)tokenFromDefaultKeychainWithServiceProviderName:(NSString *)provider;
++ (instancetype)tokenFromDefaultKeychainWithServiceProviderName:(NSString *)provider;
 {
     NSString *serviceName = [[self class] serviceNameWithProvider:provider];
     

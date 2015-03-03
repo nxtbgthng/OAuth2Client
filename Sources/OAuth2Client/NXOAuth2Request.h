@@ -40,7 +40,9 @@
 
 #pragma mark Lifecycle
 
-- (id)initWithResource:(NSURL *)url method:(NSString *)method parameters:(NSDictionary *)parameter;
+- (instancetype)initWithResource:(NSURL *)url
+                          method:(NSString *)method
+                      parameters:(NSDictionary *)parameter;
 
 
 #pragma mark Accessors

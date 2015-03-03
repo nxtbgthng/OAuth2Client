@@ -18,12 +18,12 @@
 
 #pragma mark Class Methods
 
-+ (id)wrapperWithStream:(NSInputStream *)aStream contentLength:(unsigned long long)aContentLength;
++ (instancetype)wrapperWithStream:(NSInputStream *)aStream contentLength:(unsigned long long)aContentLength;
 {
     return [self wrapperWithStream:aStream contentLength:aContentLength fileName:nil];
 }
 
-+ (id)wrapperWithStream:(NSInputStream *)aStream contentLength:(unsigned long long)aContentLength fileName:(NSString *)aFileName;
++ (instancetype)wrapperWithStream:(NSInputStream *)aStream contentLength:(unsigned long long)aContentLength fileName:(NSString *)aFileName;
 {
     return [[self alloc] initWithStream:aStream contentLength:aContentLength fileName:aFileName];
 }
@@ -31,18 +31,18 @@
 
 #pragma mark Lifecycle
 
-- (id)init;
+- (instancetype)init;
 {
     NSAssert(NO, @"-init should not be used in the NXOAuth2FileStreamWrapper");
     return nil;
 }
 
-- (id)initWithStream:(NSInputStream *)theStream contentLength:(unsigned long long)theContentLength;
+- (instancetype)initWithStream:(NSInputStream *)theStream contentLength:(unsigned long long)theContentLength;
 {
     return [self initWithStream:theStream contentLength:theContentLength fileName:nil];
 }
 
-- (id)initWithStream:(NSInputStream *)aStream contentLength:(unsigned long long)aContentLength fileName:(NSString *)aFileName;
+- (instancetype)initWithStream:(NSInputStream *)aStream contentLength:(unsigned long long)aContentLength fileName:(NSString *)aFileName;
 {
     if (!aFileName) aFileName = @"unknown";
     
@@ -51,6 +51,7 @@
         stream = aStream;
         contentLength = aContentLength;
         fileName = [aFileName copy];
+        contentType = @"application/octet-stream"; // DEFAULT if not assigned by property
     }
     return self;
 }
@@ -58,7 +59,7 @@
 
 #pragma mark Accessors
 
-@synthesize stream, contentLength, fileName;
+@synthesize stream, contentLength, fileName, contentType;
 
 
 @end

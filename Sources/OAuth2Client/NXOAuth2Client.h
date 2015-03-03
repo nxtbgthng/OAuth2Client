@@ -65,6 +65,7 @@ extern NSString * const NXOAuth2ClientConnectionContextTokenRefresh;
 @property (nonatomic, copy, readonly) NSString *clientSecret;
 @property (nonatomic, copy, readonly) NSString *tokenType;
 @property (nonatomic, strong, readwrite) NSDictionary *additionalAuthenticationParameters;
+@property (nonatomic, strong, readwrite) NSDictionary *customHeaderFields;
 
 @property (nonatomic, copy) NSSet *desiredScope;
 @property (nonatomic, copy) NSString *tokenRequestHTTPMethod; // defaults to POST
@@ -84,30 +85,30 @@ extern NSString * const NXOAuth2ClientConnectionContextTokenRefresh;
 /*!
  * Initializes the Client
  */
-- (id)initWithClientID:(NSString *)clientId
-          clientSecret:(NSString *)clientSecret
-          authorizeURL:(NSURL *)authorizeURL
-              tokenURL:(NSURL *)tokenURL
-              delegate:(NSObject<NXOAuth2ClientDelegate> *)delegate;
+- (instancetype)initWithClientID:(NSString *)clientId
+                    clientSecret:(NSString *)clientSecret
+                    authorizeURL:(NSURL *)authorizeURL
+                        tokenURL:(NSURL *)tokenURL
+                        delegate:(NSObject<NXOAuth2ClientDelegate> *)delegate;
 
-- (id)initWithClientID:(NSString *)clientId
-          clientSecret:(NSString *)clientSecret
-          authorizeURL:(NSURL *)authorizeURL
-              tokenURL:(NSURL *)tokenURL
-           accessToken:(NXOAuth2AccessToken *)accessToken
-         keyChainGroup:(NSString *)keyChainGroup
-            persistent:(BOOL)shouldPersist
-              delegate:(NSObject<NXOAuth2ClientDelegate> *)delegate;
+- (instancetype)initWithClientID:(NSString *)clientId
+                    clientSecret:(NSString *)clientSecret
+                    authorizeURL:(NSURL *)authorizeURL
+                        tokenURL:(NSURL *)tokenURL
+                     accessToken:(NXOAuth2AccessToken *)accessToken
+                   keyChainGroup:(NSString *)keyChainGroup
+                      persistent:(BOOL)shouldPersist
+                        delegate:(NSObject<NXOAuth2ClientDelegate> *)delegate;
 
-- (id)initWithClientID:(NSString *)clientId
-          clientSecret:(NSString *)clientSecret
-          authorizeURL:(NSURL *)authorizeURL
-              tokenURL:(NSURL *)tokenURL
-           accessToken:(NXOAuth2AccessToken *)accessToken
-             tokenType:(NSString *)tokenType
-         keyChainGroup:(NSString *)keyChainGroup
-            persistent:(BOOL)shouldPersist
-              delegate:(NSObject<NXOAuth2ClientDelegate> *)delegate;
+- (instancetype)initWithClientID:(NSString *)clientId
+                    clientSecret:(NSString *)clientSecret
+                    authorizeURL:(NSURL *)authorizeURL
+                        tokenURL:(NSURL *)tokenURL
+                     accessToken:(NXOAuth2AccessToken *)accessToken
+                       tokenType:(NSString *)tokenType
+                   keyChainGroup:(NSString *)keyChainGroup
+                      persistent:(BOOL)shouldPersist
+                        delegate:(NSObject<NXOAuth2ClientDelegate> *)delegate;
 
 - (BOOL)openRedirectURL:(NSURL *)URL;
 

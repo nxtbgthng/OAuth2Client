@@ -45,6 +45,7 @@ NSString * const kNXOAuth2AccountStoreConfigurationTokenType = @"kNXOAuth2Accoun
 NSString * const kNXOAuth2AccountStoreConfigurationTokenRequestHTTPMethod = @"kNXOAuth2AccountStoreConfigurationTokenRequestHTTPMethod";
 NSString * const kNXOAuth2AccountStoreConfigurationKeyChainGroup = @"kNXOAuth2AccountStoreConfigurationKeyChainGroup";
 NSString * const kNXOAuth2AccountStoreConfigurationAdditionalAuthenticationParameters = @"kNXOAuth2AccountStoreConfigurationAdditionalAuthenticationParameters";
+NSString * const kNXOAuth2AccountStoreConfigurationCustomHeaderFields = @"kNXOAuth2AccountStoreConfigurationCustomHeaderFields";
 
 #pragma mark Account Type
 
@@ -86,7 +87,7 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
 
 #pragma mark Lifecycle
 
-+ (id)sharedStore;
++ (instancetype)sharedStore;
 {
     static NXOAuth2AccountStore *shared;
     static dispatch_once_t onceToken;
@@ -96,7 +97,7 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
     return shared;
 }
 
-- (id)init;
+- (instancetype)init;
 {
     self = [super init];
     if (self) {
@@ -404,6 +405,7 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
             NSString *tokenRequestHTTPMethod = [configuration objectForKey:kNXOAuth2AccountStoreConfigurationTokenRequestHTTPMethod];
             NSString *keychainGroup = [configuration objectForKey:kNXOAuth2AccountStoreConfigurationKeyChainGroup];
             NSDictionary *additionalAuthenticationParameters = [configuration objectForKey:kNXOAuth2AccountStoreConfigurationAdditionalAuthenticationParameters];
+            NSDictionary *customHeaderFields = [configuration objectForKey:kNXOAuth2AccountStoreConfigurationCustomHeaderFields];
 
             client = [[NXOAuth2Client alloc] initWithClientID:clientID
                                                  clientSecret:clientSecret
@@ -423,6 +425,9 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
             if (additionalAuthenticationParameters != nil) {
                 NSAssert([additionalAuthenticationParameters isKindOfClass:[NSDictionary class]], @"additionalAuthenticationParameters have to be a NSDictionary");
                 client.additionalAuthenticationParameters = additionalAuthenticationParameters;
+            }
+            if (customHeaderFields) {
+                client.customHeaderFields = customHeaderFields;
             }
 
             if (scope != nil) {
@@ -511,7 +516,9 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
     NSString *accountType;
     @synchronized (self.pendingOAuthClients) {
         accountType = [self accountTypeOfPendingOAuthClient:client];
-        [self.pendingOAuthClients removeObjectForKey:accountType];
+        if (accountType) {
+            [self.pendingOAuthClients removeObjectForKey:accountType];
+        }
     }
 }
 
@@ -604,7 +611,7 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
     result = (__bridge_transfer NSDictionary *)cfResult;
 
     if (status != noErr) {
-        NSAssert1(status == errSecItemNotFound, @"Unexpected error while fetching accounts from keychain: %ld", status);
+        NSAssert1(status == errSecItemNotFound, @"Unexpected error while fetching accounts from keychain: %zd", status);
         return nil;
     }
 
@@ -625,7 +632,7 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
                            data, kSecAttrGeneric,
                            nil];
     OSStatus __attribute__((unused)) err = SecItemAdd((__bridge CFDictionaryRef)query, NULL);
-    NSAssert1(err == noErr, @"Error while adding token to keychain: %ld", err);
+    NSAssert1(err == noErr, @"Error while adding token to keychain: %zd", err);
 }
 
 + (void)removeFromDefaultKeychain;
@@ -636,7 +643,7 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
                            serviceName, kSecAttrService,
                            nil];
     OSStatus __attribute__((unused)) err = SecItemDelete((__bridge CFDictionaryRef)query);
-    NSAssert1((err == noErr || err == errSecItemNotFound), @"Error while deleting token from keychain: %ld", err);
+    NSAssert1((err == noErr || err == errSecItemNotFound), @"Error while deleting token from keychain: %zd", err);
 
 }
 

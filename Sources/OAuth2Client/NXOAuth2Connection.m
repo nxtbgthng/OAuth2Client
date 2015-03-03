@@ -64,10 +64,10 @@ sendingProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)aSendingProgres
     return self;
 }
 
-- (id)initWithRequest:(NSMutableURLRequest *)aRequest
-    requestParameters:(NSDictionary *)someRequestParameters
-          oauthClient:(NXOAuth2Client *)aClient
-             delegate:(NSObject<NXOAuth2ConnectionDelegate> *)aDelegate;
+- (instancetype)initWithRequest:(NSMutableURLRequest *)aRequest
+              requestParameters:(NSDictionary *)someRequestParameters
+                    oauthClient:(NXOAuth2Client *)aClient
+                       delegate:(NSObject<NXOAuth2ConnectionDelegate> *)aDelegate;
 {
     self = [super init];
     if (self) {
@@ -223,19 +223,37 @@ sendingProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)aSendingProgres
     NSString *httpMethod = [aRequest HTTPMethod];
     if ([httpMethod caseInsensitiveCompare:@"POST"] != NSOrderedSame
         && [httpMethod caseInsensitiveCompare:@"PUT"] != NSOrderedSame) {
+        
         aRequest.URL = [aRequest.URL nxoauth2_URLByAddingParameters:parameters];
+        
     } else {
-        NSInputStream *postBodyStream = [[NXOAuth2PostBodyStream alloc] initWithParameters:parameters];
         
-        NSString *contentType = [NSString stringWithFormat:@"multipart/form-data; boundary=%@", [(NXOAuth2PostBodyStream *)postBodyStream boundary]];
-        NSString *contentLength = [NSString stringWithFormat:@"%lld", [(NXOAuth2PostBodyStream *)postBodyStream length]];
-        [aRequest setValue:contentType forHTTPHeaderField:@"Content-Type"];
-        [aRequest setValue:contentLength forHTTPHeaderField:@"Content-Length"];
+        NSString *contentType = [aRequest valueForHTTPHeaderField:@"Content-Type"];
         
-        [aRequest setHTTPBodyStream:postBodyStream];
+        if (!contentType || [contentType isEqualToString:@"multipart/form-data"]) {
+        
+            // sends the POST/PUT request as multipart/form-data as default
+            
+            NSInputStream *postBodyStream = [[NXOAuth2PostBodyStream alloc] initWithParameters:parameters];
+            
+            contentType = [NSString stringWithFormat:@"multipart/form-data; boundary=%@",[(NXOAuth2PostBodyStream *)postBodyStream boundary]];
+            NSString *contentLength = [NSString stringWithFormat:@"%lld", [(NXOAuth2PostBodyStream *)postBodyStream length]];
+            [aRequest setValue:contentType forHTTPHeaderField:@"Content-Type"];
+            [aRequest setValue:contentLength forHTTPHeaderField:@"Content-Length"];
+            
+            [aRequest setHTTPBodyStream:postBodyStream];
+            
+        } else if ([contentType isEqualToString:@"application/x-www-form-urlencoded"]) {
+            
+            // sends the POST/PUT request as application/x-www-form-urlencoded
+            
+            NSString *query = [[aRequest.URL nxoauth2_URLByAddingParameters:parameters] query];
+            [aRequest setHTTPBody:[query dataUsingEncoding:NSUTF8StringEncoding]];
+            
+        }
+
     }
 }
-
 
 - (BOOL)trustsAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
                           forHostname:(NSString *)hostname

@@ -52,7 +52,7 @@
 
 #pragma mark Lifecycle
 
-- (id)initWithResource:(NSURL *)aResource method:(NSString *)aMethod parameters:(NSDictionary *)someParameters;
+- (instancetype)initWithResource:(NSURL *)aResource method:(NSString *)aMethod parameters:(NSDictionary *)someParameters;
 {
     self = [super init];
     if (self) {
@@ -166,8 +166,7 @@
     if (!someParameters) return;
     
     NSString *httpMethod = [aRequest HTTPMethod];
-    if ([httpMethod caseInsensitiveCompare:@"POST"] != NSOrderedSame
-        && [httpMethod caseInsensitiveCompare:@"PUT"] != NSOrderedSame) {
+    if (![@[@"POST",@"PUT",@"PATCH"] containsObject: [httpMethod uppercaseString]]) {
         aRequest.URL = [aRequest.URL nxoauth2_URLByAddingParameters:someParameters];
     } else {
         NSInputStream *postBodyStream = [[NXOAuth2PostBodyStream alloc] initWithParameters:parameters];

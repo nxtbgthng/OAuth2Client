@@ -17,9 +17,9 @@
 
 
 @interface NXOAuth2PostBodyPart(Private)
-- (id)initWithName:(NSString *)name dataContent:(NSData *)data;
-- (id)initWithName:(NSString *)name fileContent:(NSString *)path;
-- (id)initWithName:(NSString *)name stringContent:(NSString *)string;
+- (instancetype)initWithName:(NSString *)name dataContent:(NSData *)data;
+- (instancetype)initWithName:(NSString *)name fileContent:(NSString *)path;
+- (instancetype)initWithName:(NSString *)name stringContent:(NSString *)string;
 @end
 
 
@@ -27,30 +27,30 @@
 
 #pragma mark Lifecycle
 
-+ (id)partWithName:(NSString *)name content:(id)content;
++ (instancetype)partWithName:(NSString *)name content:(id)content;
 {
     return [[self alloc] initWithName:name content:content];
 }
 
-- (id)initWithName:(NSString *)name content:(id)content;
+- (instancetype)initWithName:(NSString *)name content:(id)content;
 {
     if ([content isKindOfClass:[NSString class]]) {
         return [self initWithName:name stringContent:content];
     } else if ([content isKindOfClass:[NSNumber class]]) {
         return [self initWithName:name stringContent:[content stringValue]];
     } else if ([content isKindOfClass:[NSURL class]] && [content isFileURL]) {
-        return [self initWithName:name fileContent:[content path]];
+        return [self initWithName:name fileContent:[(NSURL *)content path]];
     } else if ([content isKindOfClass:[NSData class]]) {
         return [self initWithName:name dataContent:content];
     } else if ([content isKindOfClass:[NXOAuth2FileStreamWrapper class]]) {
-        return [self initWithName:name streamContent:[content stream] streamLength:[content contentLength] fileName:[content fileName]];
+        return [self initWithName:name streamContent:[content stream] streamLength:[content contentLength] fileName:[content fileName] contentType:[content contentType]];
     } else {
         NSAssert1(NO, @"NXOAuth2PostBodyPart with illegal type:\n%@", [content class]);
         return nil;
     }
 }
 
-- (id)initWithName:(NSString *)name streamContent:(NSInputStream *)stream streamLength:(unsigned long long)streamLength fileName:(NSString *)fileName;
+- (instancetype)initWithName:(NSString *)name streamContent:(NSInputStream *)stream streamLength:(unsigned long long)streamLength fileName:(NSString *)fileName;
 {
     NSMutableString *headers = [NSMutableString string];
     [headers appendFormat:@"Content-Disposition: form-data; name=\"%@\"; filename=\"%@\"\r\n", name, fileName];
@@ -60,7 +60,17 @@
     return [self initWithHeaders:headers streamContent:stream length:streamLength];
 }
 
-- (id)initWithName:(NSString *)name dataContent:(NSData *)data;
+- (instancetype)initWithName:(NSString *)name streamContent:(NSInputStream *)stream streamLength:(unsigned long long)streamLength fileName:(NSString *)fileName contentType:(NSString *)contentType;
+{
+    NSMutableString *headers = [NSMutableString string];
+    [headers appendFormat:@"Content-Disposition: form-data; name=\"%@\"; filename=\"%@\"\r\n", name, fileName];
+    [headers appendString:@"Content-Transfer-Encoding: binary\r\n"];
+    [headers appendFormat:@"Content-Type: %@\r\n", contentType];
+    [headers appendString:@"\r\n"];
+    return [self initWithHeaders:headers streamContent:stream length:streamLength];
+}
+
+- (instancetype)initWithName:(NSString *)name dataContent:(NSData *)data;
 {
     NSMutableString *headers = [NSMutableString string];
     [headers appendFormat:@"Content-Disposition: form-data; name=\"%@\"; filename=\"unknown\"\r\n", name];
@@ -70,7 +80,7 @@
     return [self initWithHeaders:headers dataContent:data];
 }
 
-- (id)initWithName:(NSString *)name fileContent:(NSString *)path;
+- (instancetype)initWithName:(NSString *)name fileContent:(NSString *)path;
 {
     NSMutableString *headers = [NSMutableString string];
     [headers appendFormat:@"Content-Disposition: form-data; name=\"%@\"; filename=\"%@\"\r\n", name, [path lastPathComponent]];
@@ -90,7 +100,7 @@
                           length:[fileSize unsignedLongLongValue]];
 }
 
-- (id)initWithName:(NSString *)name stringContent:(NSString *)string;
+- (instancetype)initWithName:(NSString *)name stringContent:(NSString *)string;
 {
     NSMutableString *headers = [NSMutableString string];
     [headers appendFormat:@"Content-Disposition: form-data; name=\"%@\"\r\n", name];
@@ -98,14 +108,14 @@
     return [self initWithHeaders:headers dataContent:[string dataUsingEncoding:NSUTF8StringEncoding]];
 }
 
-- (id)initWithHeaders:(NSString *)headers dataContent:(NSData *)data;
+- (instancetype)initWithHeaders:(NSString *)headers dataContent:(NSData *)data;
 {
     return [self initWithHeaders: headers
                    streamContent: [NSInputStream inputStreamWithData:data]
                           length: [data length]];
 }
 
-- (id)initWithHeaders:(NSString *)headers streamContent:(NSInputStream *)stream length:(unsigned long long)length;
+- (instancetype)initWithHeaders:(NSString *)headers streamContent:(NSInputStream *)stream length:(unsigned long long)length;
 {
     self = [super init];
     if(self) {
