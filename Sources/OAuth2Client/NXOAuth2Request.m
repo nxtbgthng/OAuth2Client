@@ -112,12 +112,29 @@
                                            sendingProgressHandler:progressHandler
                                                   responseHandler:responseHandler];
     self.connection.delegate = self;
-    self.progressHandler = progressHandler;
     
     // Keep request object alive during the request is performing.
     self.me = self;
 }
 
+- (void)performRequestWithProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)progressHandler
+                          responseHandler:(NXOAuth2ConnectionResponseHandler)responseHandler;
+{
+    NSAssert(self.me == nil, @"This object an only perform one request at the same time.");
+    
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:self.resource];
+    [request setHTTPMethod:self.requestMethod];
+    self.connection = [[NXOAuth2Connection alloc] initWithRequest:request
+                                                requestParameters:self.parameters
+                                                      oauthClient:self.account.oauthClient
+                                           sendingProgressHandler:progressHandler
+                                                  responseHandler:responseHandler];
+    self.connection.delegate = self;
+    self.progressHandler = progressHandler;
+    
+    // Keep request object alive during the request is performing.
+    self.me = self;
+}
 
 #pragma mark Cancel
 
