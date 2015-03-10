@@ -87,16 +87,16 @@ typedef void(^NXOAuth2ConnectionSendingProgressHandler)(unsigned long long bytes
 @property (nonatomic, strong) NSDictionary *userInfo;
 @property (nonatomic, strong, readonly) NXOAuth2Client *client;
 
-- (id) initWithRequest:(NSMutableURLRequest *)request
-     requestParameters:(NSDictionary *)requestParameters
-           oauthClient:(NXOAuth2Client *)client
-sendingProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)sendingProgressHandler
-       responseHandler:(NXOAuth2ConnectionResponseHandler)responseHandler;
+- (instancetype) initWithRequest:(NSMutableURLRequest *)request
+               requestParameters:(NSDictionary *)requestParameters
+                     oauthClient:(NXOAuth2Client *)client
+          sendingProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)sendingProgressHandler
+                 responseHandler:(NXOAuth2ConnectionResponseHandler)responseHandler;
 
-- (id)initWithRequest:(NSMutableURLRequest *)request
-    requestParameters:(NSDictionary *)requestParameters
-          oauthClient:(NXOAuth2Client *)client
-             delegate:(NSObject<NXOAuth2ConnectionDelegate> *)delegate;
+- (instancetype)initWithRequest:(NSMutableURLRequest *)request
+              requestParameters:(NSDictionary *)requestParameters
+                    oauthClient:(NXOAuth2Client *)client
+                       delegate:(NSObject<NXOAuth2ConnectionDelegate> *)delegate;
 
 - (void)cancel;
 

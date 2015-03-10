@@ -25,6 +25,7 @@
 @interface NXOAuth2Request () <NXOAuth2ConnectionDelegate>
 @property (nonatomic,  strong, readwrite) NXOAuth2Connection *connection;
 @property (nonatomic,  strong, readwrite) NXOAuth2Request *me;
+@property (nonatomic,  copy) NXOAuth2ConnectionSendingProgressHandler progressHandler;
 #pragma mark Apply Parameters
 - (void)applyParameters:(NSDictionary *)someParameters onRequest:(NSMutableURLRequest *)aRequest;
 @end
@@ -51,7 +52,7 @@
 
 #pragma mark Lifecycle
 
-- (id)initWithResource:(NSURL *)aResource method:(NSString *)aMethod parameters:(NSDictionary *)someParameters;
+- (instancetype)initWithResource:(NSURL *)aResource method:(NSString *)aMethod parameters:(NSDictionary *)someParameters;
 {
     self = [super init];
     if (self) {
@@ -116,6 +117,12 @@
     self.me = self;
 }
 
+- (void)performRequestWithProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)progressHandler
+                          responseHandler:(NXOAuth2ConnectionResponseHandler)responseHandler;
+{
+    self.progressHandler = progressHandler;
+    [self performRequestWithSendingProgressHandler:progressHandler responseHandler:responseHandler];
+}
 
 #pragma mark Cancel
 
@@ -149,6 +156,13 @@
     self.me = nil;
 }
 
+-(void)oauthConnection:(NXOAuth2Connection *)connectionStbl didReceiveData:(NSData *)data
+{
+    if (self.progressHandler)
+    {
+        self.progressHandler(self.connection.data.length, connectionStbl.expectedContentLength);
+    }
+}
 
 #pragma mark Apply Parameters
 

@@ -40,7 +40,9 @@
 
 #pragma mark Lifecycle
 
-- (id)initWithResource:(NSURL *)url method:(NSString *)method parameters:(NSDictionary *)parameter;
+- (instancetype)initWithResource:(NSURL *)url
+                          method:(NSString *)method
+                      parameters:(NSDictionary *)parameter;
 
 
 #pragma mark Accessors
@@ -61,6 +63,9 @@
 
 - (void)performRequestWithSendingProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)progressHandler
                                  responseHandler:(NXOAuth2ConnectionResponseHandler)responseHandler;
+
+- (void)performRequestWithProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)progressHandler
+                          responseHandler:(NXOAuth2ConnectionResponseHandler)responseHandler;
 
 
 #pragma mark Cancel

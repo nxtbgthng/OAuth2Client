@@ -25,7 +25,7 @@
     unsigned long long numBytesTotal;
 }
 
-- (id)initWithParameters:(NSDictionary *)postParameters;
+- (instancetype)initWithParameters:(NSDictionary *)postParameters;
 
 @property (readonly) NSString *boundary;
 @property (readonly) unsigned long long length;

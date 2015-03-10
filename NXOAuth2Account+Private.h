@@ -15,7 +15,10 @@
 
 @interface NXOAuth2Account (Private)
 
-- (id)initAccountWithOAuthClient:(NXOAuth2Client *)oauthClient accountType:(NSString *)accountType;
-- (id)initAccountWithAccessToken:(NXOAuth2AccessToken *)accessToken accountType:(NSString *)accountType;
+- (instancetype)initAccountWithOAuthClient:(NXOAuth2Client *)oauthClient
+                               accountType:(NSString *)accountType;
+
+- (instancetype)initAccountWithAccessToken:(NXOAuth2AccessToken *)accessToken
+                               accountType:(NSString *)accountType;
 
 @end

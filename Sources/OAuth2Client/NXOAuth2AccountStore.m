@@ -87,7 +87,7 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
 
 #pragma mark Lifecycle
 
-+ (id)sharedStore;
++ (instancetype)sharedStore;
 {
     static NXOAuth2AccountStore *shared;
     static dispatch_once_t onceToken;
@@ -97,7 +97,7 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
     return shared;
 }
 
-- (id)init;
+- (instancetype)init;
 {
     self = [super init];
     if (self) {

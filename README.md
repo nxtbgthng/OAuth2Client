@@ -122,7 +122,7 @@ If an account was added the `userInfo` dictionary of the notification will conta
 
 #### On Failure
 
-If the authentication did not succeed, a notification of type `NXOAuth2AccountStoreDidFailToRequestAccessNotification` containing an `NSError` will be send.
+If the authentication did not succeed, a notification of type `NXOAuth2AccountStoreDidFailToRequestAccessNotification` containing an `NSError` will be sent.
 <pre>
 [[NSNotificationCenter defaultCenter] addObserverForName:NXOAuth2AccountStoreDidFailToRequestAccessNotification
                                                   object:[NXOAuth2AccountStore sharedStore]
@@ -157,7 +157,7 @@ NSDictionary *userData = // ...
 account.userData = userData;
 </pre>
 
-This payload will be stored together with the accounts in the Keychain. Thus it shouldn't be to big.
+This payload will be stored together with the accounts in the Keychain. Thus it shouldn't be too big.
 
 ### Invoking a Request
 
@@ -175,7 +175,7 @@ A request using the authentication for a service can be invoked via `NXOAuth2Req
 
 #### Getting a signed NSURLRequest
 
-In some circumstances you have to go the *good old way* and use an `NSURLConnection`. Maybe if you to download a large file. Therefore `NXOAuth2Request` gives you the possibility to get an `NSURLRequest` containing the additional information to authenticate that request.
+In some circumstances you have to go the *good old way* and use an `NSURLConnection`. Maybe if you want to download a large file. Therefore `NXOAuth2Request` gives you the possibility to get an `NSURLRequest` containing the additional information to authenticate that request.
 
 <pre>
 NXOAuth2Request *theRequest = [[NXOAuth2Request alloc] initWithResource:[NSURL URLWithString:@"https://...your service URL..."]

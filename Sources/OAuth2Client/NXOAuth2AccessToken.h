@@ -33,14 +33,34 @@
 @property (nonatomic, readonly) NSSet *scope;
 @property (nonatomic, readonly) NSString *responseBody;
 
-+ (id)tokenWithResponseBody:(NSString *)responseBody;
-+ (id)tokenWithResponseBody:(NSString *)responseBody tokenType:(NSString *)tokenType;
++ (instancetype)tokenWithResponseBody:(NSString *)responseBody;
 
-- (id)initWithAccessToken:(NSString *)accessToken;
-- (id)initWithAccessToken:(NSString *)accessToken refreshToken:(NSString *)refreshToken expiresAt:(NSDate *)expiryDate;
-- (id)initWithAccessToken:(NSString *)accessToken refreshToken:(NSString *)refreshToken expiresAt:(NSDate *)expiryDate scope:(NSSet *)scope;
-- (id)initWithAccessToken:(NSString *)accessToken refreshToken:(NSString *)refreshToken expiresAt:(NSDate *)expiryDate scope:(NSSet *)scope responseBody:(NSString *)responseBody;
-- (id)initWithAccessToken:(NSString *)accessToken refreshToken:(NSString *)refreshToken expiresAt:(NSDate *)expiryDate scope:(NSSet *)scope responseBody:(NSString *)responseBody tokenType:(NSString*)tokenType; // designated
++ (instancetype)tokenWithResponseBody:(NSString *)responseBody
+                            tokenType:(NSString *)tokenType;
+
+- (instancetype)initWithAccessToken:(NSString *)accessToken;
+
+- (instancetype)initWithAccessToken:(NSString *)accessToken
+                       refreshToken:(NSString *)refreshToken
+                          expiresAt:(NSDate *)expiryDate;
+
+- (instancetype)initWithAccessToken:(NSString *)accessToken
+                       refreshToken:(NSString *)refreshToken
+                          expiresAt:(NSDate *)expiryDate
+                              scope:(NSSet *)scope;
+
+- (instancetype)initWithAccessToken:(NSString *)accessToken
+                       refreshToken:(NSString *)refreshToken
+                          expiresAt:(NSDate *)expiryDate
+                              scope:(NSSet *)scope
+                       responseBody:(NSString *)responseBody;
+
+- (instancetype)initWithAccessToken:(NSString *)accessToken
+                       refreshToken:(NSString *)refreshToken
+                          expiresAt:(NSDate *)expiryDate
+                              scope:(NSSet *)scope
+                       responseBody:(NSString *)responseBody
+                          tokenType:(NSString*)tokenType; // designated
 
 - (void)restoreWithOldToken:(NXOAuth2AccessToken *)oldToken;
 
@@ -48,7 +68,7 @@
 
 //TODO: Support alternate KeyChain Locations
 
-+ (id)tokenFromDefaultKeychainWithServiceProviderName:(NSString *)provider;
++ (instancetype)tokenFromDefaultKeychainWithServiceProviderName:(NSString *)provider;
 - (void)storeInDefaultKeychainWithServiceProviderName:(NSString *)provider;
 - (void)removeFromDefaultKeychainWithServiceProviderName:(NSString *)provider;
 
