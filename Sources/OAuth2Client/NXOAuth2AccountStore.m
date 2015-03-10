@@ -252,6 +252,8 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
       keyChainGroup:(NSString *)aKeyChainGroup
      forAccountType:(NSString *)anAccountType;
 {
+    NSAssert(!aKeyChainGroup, @"keyChainGroup must be non-nil");
+    
     [self setConfiguration:[NSDictionary dictionaryWithObjectsAndKeys:
                             aClientID, kNXOAuth2AccountStoreConfigurationClientID,
                             aSecret, kNXOAuth2AccountStoreConfigurationSecret,
@@ -273,6 +275,9 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
           tokenType:(NSString *)aTokenType
      forAccountType:(NSString *)anAccountType;
 {
+    NSAssert(!aKeyChainGroup, @"keyChainGroup must be non-nil");
+    NSAssert(!aTokenType, @"tokenType must be non-nil");
+    
     [self setConfiguration:[NSDictionary dictionaryWithObjectsAndKeys:
                             aClientID, kNXOAuth2AccountStoreConfigurationClientID,
                             aSecret, kNXOAuth2AccountStoreConfigurationSecret,
