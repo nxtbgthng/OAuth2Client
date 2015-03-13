@@ -80,6 +80,19 @@ The best place to configure your client is `+[UIApplicationDelegate initialize]`
 
 Take a look at the [Wiki](https://github.com/nxtbgthng/OAuth2Client/wiki) for some examples.
 
+Unless otherwise specficied, the token request will be called with a HTTP Header 'Content-Type' set to 'multipart/form-data'.  If you wish that header to be set to 'application/x-www-form-urlencoded', the custom header fields must be modified.
+
+<pre>
+NSMutableDictionary *configuration = [NSMutableDictionary dictionaryWithDictionary:[[NXOAuth2AccountStore sharedStore] configurationForAccountType:kOAuth2AccountType]];
+NSDictionary *customHeaderFields = [NSDictionary dictionaryWithObject:@"application/x-www-form-urlencoded" forKey:@"Content-Type"];
+[configuration setObject:customHeaderFields forKey:kNXOAuth2AccountStoreConfigurationCustomHeaderFields];
+[[NXOAuth2AccountStore sharedStore] setConfiguration:configuration forAccountType:kOAuth2AccountType];
+</pre>
+  
+Consult the documentation of the OAuth2 provider to determine acceptable Content-Type header values. 
+
+    
+
 ### Requesting Access to a Service
 
 Once you have configured your client you are ready to request access to one of those services. The NXOAuth2AccountStore provides three different methods for this:
@@ -106,6 +119,24 @@ Once you have configured your client you are ready to request access to one of t
  	                            }];
  </pre>
  Using an authorization URL handler gives you the ability to open the URL in an own web view or do some fancy stuff for authentication. Therefore you pass a block to the NXOAuth2AccountStore while requesting access.
+ 
+ One method for receiving a code and exchanging it for an auth token requires the following:
+ 
+  1) Load the preparedURL into an existing UIWebView as part of the block code above. Be certain to set the delegate for the UIWebView.
+  
+ <pre>
+ [_webView loadRequest:[NSURLRequest requestWithURL:preparedURL]];
+ </pre>
+ 
+  2) In the `webViewDidFinishLoad:` delegate method, you will need to parse the URL for your callback URL.  If there is a match, pass that URL to `handleRedirectURL:`
+
+ <pre>
+ if ([webView.request.URL.absoluteString rangeOfString:kOAuth2RedirectURL options:NSCaseInsensitiveSearch].location != NSNotFound) {
+        [[NXOAuth2AccountStore sharedStore] handleRedirectURL:[NSURL URLWithString:webView.request.URL.absoluteString]];        
+    }
+</pre>   
+
+This is a very basic example.  In the above, it is assumed that the `code` being returned from the OAuth2 provider is in the query parameter of the webView.request.URL (i.e. `http://myredirecturl.com?code=<verylongcodestring>`).  This is not always the case and you may have to look elsewhere for the code (e.g. in the page content, web page title).  You must prepare a URL in the format described above to pass to `handleRedirectURL:`.
 
 #### On Success
 
