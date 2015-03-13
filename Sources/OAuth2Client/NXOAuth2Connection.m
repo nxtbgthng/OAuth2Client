@@ -538,13 +538,21 @@ sendingProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)aSendingProgres
     return mutableRequest;
 }
 
-- (void)connection:(NSURLConnection *)connection didSendBodyData:(NSInteger)bytesWritten totalBytesWritten:(NSInteger)totalBytesWritten totalBytesExpectedToWrite:(NSInteger)totalBytesExpectedToWrite;
+- (void)connection:(NSURLConnection *)connection
+   didSendBodyData:(NSInteger)bytesWritten
+ totalBytesWritten:(NSInteger)totalBytesWritten
+totalBytesExpectedToWrite:(NSInteger)totalBytesExpectedToWrite;
 {
+    unsigned long long castedTotalBytes = (unsigned long long)totalBytesWritten;
+    unsigned long long castedExpectedBytes = (unsigned long long)totalBytesExpectedToWrite;
+    
     if ([delegate respondsToSelector:@selector(oauthConnection:didSendBytes:ofTotal:)]) {
-        [delegate oauthConnection:self didSendBytes:totalBytesWritten ofTotal:totalBytesExpectedToWrite];
+        [delegate oauthConnection:self
+                     didSendBytes:castedTotalBytes
+                          ofTotal:castedExpectedBytes];
     }
     
-    if (sendingProgressHandler) sendingProgressHandler(totalBytesWritten, totalBytesExpectedToWrite);
+    if (sendingProgressHandler) sendingProgressHandler(castedTotalBytes, castedExpectedBytes);
 }
 
 - (NSInputStream *)connection:(NSURLConnection *)connection needNewBodyStream:(NSURLRequest *)aRequest;

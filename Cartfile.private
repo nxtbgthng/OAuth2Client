@@ -1,0 +1,4 @@
+github "specta/specta" => 0.2
+github "specta/expecta" => 0.3
+github "erikdoe/ocmock" => 3.1
+github "AliSoftware/OHHTTPStubs" => 3.1

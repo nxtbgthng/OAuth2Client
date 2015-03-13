@@ -11,13 +11,17 @@
 //  the full licence.
 //
 
+#import "NXOAuth2Client.h"
+#import "NXOAuth2ClientDelegate.h"
+
+
 #import "NXOAuth2Connection.h"
 #import "NXOAuth2ConnectionDelegate.h"
 #import "NXOAuth2AccessToken.h"
 
 #import "NSURL+NXOAuth2.h"
 
-#import "NXOAuth2Client.h"
+
 
 
 NSString * const NXOAuth2ClientConnectionContextTokenRequest = @"tokenRequest";
