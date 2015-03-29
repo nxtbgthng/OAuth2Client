@@ -238,7 +238,7 @@
     result = (__bridge_transfer NSDictionary *)cfResult;
     
     if (status != noErr) {
-        NSAssert1(status == errSecItemNotFound, @"unexpected error while fetching token from keychain: %@", (int)status);
+        NSAssert1(status == errSecItemNotFound, @"unexpected error while fetching token from keychain: %@", @(status));
         return nil;
     }
     
@@ -257,7 +257,7 @@
                            nil];
     [self removeFromDefaultKeychainWithServiceProviderName:provider];
     OSStatus __attribute__((unused)) err = SecItemAdd((__bridge CFDictionaryRef)query, NULL);
-    NSAssert1(err == noErr, @"error while adding token to keychain: %@", (int)err);
+    NSAssert1(err == noErr, @"error while adding token to keychain: %@", @(err));
 }
 
 - (void)removeFromDefaultKeychainWithServiceProviderName:(NSString *)provider;
