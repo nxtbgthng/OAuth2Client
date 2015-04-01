@@ -12,5 +12,6 @@
 //
 
 #ifdef __OBJC__
+#import <OAuth2Client/NXOAuth2Constants.h>
 #import <Foundation/Foundation.h>
 #endif

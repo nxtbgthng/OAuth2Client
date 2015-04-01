@@ -11,18 +11,16 @@
 //  the full licence.
 //
 
-#if TARGET_OS_IPHONE
-#import <UIKit/UIKit.h>
-#else
-#import <Cocoa/Cocoa.h>
-#endif
 
 
 #import "NXOAuth2Client.h"
+#import "NXOAuth2ClientDelegate.h"
+
 #import "NXOAuth2Connection.h"
 #import "NXOAuth2Account.h"
 #import "NXOAuth2Account+Private.h"
 
+#import "NXApplication.h"
 #import "NXOAuth2AccountStore.h"
 
 
@@ -55,6 +53,9 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
 
 
 @interface NXOAuth2AccountStore () <NXOAuth2ClientDelegate, NXOAuth2TrustDelegate>
+
+-(instancetype)initWithApplication:(id<NXApplication>)uiApplication;
+
 @property (nonatomic, strong, readwrite) NSMutableDictionary *pendingOAuthClients;
 @property (nonatomic, strong, readwrite) NSMutableDictionary *accountsDict;
 
@@ -84,50 +85,72 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
 
 
 @implementation NXOAuth2AccountStore
+{
+    id<NXApplication> _uiApplication;
+}
 
 #pragma mark Lifecycle
 
-+ (instancetype)sharedStore;
++ (instancetype)sharedStoreForApplication:(id<NXApplication>)uiApplication
 {
     static NXOAuth2AccountStore *shared;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        shared = [NXOAuth2AccountStore new];
+        shared = [[NXOAuth2AccountStore alloc] initWithApplication: uiApplication];
     });
     return shared;
 }
 
-- (instancetype)init;
+
+-(instancetype)initWithApplication:(id)uiApplication
 {
-    self = [super init];
-    if (self) {
-        self.pendingOAuthClients = [NSMutableDictionary dictionary];
-        self.accountsDict = [NSMutableDictionary dictionaryWithDictionary:[NXOAuth2AccountStore accountsFromDefaultKeychain]];
-        self.configurations = [NSMutableDictionary dictionary];
-        self.trustModeHandler = [NSMutableDictionary dictionary];
-        self.trustedCertificatesHandler = [NSMutableDictionary dictionary];
-
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(accountDidChangeUserData:)
-                                                     name:NXOAuth2AccountDidChangeUserDataNotification
-                                                   object:nil];
-
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(accountDidChangeAccessToken:)
-                                                     name:NXOAuth2AccountDidChangeAccessTokenNotification
-                                                   object:nil];
-
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(accountDidLoseAccessToken:)
-                                                     name:NXOAuth2AccountDidLoseAccessTokenNotification
-                                                   object:nil];
+    if (nil == uiApplication)
+    {
+        return nil;
     }
+
+    self = [super init];
+    if (nil == self)
+    {
+        return nil;
+    }
+    
+    self->_uiApplication = uiApplication;
+    
+    self.pendingOAuthClients = [NSMutableDictionary dictionary];
+    self.accountsDict = [NSMutableDictionary dictionaryWithDictionary:[NXOAuth2AccountStore accountsFromDefaultKeychain]];
+    self.configurations = [NSMutableDictionary dictionary];
+    self.trustModeHandler = [NSMutableDictionary dictionary];
+    self.trustedCertificatesHandler = [NSMutableDictionary dictionary];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(accountDidChangeUserData:)
+                                                 name:NXOAuth2AccountDidChangeUserDataNotification
+                                               object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(accountDidChangeAccessToken:)
+                                                 name:NXOAuth2AccountDidChangeAccessTokenNotification
+                                               object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(accountDidLoseAccessToken:)
+                                                 name:NXOAuth2AccountDidLoseAccessTokenNotification
+                                               object:nil];
+    
     return self;
 }
 
 - (void)dealloc;
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
+    
+    NSArray* pendingClients = [self.pendingOAuthClients allValues];
+    [self.pendingOAuthClients removeAllObjects];
+    for (NXOAuth2Client* singleClient in pendingClients)
+    {
+        singleClient.delegate = nil;
+    }
 }
 
 
@@ -476,11 +499,9 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
     NSURL *redirectURL = [configuration objectForKey:kNXOAuth2AccountStoreConfigurationRedirectURL];
     NSURL *preparedURL = [client authorizationURLWithRedirectURL:redirectURL];
 
-#if TARGET_OS_IPHONE
-        [[UIApplication sharedApplication] openURL:preparedURL];
-#else
-        [[NSWorkspace sharedWorkspace] openURL:preparedURL];
-#endif
+    
+    NSParameterAssert(nil != self->_uiApplication);
+    [self->_uiApplication openURL: preparedURL];
 }
 
 - (void)oauthClientDidGetAccessToken:(NXOAuth2Client *)client;
@@ -491,7 +512,9 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
         [self.pendingOAuthClients removeObjectForKey:accountType];
     }
 
-    NXOAuth2Account *account = [[NXOAuth2Account alloc] initAccountWithOAuthClient:client accountType:accountType];
+    NXOAuth2Account *account = [[NXOAuth2Account alloc] initAccountWithOAuthClient:client
+                                                                       accountType:accountType
+                                                                       application:self->_uiApplication];
 
     [self addAccount:account];
 }
