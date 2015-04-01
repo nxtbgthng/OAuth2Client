@@ -44,6 +44,14 @@ NSString * const NXOAuth2AccountDidFailToGetAccessTokenNotification = @"NXOAuth2
 
 #pragma mark Lifecycle
 
+-(void)dealloc
+{
+    if (self == self->oauthClient.delegate)
+    {
+        self->oauthClient.delegate = nil;
+    }
+}
+
 - (instancetype)initAccountWithOAuthClient:(NXOAuth2Client *)anOAuthClient
                                accountType:(NSString *)anAccountType
                                application:(id<NXApplication>)app
@@ -62,7 +70,7 @@ NSString * const NXOAuth2AccountDidFailToGetAccessTokenNotification = @"NXOAuth2
                                application:(id<NXApplication>)app
 {
     self = [super init];
-    if (self) {
+    if (nil != self) {
         self.application = app;
         accountType = anAccountType;
         accessToken = anAccessToken;
