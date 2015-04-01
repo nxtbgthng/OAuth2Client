@@ -111,6 +111,10 @@ NSString * const NXOAuth2ClientConnectionContextTokenRefresh = @"tokenRefresh";
 
 - (void)dealloc;
 {
+    if (self == authConnection.delegate)
+    {
+        authConnection.delegate = nil;
+    }
     [authConnection cancel];
 }
 

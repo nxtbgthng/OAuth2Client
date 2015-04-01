@@ -144,6 +144,13 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
 - (void)dealloc;
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
+    
+    NSArray* pendingClients = [self.pendingOAuthClients allValues];
+    [self.pendingOAuthClients removeAllObjects];
+    for (NXOAuth2Client* singleClient in pendingClients)
+    {
+        singleClient.delegate = nil;
+    }
 }
 
 
