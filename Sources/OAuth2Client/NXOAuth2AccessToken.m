@@ -226,13 +226,23 @@
 
 + (instancetype)tokenFromDefaultKeychainWithServiceProviderName:(NSString *)provider;
 {
+    return [NXOAuth2AccessToken tokenFromKeychainWithServiceProviderName:provider withAccessGroup:nil];
+}
+
++ (instancetype)tokenFromKeychainWithServiceProviderName:(NSString *)provider withAccessGroup:(NSString *)accessGroup
+{
     NSString *serviceName = [[self class] serviceNameWithProvider:provider];
     NSDictionary *result = nil;
-    NSDictionary *query = [NSDictionary dictionaryWithObjectsAndKeys:
-                           (__bridge NSString *)kSecClassGenericPassword, kSecClass,
-                           serviceName, kSecAttrService,
-                           kCFBooleanTrue, kSecReturnAttributes,
-                           nil];
+    NSMutableDictionary *query = [NSMutableDictionary dictionaryWithObjectsAndKeys:
+                                  (__bridge NSString *)kSecClassGenericPassword, kSecClass,
+                                  serviceName, kSecAttrService,
+                                  kCFBooleanTrue, kSecReturnAttributes,
+                                  nil];
+    
+    if (accessGroup != nil) {
+        [query setObject:accessGroup forKey:(__bridge NSString *)kSecAttrAccessGroup];
+    }
+    
     CFTypeRef cfResult = nil;
     OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)query, &cfResult);
     result = (__bridge_transfer NSDictionary *)cfResult;
@@ -247,26 +257,46 @@
 
 - (void)storeInDefaultKeychainWithServiceProviderName:(NSString *)provider;
 {
+    [self storeInKeychainWithServiceProviderName:provider withAccessGroup:nil];
+}
+
+- (void)storeInKeychainWithServiceProviderName:(NSString *)provider withAccessGroup:(NSString *)accessGroup
+{
     NSString *serviceName = [[self class] serviceNameWithProvider:provider];
     NSData *data = [NSKeyedArchiver archivedDataWithRootObject:self];
-    NSDictionary *query = [NSDictionary dictionaryWithObjectsAndKeys:
-                           (__bridge NSString *)kSecClassGenericPassword, kSecClass,
-                           serviceName, kSecAttrService,
-                           @"OAuth 2 Access Token", kSecAttrLabel,
-                           data, kSecAttrGeneric,
-                           nil];
-    [self removeFromDefaultKeychainWithServiceProviderName:provider];
+    NSMutableDictionary *query = [NSMutableDictionary dictionaryWithObjectsAndKeys:
+                                  (__bridge NSString *)kSecClassGenericPassword, kSecClass,
+                                  serviceName, kSecAttrService,
+                                  @"OAuth 2 Access Token", kSecAttrLabel,
+                                  data, kSecAttrGeneric,
+                                  nil];
+    
+    if (accessGroup != nil) {
+        [query setObject:accessGroup forKey:(__bridge NSString *)kSecAttrAccessGroup];
+    }
+    
+    [self removeFromKeychainWithServiceProviderName:provider withAccessGroup:accessGroup];
     OSStatus __attribute__((unused)) err = SecItemAdd((__bridge CFDictionaryRef)query, NULL);
     NSAssert1(err == noErr, @"error while adding token to keychain: %d", (int)err);
 }
 
 - (void)removeFromDefaultKeychainWithServiceProviderName:(NSString *)provider;
 {
+    [self removeFromKeychainWithServiceProviderName:provider withAccessGroup:nil];
+}
+
+- (void)removeFromKeychainWithServiceProviderName:(NSString *)provider withAccessGroup:(NSString *)accessGroup
+{
     NSString *serviceName = [[self class] serviceNameWithProvider:provider];
-    NSDictionary *query = [NSDictionary dictionaryWithObjectsAndKeys:
+    NSMutableDictionary *query = [NSMutableDictionary dictionaryWithObjectsAndKeys:
                            (__bridge NSString *)kSecClassGenericPassword, kSecClass,
                            serviceName, kSecAttrService,
                            nil];
+    
+    if (accessGroup != nil) {
+        [query setObject:accessGroup forKey:(__bridge NSString *)kSecAttrAccessGroup];
+    }
+    
     OSStatus __attribute__((unused)) err = SecItemDelete((__bridge CFDictionaryRef)query);
     NSAssert1((err == noErr || err == errSecItemNotFound), @"error while deleting token from keychain: %d", (int)err);
 }
