@@ -170,10 +170,7 @@
 
 - (BOOL)hasExpired;
 {
-    NSComparisonResult checkExpireDateResult = [[NSDate date] compare: self->expiresAt];
-    BOOL result = (NSOrderedDescending != checkExpireDateResult);
-    
-    return result;
+    return ([[NSDate date] earlierDate:expiresAt] == expiresAt);
 }
 
 - (NSString *)description;
