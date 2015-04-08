@@ -185,7 +185,11 @@ NSString * const NXOAuth2ClientConnectionContextTokenRefresh = @"tokenRefresh";
 
 - (void)setAccessToken:(NXOAuth2AccessToken *)value;
 {
-    if (self.accessToken == value) return;
+    if (self.accessToken == value)
+    {
+        return;
+    }
+    
     BOOL authorisationStatusChanged = ((accessToken == nil)    || (value == nil)); //They can't both be nil, see one line above. So they have to have changed from or to nil.
     
     if (!value) {
@@ -470,8 +474,23 @@ NSString * const NXOAuth2ClientConnectionContextTokenRefresh = @"tokenRefresh";
         if (!waitingConnections) waitingConnections = [[NSMutableArray alloc] init];
         [waitingConnections addObject:retryConnection];
     }
-    if (!authConnection) {
-        NSAssert((accessToken.refreshToken != nil), @"invalid state");
+    if (!authConnection)
+    {
+        if (nil == accessToken.refreshToken)
+        {
+            if ([delegate respondsToSelector:@selector(oauthClient:didFailToGetAccessTokenWithError:)])
+            {
+                NSError* noTokenError = [NSError errorWithDomain: NXOAuth2ErrorDomain
+                                                            code: NXOAuth2CouldNotRefreshTokenErrorCode
+                                                        userInfo: nil];
+
+                [delegate oauthClient: self didFailToGetAccessTokenWithError: noTokenError];
+            }
+            
+            return;
+        }
+        
+
         NSMutableURLRequest *tokenRequest = [NSMutableURLRequest requestWithURL:tokenURL];
         [tokenRequest setHTTPMethod:self.tokenRequestHTTPMethod];
         [authConnection cancel]; // not needed, but looks more clean to me :)
