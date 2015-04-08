@@ -550,16 +550,27 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
     NSString *accountType;
     @synchronized (self.pendingOAuthClients) {
         accountType = [self accountTypeOfPendingOAuthClient:client];
-        [self.pendingOAuthClients removeObjectForKey:accountType];
+        
+        if (nil != accountType)
+        {
+            [self.pendingOAuthClients removeObjectForKey:accountType];
+        }
     }
 
-    NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-                              accountType, kNXOAuth2AccountStoreAccountType,
-                              error, NXOAuth2AccountStoreErrorKey, nil];
-
-    [[NSNotificationCenter defaultCenter] postNotificationName:NXOAuth2AccountStoreDidFailToRequestAccessNotification
-                                                        object:self
-                                                      userInfo:userInfo];
+    NSDictionary *userInfo = nil;
+    if (nil != accountType)
+    {
+        userInfo = @{kNXOAuth2AccountStoreAccountType: accountType, NXOAuth2AccountStoreErrorKey : error};
+    }
+    else
+    {
+        userInfo = @{NXOAuth2AccountStoreErrorKey : error};
+    }
+    
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName: NXOAuth2AccountStoreDidFailToRequestAccessNotification
+                                                        object: self
+                                                      userInfo: userInfo];
 }
 
 
