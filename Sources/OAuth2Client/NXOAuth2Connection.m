@@ -159,8 +159,11 @@ sendingProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)aSendingProgres
 {
     // if the request is a token refresh request don't sign it and don't check for the expiration of the token (we know that already)
     NSString *oauthAuthorizationHeader = nil;
-    if (client.accessToken &&
-        ![[requestParameters objectForKey:@"grant_type"] isEqualToString:@"refresh_token"]) {
+    
+    BOOL isRefreshToken = [requestParameters[@"grant_type"] isEqualToString:@"refresh_token"];
+    
+    if (client.accessToken && !isRefreshToken)
+    {
         
         // if token is expired don't bother starting this connection.
         NSDate *tenSecondsAgo = [NSDate dateWithTimeIntervalSinceNow:(-10)];
@@ -183,6 +186,20 @@ sendingProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)aSendingProgres
         }
         
         oauthAuthorizationHeader = [NSString stringWithFormat:@"%@ %@", tokenType, client.accessToken.accessToken];
+    }
+    else if (isRefreshToken)
+    {
+        NSString* nonEncodedIdAndSecret =
+            [NSString stringWithFormat:
+                 @"%@:%@",
+                 requestParameters[@"client_id"],
+                 requestParameters[@"client_secret"] ];
+        
+        
+        NSData* nonEncodedIdAndSecretBinary = [nonEncodedIdAndSecret dataUsingEncoding: NSUTF8StringEncoding];
+
+        NSString* base64IdAndSecret = [nonEncodedIdAndSecretBinary base64EncodedStringWithOptions: (NSDataBase64EncodingOptions)0];
+        oauthAuthorizationHeader = [NSString stringWithFormat: @"Basic %@", base64IdAndSecret];
     }
     
     NSMutableURLRequest *startRequest = [request mutableCopy];
