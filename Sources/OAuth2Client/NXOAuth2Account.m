@@ -35,6 +35,7 @@ NSString * const NXOAuth2AccountDidFailToGetAccessTokenNotification = @"NXOAuth2
 @interface NXOAuth2Account () <NXOAuth2ClientDelegate, NXOAuth2TrustDelegate>
 
 @property (nonatomic, readwrite) id<NXApplication> application;
+@property (nonatomic, strong) NXOAuth2AccessToken *accessToken;
 
 @end
 

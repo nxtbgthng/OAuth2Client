@@ -14,6 +14,7 @@
 #import <OAuth2Client/NXOAuth2Account.h>
 
 @protocol NXApplication;
+@class NXOAuth2AccessToken;
 
 @interface NXOAuth2Account (Private)
 
@@ -26,5 +27,7 @@
 - (instancetype)initAccountWithAccessToken:(NXOAuth2AccessToken *)accessToken
                                accountType:(NSString *)accountType
                                application:(id<NXApplication>)app /*NS_DESIGNATED_INITIALIZER*/ NS_REQUIRES_SUPER;
+
+@property (nonatomic, strong) NXOAuth2AccessToken *accessToken;
 
 @end
