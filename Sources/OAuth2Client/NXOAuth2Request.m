@@ -75,6 +75,14 @@
 
 #pragma mark Signed NSURLRequest
 
+-(void)dealloc
+{
+    if (self == self.connection.delegate)
+    {
+        self.connection.delegate = nil;
+    }
+}
+
 - (NSURLRequest *)signedURLRequest;
 {
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:self.resource];

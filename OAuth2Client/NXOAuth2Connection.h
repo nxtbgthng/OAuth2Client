@@ -12,8 +12,8 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <OAuth2Client/NXOAuth2RequestCallbacks.h>
 
-#import "NXOAuth2Constants.h"
 
 @class NXOAuth2Client;
 @protocol NXOAuth2ConnectionDelegate;
@@ -44,10 +44,6 @@
 
 extern NSString * const NXOAuth2ConnectionDidStartNotification;
 extern NSString * const NXOAuth2ConnectionDidEndNotification;
-
-
-typedef void(^NXOAuth2ConnectionResponseHandler)(NSURLResponse *response, NSData *responseData, NSError *error);
-typedef void(^NXOAuth2ConnectionSendingProgressHandler)(unsigned long long bytesSend, unsigned long long bytesTotal);
 
 
 @interface NXOAuth2Connection : NSObject {
@@ -87,11 +83,11 @@ typedef void(^NXOAuth2ConnectionSendingProgressHandler)(unsigned long long bytes
 @property (nonatomic, strong) NSDictionary *userInfo;
 @property (nonatomic, strong, readonly) NXOAuth2Client *client;
 
-- (instancetype) initWithRequest:(NSMutableURLRequest *)request
-               requestParameters:(NSDictionary *)requestParameters
-                     oauthClient:(NXOAuth2Client *)client
-          sendingProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)sendingProgressHandler
-                 responseHandler:(NXOAuth2ConnectionResponseHandler)responseHandler;
+- (instancetype)initWithRequest:(NSMutableURLRequest *)request
+              requestParameters:(NSDictionary *)requestParameters
+                    oauthClient:(NXOAuth2Client *)client
+         sendingProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)sendingProgressHandler
+                responseHandler:(NXOAuth2ConnectionResponseHandler)responseHandler;
 
 - (instancetype)initWithRequest:(NSMutableURLRequest *)request
               requestParameters:(NSDictionary *)requestParameters

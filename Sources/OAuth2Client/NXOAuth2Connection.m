@@ -159,13 +159,19 @@ sendingProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)aSendingProgres
 {
     // if the request is a token refresh request don't sign it and don't check for the expiration of the token (we know that already)
     NSString *oauthAuthorizationHeader = nil;
-    if (client.accessToken &&
-        ![[requestParameters objectForKey:@"grant_type"] isEqualToString:@"refresh_token"]) {
+    
+    BOOL isRefreshToken = [requestParameters[@"grant_type"] isEqualToString:@"refresh_token"];
+    
+    if (client.accessToken && !isRefreshToken)
+    {
         
         // if token is expired don't bother starting this connection.
         NSDate *tenSecondsAgo = [NSDate dateWithTimeIntervalSinceNow:(-10)];
         NSDate *tokenExpiresAt = client.accessToken.expiresAt;
-        if (client.accessToken.refreshToken && [tenSecondsAgo earlierDate:tokenExpiresAt] == tokenExpiresAt) {
+
+        BOOL isNotExpiredTenSecondsAgo = ([tenSecondsAgo earlierDate:tokenExpiresAt] == tokenExpiresAt);
+        
+        if (client.accessToken.refreshToken && isNotExpiredTenSecondsAgo) {
             [self cancel];
             [client refreshAccessTokenAndRetryConnection:self];
             return nil;
@@ -180,6 +186,20 @@ sendingProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)aSendingProgres
         }
         
         oauthAuthorizationHeader = [NSString stringWithFormat:@"%@ %@", tokenType, client.accessToken.accessToken];
+    }
+    else if (isRefreshToken)
+    {
+        NSString* nonEncodedIdAndSecret =
+            [NSString stringWithFormat:
+                 @"%@:%@",
+                 requestParameters[@"client_id"],
+                 requestParameters[@"client_secret"] ];
+        
+        
+        NSData* nonEncodedIdAndSecretBinary = [nonEncodedIdAndSecret dataUsingEncoding: NSUTF8StringEncoding];
+
+        NSString* base64IdAndSecret = [nonEncodedIdAndSecretBinary base64EncodedStringWithOptions: (NSDataBase64EncodingOptions)0];
+        oauthAuthorizationHeader = [NSString stringWithFormat: @"Basic %@", base64IdAndSecret];
     }
     
     NSMutableURLRequest *startRequest = [request mutableCopy];
@@ -538,13 +558,21 @@ sendingProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)aSendingProgres
     return mutableRequest;
 }
 
-- (void)connection:(NSURLConnection *)connection didSendBodyData:(NSInteger)bytesWritten totalBytesWritten:(NSInteger)totalBytesWritten totalBytesExpectedToWrite:(NSInteger)totalBytesExpectedToWrite;
+- (void)connection:(NSURLConnection *)connection
+   didSendBodyData:(NSInteger)bytesWritten
+ totalBytesWritten:(NSInteger)totalBytesWritten
+totalBytesExpectedToWrite:(NSInteger)totalBytesExpectedToWrite;
 {
+    unsigned long long castedTotalBytes = (unsigned long long)totalBytesWritten;
+    unsigned long long castedExpectedBytes = (unsigned long long)totalBytesExpectedToWrite;
+    
     if ([delegate respondsToSelector:@selector(oauthConnection:didSendBytes:ofTotal:)]) {
-        [delegate oauthConnection:self didSendBytes:totalBytesWritten ofTotal:totalBytesExpectedToWrite];
+        [delegate oauthConnection:self
+                     didSendBytes:castedTotalBytes
+                          ofTotal:castedExpectedBytes];
     }
     
-    if (sendingProgressHandler) sendingProgressHandler(totalBytesWritten, totalBytesExpectedToWrite);
+    if (sendingProgressHandler) sendingProgressHandler(castedTotalBytes, castedExpectedBytes);
 }
 
 - (NSInputStream *)connection:(NSURLConnection *)connection needNewBodyStream:(NSURLRequest *)aRequest;

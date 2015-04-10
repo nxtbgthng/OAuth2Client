@@ -32,7 +32,9 @@
     if (jsonSerializationClass) {
         NSError *error = nil;
         NSData *data = [theResponseBody dataUsingEncoding:NSUTF8StringEncoding];
-        jsonDict = [jsonSerializationClass JSONObjectWithData:data options:0 error:&error];
+        jsonDict = [jsonSerializationClass JSONObjectWithData:data
+                                                      options:(NSJSONReadingOptions)0
+                                                        error:&error];
     } else {
         // do we really need a JSON dependency? We can easily split this up ourselfs
         NSString *normalizedResponseBody = [[[theResponseBody stringByReplacingOccurrencesOfString:@"{" withString:@""]

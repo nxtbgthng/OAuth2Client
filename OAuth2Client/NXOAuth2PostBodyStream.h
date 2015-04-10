@@ -27,8 +27,8 @@
 
 - (instancetype)initWithParameters:(NSDictionary *)postParameters;
 
-@property (readonly) NSString *boundary;
-@property (readonly) unsigned long long length;
+@property (readonly, nonatomic) NSString *boundary;
+@property (readonly, nonatomic) unsigned long long length;
 
 @end
 

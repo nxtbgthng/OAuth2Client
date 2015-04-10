@@ -11,8 +11,8 @@
 //  the full licence.
 //
 
-#import "NXOAuth2Constants.h"
-#import "NXOAuth2TrustDelegate.h"
+
+#import <OAuth2Client/NXOAuth2TrustDelegate.h>
 
 @class NXOAuth2Client;
 
