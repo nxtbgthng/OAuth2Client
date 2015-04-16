@@ -496,6 +496,7 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
 
 - (void)oauthClientNeedsAuthentication:(NXOAuth2Client *)client;
 {
+#if !defined(NX_APP_EXTENSIONS)
     NSString *accountType = [self accountTypeOfPendingOAuthClient:client];
 
     NSDictionary *configuration;
@@ -510,6 +511,7 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
         [[UIApplication sharedApplication] openURL:preparedURL];
 #else
         [[NSWorkspace sharedWorkspace] openURL:preparedURL];
+#endif
 #endif
 }
 
