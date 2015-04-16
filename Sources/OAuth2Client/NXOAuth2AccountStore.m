@@ -648,9 +648,11 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
                                   kCFBooleanTrue, kSecReturnAttributes,
                                   nil];
     
+#ifndef TARGET_IPHONE_SIMULATOR
     if (keyChainAccessGroup) {
         [query setObject:keyChainAccessGroup forKey:(__bridge NSString *)kSecAttrAccessGroup];
     }
+#endif
     
     CFTypeRef cfResult = nil;
     OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)query, &cfResult);
@@ -678,9 +680,11 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
                                   data, kSecAttrGeneric,
                                   nil];
     
+#ifndef TARGET_IPHONE_SIMULATOR
     if (keyChainAccessGroup) {
         [query setObject:keyChainAccessGroup forKey:(__bridge NSString *)kSecAttrAccessGroup];
     }
+#endif
     
     OSStatus __attribute__((unused)) err = SecItemAdd((__bridge CFDictionaryRef)query, NULL);
     NSAssert1(err == noErr, @"Error while adding token to keychain: %zd", err);
@@ -694,9 +698,11 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
                                   serviceName, kSecAttrService,
                                   nil];
     
+#ifndef TARGET_IPHONE_SIMULATOR
     if (keyChainAccessGroup) {
         [query setObject:keyChainAccessGroup forKey:(__bridge NSString *)kSecAttrAccessGroup];
     }
+#endif
     
     OSStatus __attribute__((unused)) err = SecItemDelete((__bridge CFDictionaryRef)query);
     NSAssert1((err == noErr || err == errSecItemNotFound), @"Error while deleting token from keychain: %zd", err);

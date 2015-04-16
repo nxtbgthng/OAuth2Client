@@ -239,9 +239,11 @@
                                   kCFBooleanTrue, kSecReturnAttributes,
                                   nil];
     
+#ifndef TARGET_IPHONE_SIMULATOR
     if (accessGroup != nil) {
         [query setObject:accessGroup forKey:(__bridge NSString *)kSecAttrAccessGroup];
     }
+#endif
     
     CFTypeRef cfResult = nil;
     OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)query, &cfResult);
@@ -271,9 +273,11 @@
                                   data, kSecAttrGeneric,
                                   nil];
     
+#ifndef TARGET_IPHONE_SIMULATOR
     if (accessGroup != nil) {
         [query setObject:accessGroup forKey:(__bridge NSString *)kSecAttrAccessGroup];
     }
+#endif
     
     [self removeFromKeychainWithServiceProviderName:provider withAccessGroup:accessGroup];
     OSStatus __attribute__((unused)) err = SecItemAdd((__bridge CFDictionaryRef)query, NULL);
@@ -293,9 +297,11 @@
                            serviceName, kSecAttrService,
                            nil];
     
+#ifndef TARGET_IPHONE_SIMULATOR
     if (accessGroup != nil) {
         [query setObject:accessGroup forKey:(__bridge NSString *)kSecAttrAccessGroup];
     }
+#endif
     
     OSStatus __attribute__((unused)) err = SecItemDelete((__bridge CFDictionaryRef)query);
     NSAssert1((err == noErr || err == errSecItemNotFound), @"error while deleting token from keychain: %d", (int)err);
