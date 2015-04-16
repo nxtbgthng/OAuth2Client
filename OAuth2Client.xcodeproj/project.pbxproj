@@ -85,7 +85,6 @@
 
 /* Begin PBXFileReference section */
 		824D5A6D123F68A8001177D5 /* NXOAuth2ClientDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NXOAuth2ClientDelegate.h; sourceTree = "<group>"; };
-		83DD991B6049465CB61E135B /* Pods-OAuth2ClientTests.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OAuth2ClientTests.xcconfig"; path = "Pods/Pods-OAuth2ClientTests.xcconfig"; sourceTree = "<group>"; };
 		9404FAC1123E3A6900397DD1 /* NXOAuth2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NXOAuth2.h; sourceTree = "<group>"; };
 		9429B3A812267A3100D31807 /* NXOAuth2Client.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NXOAuth2Client.h; sourceTree = "<group>"; };
 		9429B3A912267A3100D31807 /* NXOAuth2Client.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NXOAuth2Client.m; sourceTree = "<group>"; };
@@ -116,9 +115,11 @@
 		99D8A7F713852C6E00E3073C /* NSData+NXOAuth2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+NXOAuth2.h"; sourceTree = "<group>"; };
 		99D8A7FE13852D3600E3073C /* NSData+NXOAuth2.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+NXOAuth2.m"; sourceTree = "<group>"; };
 		99F08DE9138BE8CE002A5401 /* NXOAuth2TrustDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NXOAuth2TrustDelegate.h; sourceTree = "<group>"; };
+		A584AA53216FADEE87202521 /* Pods-OAuth2ClientTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OAuth2ClientTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-OAuth2ClientTests/Pods-OAuth2ClientTests.release.xcconfig"; sourceTree = "<group>"; };
 		AA747D9E0F9514B9006C5449 /* OAuth2Client_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OAuth2Client_Prefix.pch; sourceTree = "<group>"; };
 		AACBBE490F95108600F1A2B1 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		B9E2089E9E7941B7AF3D27AA /* libPods-OAuth2ClientTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-OAuth2ClientTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		CCCB476CC96A52415E9D44D3 /* Pods-OAuth2ClientTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OAuth2ClientTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-OAuth2ClientTests/Pods-OAuth2ClientTests.debug.xcconfig"; sourceTree = "<group>"; };
 		D2AAC07E0554694100DB518D /* libOAuth2Client.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libOAuth2Client.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		F6525B4313D593C900ACAE8F /* NXOAuth2Account+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NXOAuth2Account+Private.h"; sourceTree = SOURCE_ROOT; };
 		F65713CC13CC87FD00C8A33A /* NXOAuth2AccountStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NXOAuth2AccountStore.h; sourceTree = "<group>"; };
@@ -182,7 +183,7 @@
 				0867D69AFE84028FC02AAC07 /* Frameworks */,
 				034768DFFF38A50411DB9C8B /* Products */,
 				942FFCDE12315E2E00E6C65E /* Resources */,
-				83DD991B6049465CB61E135B /* Pods-OAuth2ClientTests.xcconfig */,
+				B061851D30896FF145B69FB5 /* Pods */,
 			);
 			name = OAuth2Client;
 			sourceTree = "<group>";
@@ -274,6 +275,15 @@
 				94B6CE7119C1D3E400AA859B /* NXOAuth2PostBodyStreamSpec.m */,
 			);
 			path = Tests;
+			sourceTree = "<group>";
+		};
+		B061851D30896FF145B69FB5 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				CCCB476CC96A52415E9D44D3 /* Pods-OAuth2ClientTests.debug.xcconfig */,
+				A584AA53216FADEE87202521 /* Pods-OAuth2ClientTests.release.xcconfig */,
+			);
+			name = Pods;
 			sourceTree = "<group>";
 		};
 		F6E1A11313D7128100B6DAC3 /* Private */ = {
@@ -490,7 +500,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Pods-OAuth2ClientTests-resources.sh\"\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-OAuth2ClientTests/Pods-OAuth2ClientTests-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -682,7 +692,7 @@
 		};
 		94B6CE6C19C1D0A300AA859B /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 83DD991B6049465CB61E135B /* Pods-OAuth2ClientTests.xcconfig */;
+			baseConfigurationReference = CCCB476CC96A52415E9D44D3 /* Pods-OAuth2ClientTests.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
@@ -728,7 +738,7 @@
 		};
 		94B6CE6D19C1D0A300AA859B /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 83DD991B6049465CB61E135B /* Pods-OAuth2ClientTests.xcconfig */;
+			baseConfigurationReference = A584AA53216FADEE87202521 /* Pods-OAuth2ClientTests.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
