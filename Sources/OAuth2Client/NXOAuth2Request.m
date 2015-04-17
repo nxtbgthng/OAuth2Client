@@ -46,7 +46,7 @@
                                                                   method:aMethod
                                                               parameters:someParameters];
     request.account = anAccount;
-    request.headerFields = headerFields;
+    request.customHeaderFields = headerFields;
     [request performRequestWithSendingProgressHandler:progressHandler responseHandler:responseHandler];
 }
 
@@ -82,7 +82,7 @@
 #pragma mark Accessors
 
 @synthesize parameters;
-@synthesize headerFields;
+@synthesize customHeaderFields;
 @synthesize resource;
 @synthesize requestMethod;
 @synthesize account;
@@ -123,8 +123,8 @@
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:self.resource];
     [request setHTTPMethod:self.requestMethod];
     
-    if (self.headerFields) {
-        [self.headerFields enumerateKeysAndObjectsUsingBlock:^(NSString *field, NSString *value, BOOL *stop) {
+    if (self.customHeaderFields) {
+        [self.customHeaderFields enumerateKeysAndObjectsUsingBlock:^(NSString *field, NSString *value, BOOL *stop) {
             if ([field isKindOfClass:NSString.class] && [value isKindOfClass:NSString.class]) {
                 [request setValue:value forHTTPHeaderField:field];
             }

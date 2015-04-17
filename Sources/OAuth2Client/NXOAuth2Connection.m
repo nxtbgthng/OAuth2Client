@@ -163,7 +163,9 @@ sendingProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)aSendingProgres
         ![[requestParameters objectForKey:@"grant_type"] isEqualToString:@"refresh_token"]) {
         
         // if token is expired don't bother starting this connection.
-        if (client.accessToken.refreshToken && client.accessToken.hasExpired) {
+        NSDate *tenSecondsAgo = [NSDate dateWithTimeIntervalSinceNow:(-10)];
+        NSDate *tokenExpiresAt = client.accessToken.expiresAt;
+        if (client.accessToken.refreshToken && [tenSecondsAgo earlierDate:tokenExpiresAt] == tokenExpiresAt) {
             [self cancel];
             [client refreshAccessTokenAndRetryConnection:self];
             return nil;

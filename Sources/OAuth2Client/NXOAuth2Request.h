@@ -20,7 +20,7 @@
 @interface NXOAuth2Request : NSObject {
 @private
     NSDictionary *parameters;
-    NSDictionary *headerFields;
+    NSDictionary *customHeaderFields;
     NSURL *resource;
     NSString *requestMethod;
     NXOAuth2Account *account;
@@ -61,7 +61,7 @@
 @property (nonatomic, strong, readwrite) NSString *requestMethod;
 @property (nonatomic, strong, readwrite) NSURL *resource;
 @property (nonatomic, strong, readwrite) NSDictionary *parameters;
-@property (nonatomic, strong, readwrite) NSDictionary *headerFields;
+@property (nonatomic, strong, readwrite) NSDictionary *customHeaderFields;
 
 
 #pragma mark Signed NSURLRequest
