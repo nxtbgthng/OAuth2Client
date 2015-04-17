@@ -61,7 +61,7 @@
     return (__bridge_transfer NSString *) CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault, //Allocator
                                                                                   (__bridge CFStringRef)self, //Original String
                                                                                   NULL, //Characters to leave unescaped
-                                                                                  CFSTR("!*'();:@&=+$,/?%#[]"), //Legal Characters to be escaped
+                                                                                  NULL, //CFSTR("!*'();:@&=+$,/?%#[]"), //Legal Characters to be escaped
                                                                                   kCFStringEncodingUTF8); //Encoding
 }
 
