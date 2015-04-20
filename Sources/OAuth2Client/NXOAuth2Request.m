@@ -125,9 +125,9 @@
     
     if (self.customHeaderFields) {
         [self.customHeaderFields enumerateKeysAndObjectsUsingBlock:^(NSString *field, NSString *value, BOOL *stop) {
-            if ([field isKindOfClass:NSString.class] && [value isKindOfClass:NSString.class]) {
+            NSAssert([field isKindOfClass:NSString.class], @"Invalid Type For Field - String Expected");
+            NSAssert([value isKindOfClass:NSString.class], @"Invalid Type For Value - String Expected");
                 [request setValue:value forHTTPHeaderField:field];
-            }
         }];
     }
     

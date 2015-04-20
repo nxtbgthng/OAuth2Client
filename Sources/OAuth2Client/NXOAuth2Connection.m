@@ -187,8 +187,6 @@ sendingProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)aSendingProgres
     
     if (oauthAuthorizationHeader) {
         [startRequest setValue:oauthAuthorizationHeader forHTTPHeaderField:@"Authorization"];
-        // some services require the access token in the "t_auth_token" header field
-        [startRequest setValue:client.accessToken.accessToken forHTTPHeaderField:@"t_auth_token"];
     }
     
     if (client.userAgent && ![startRequest valueForHTTPHeaderField:@"User-Agent"]) {
@@ -418,7 +416,8 @@ sendingProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)aSendingProgres
         }
     }
     
-    BOOL shouldRefresh = (self.statusCode == 401) && (client.accessToken.hasExpired) && (client.accessToken.refreshToken != nil);
+    BOOL shouldRefresh = (self.statusCode == 401) && (client.accessToken.hasExpired) && (client.accessToken.refreshToken != nil) && authenticateHeader
+    && [authenticateHeader rangeOfString:@"expired_token"].location != NSNotFound;
     
     if (shouldRefresh) {
         [self cancel];
