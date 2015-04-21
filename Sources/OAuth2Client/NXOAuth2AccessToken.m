@@ -112,8 +112,7 @@
 
 - (instancetype)initWithAccessToken:(NSString *)anAccessToken refreshToken:(NSString *)aRefreshToken expiresAt:(NSDate *)anExpiryDate scope:(NSSet *)aScope responseBody:(NSString *)aResponseBody tokenType:(NSString *)aTokenType
 {
-    // a token object without an actual token is not what we want!
-    NSAssert1(anAccessToken, @"No token from token response: %@", aResponseBody);
+    // a token object without an actual token is not what we want! >> But we must process response!
     if (anAccessToken == nil) {
         return nil;
     }
@@ -238,7 +237,7 @@
     result = (__bridge_transfer NSDictionary *)cfResult;
     
     if (status != noErr) {
-        NSAssert1(status == errSecItemNotFound, @"unexpected error while fetching token from keychain: %d", (int)status);
+        NSAssert1(status == errSecItemNotFound, @"unexpected error while fetching token from keychain: %ld", status);
         return nil;
     }
     
@@ -257,7 +256,7 @@
                            nil];
     [self removeFromDefaultKeychainWithServiceProviderName:provider];
     OSStatus __attribute__((unused)) err = SecItemAdd((__bridge CFDictionaryRef)query, NULL);
-    NSAssert1(err == noErr, @"error while adding token to keychain: %d", (int)err);
+    NSAssert1(err == noErr, @"error while adding token to keychain: %ld", err);
 }
 
 - (void)removeFromDefaultKeychainWithServiceProviderName:(NSString *)provider;
@@ -268,7 +267,7 @@
                            serviceName, kSecAttrService,
                            nil];
     OSStatus __attribute__((unused)) err = SecItemDelete((__bridge CFDictionaryRef)query);
-    NSAssert1((err == noErr || err == errSecItemNotFound), @"error while deleting token from keychain: %d", (int)err);
+    NSAssert1((err == noErr || err == errSecItemNotFound), @"error while deleting token from keychain: %ld", err);
 }
 
 #else

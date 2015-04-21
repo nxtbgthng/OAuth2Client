@@ -161,7 +161,7 @@ NSString * const NXOAuth2ClientConnectionContextTokenRefresh = @"tokenRefresh";
 - (NXOAuth2AccessToken *)accessToken;
 {
     if (accessToken) return accessToken;
-    
+  
     if (persistent) {
         accessToken = [NXOAuth2AccessToken tokenFromDefaultKeychainWithServiceProviderName:keyChainGroup ? keyChainGroup : [tokenURL host]];
         if (accessToken) {
@@ -177,10 +177,10 @@ NSString * const NXOAuth2ClientConnectionContextTokenRefresh = @"tokenRefresh";
 
 - (void)setAccessToken:(NXOAuth2AccessToken *)value;
 {
-    if (self.accessToken == value) return;
+    if (self.accessToken == value && nil != value) return;
     BOOL authorisationStatusChanged = ((accessToken == nil)    || (value == nil)); //They can't both be nil, see one line above. So they have to have changed from or to nil.
     
-    if (!value) {
+    if (!value && nil != self.accessToken) {
         [self.accessToken removeFromDefaultKeychainWithServiceProviderName:keyChainGroup ? keyChainGroup : [tokenURL host]];
     }
     
@@ -329,13 +329,13 @@ NSString * const NXOAuth2ClientConnectionContextTokenRefresh = @"tokenRefresh";
     if (self.desiredScope) {
         [parameters setObject:[[self.desiredScope allObjects] componentsJoinedByString:@" "] forKey:@"scope"];
     }
-    
+  
     if (self.customHeaderFields) {
         [self.customHeaderFields enumerateKeysAndObjectsUsingBlock:^(NSString *key, NSString *obj, BOOL *stop) {
             [tokenRequest addValue:obj forHTTPHeaderField:key];
         }];
     }
-    
+  
     if (self.additionalAuthenticationParameters) {
         [parameters addEntriesFromDictionary:self.additionalAuthenticationParameters];
     }
@@ -366,13 +366,13 @@ NSString * const NXOAuth2ClientConnectionContextTokenRefresh = @"tokenRefresh";
     if (self.desiredScope) {
         [parameters setObject:[[self.desiredScope allObjects] componentsJoinedByString:@" "] forKey:@"scope"];
     }
-    
+  
     if (self.customHeaderFields) {
         [self.customHeaderFields enumerateKeysAndObjectsUsingBlock:^(NSString *key, NSString *obj, BOOL *stop) {
             [tokenRequest addValue:obj forHTTPHeaderField:key];
         }];
     }
-    
+
     authConnection = [[NXOAuth2Connection alloc] initWithRequest:tokenRequest
                                                requestParameters:parameters
                                                      oauthClient:self
@@ -405,13 +405,13 @@ NSString * const NXOAuth2ClientConnectionContextTokenRefresh = @"tokenRefresh";
     if (self.additionalAuthenticationParameters) {
         [parameters addEntriesFromDictionary:self.additionalAuthenticationParameters];
     }
-    
+  
     if (self.customHeaderFields) {
         [self.customHeaderFields enumerateKeysAndObjectsUsingBlock:^(NSString *key, NSString *obj, BOOL *stop) {
             [tokenRequest addValue:obj forHTTPHeaderField:key];
         }];
     }
-    
+  
     authConnection = [[NXOAuth2Connection alloc] initWithRequest:tokenRequest
                                                requestParameters:parameters
                                                      oauthClient:self
@@ -442,6 +442,13 @@ NSString * const NXOAuth2ClientConnectionContextTokenRefresh = @"tokenRefresh";
     if (self.desiredScope) {
         [parameters setObject:[[self.desiredScope allObjects] componentsJoinedByString:@" "] forKey:@"scope"];
     }
+
+    if (self.customHeaderFields) {
+        [self.customHeaderFields enumerateKeysAndObjectsUsingBlock:^(NSString *key, NSString *obj, BOOL *stop) {
+            [tokenRequest addValue:obj forHTTPHeaderField:key];
+        }];
+    }
+  
     authConnection = [[NXOAuth2Connection alloc] initWithRequest:tokenRequest
                                                requestParameters:parameters
                                                      oauthClient:self
@@ -500,14 +507,15 @@ NSString * const NXOAuth2ClientConnectionContextTokenRefresh = @"tokenRefresh";
         self.authenticating = NO;
 
         NSString *result = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-        NXOAuth2AccessToken *newToken = [NXOAuth2AccessToken tokenWithResponseBody:result tokenType:self.tokenType
-                                         ];
-        NSAssert(newToken != nil, @"invalid response?");
-        
-        [newToken restoreWithOldToken:self.accessToken];
-        
-        self.accessToken = newToken;
-        
+        NXOAuth2AccessToken *newToken = [NXOAuth2AccessToken tokenWithResponseBody:result tokenType:self.tokenType];
+      
+        if (nil != newToken) {
+            [newToken restoreWithOldToken:self.accessToken];
+            self.accessToken = newToken;
+        } else {
+            self.accessToken = nil;
+        }
+      
         for (NXOAuth2Connection *retryConnection in waitingConnections) {
             [retryConnection retry];
         }
