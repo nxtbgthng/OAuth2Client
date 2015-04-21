@@ -416,7 +416,10 @@ sendingProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)aSendingProgres
         }
     }
     
-    BOOL shouldRefresh = (self.statusCode == 401) && (client.accessToken.hasExpired) && (client.accessToken.refreshToken != nil) && authenticateHeader
+    BOOL shouldRefresh = (self.statusCode == 401)
+    && (client.accessToken.hasExpired)
+    && (client.accessToken.refreshToken != nil)
+    && authenticateHeader
     && [authenticateHeader rangeOfString:@"expired_token"].location != NSNotFound;
     
     if (shouldRefresh) {
