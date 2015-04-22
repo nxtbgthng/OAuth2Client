@@ -415,8 +415,8 @@ sendingProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)aSendingProgres
             }
         }
     }
-    if (/*self.statusCode == 401 // TODO: check for status code once the bug returning 500 is fixed
-         &&*/ client.accessToken.refreshToken != nil
+    if (self.statusCode == 401
+        && client.accessToken.refreshToken != nil
         && authenticateHeader
         && [authenticateHeader rangeOfString:@"expired_token"].location != NSNotFound) {
         [self cancel];
