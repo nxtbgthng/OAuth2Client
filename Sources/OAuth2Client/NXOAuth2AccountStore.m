@@ -603,7 +603,7 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
 {
     @synchronized (self.accountsDict) {
         // The user data of an account has been changed.
-        // Save all accounts in the keychain.
+        // Save all accounts in the default keychain.
         [self storeAccountsInDefaultKeychain:self.accountsDict withAccessGroup:self.keychainAccessGroup];
     }
 }
@@ -612,7 +612,7 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
 {
     @synchronized (self.accountsDict) {
         // An access token of an account has been changed.
-        // Save all accounts in the keychain.
+        // Save all accounts in the default keychain.
         [self storeAccountsInDefaultKeychain:self.accountsDict withAccessGroup:self.keychainAccessGroup];
     }
 }
