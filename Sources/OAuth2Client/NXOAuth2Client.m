@@ -151,12 +151,12 @@ NSString * const NXOAuth2ClientConnectionContextTokenRefresh = @"tokenRefresh";
     if (persistent == shouldPersist) return;
     
     if (shouldPersist && accessToken) {
-        [self.accessToken storeInKeychainWithServiceProviderName:keyChainGroup ? keyChainGroup : [tokenURL host]
+        [self.accessToken storeInDefaultKeychainWithServiceProviderName:keyChainGroup ? keyChainGroup : [tokenURL host]
                                                  withAccessGroup:keyChainAccessGroup];
     }
     
     if (persistent && !shouldPersist) {
-        [accessToken removeFromKeychainWithServiceProviderName:keyChainGroup ? keyChainGroup : [tokenURL host]
+        [accessToken removeFromDefaultKeychainWithServiceProviderName:keyChainGroup ? keyChainGroup : [tokenURL host]
                                                withAccessGroup:keyChainAccessGroup];
     }
 
@@ -170,7 +170,7 @@ NSString * const NXOAuth2ClientConnectionContextTokenRefresh = @"tokenRefresh";
     if (accessToken) return accessToken;
     
     if (persistent) {
-        accessToken = [NXOAuth2AccessToken tokenFromKeychainWithServiceProviderName:keyChainGroup ? keyChainGroup : [tokenURL host]
+        accessToken = [NXOAuth2AccessToken tokenFromDefaultKeychainWithServiceProviderName:keyChainGroup ? keyChainGroup : [tokenURL host]
                                                                     withAccessGroup:keyChainAccessGroup];
         if (accessToken) {
             if ([delegate respondsToSelector:@selector(oauthClientDidGetAccessToken:)]) {
@@ -189,7 +189,7 @@ NSString * const NXOAuth2ClientConnectionContextTokenRefresh = @"tokenRefresh";
     BOOL authorisationStatusChanged = ((accessToken == nil)    || (value == nil)); //They can't both be nil, see one line above. So they have to have changed from or to nil.
     
     if (!value) {
-        [self.accessToken removeFromKeychainWithServiceProviderName:keyChainGroup ? keyChainGroup : [tokenURL host]
+        [self.accessToken removeFromDefaultKeychainWithServiceProviderName:keyChainGroup ? keyChainGroup : [tokenURL host]
                                                     withAccessGroup:keyChainAccessGroup];
     }
     
@@ -198,7 +198,7 @@ NSString * const NXOAuth2ClientConnectionContextTokenRefresh = @"tokenRefresh";
     [self didChangeValueForKey:@"accessToken"];
     
     if (persistent) {
-        [accessToken storeInKeychainWithServiceProviderName:keyChainGroup ? keyChainGroup : [tokenURL host]
+        [accessToken storeInDefaultKeychainWithServiceProviderName:keyChainGroup ? keyChainGroup : [tokenURL host]
                                             withAccessGroup:keyChainAccessGroup];
     }
     

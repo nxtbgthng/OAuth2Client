@@ -77,9 +77,9 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
 #pragma mark Keychain Support
 
 - (NSString *)accountsKeychainServiceName;
-- (NSDictionary *)accountsFromtKeychainWithAccessGroup:(NSString *)keyChainAccessGroup;
-- (void)storeAccountsInKeychain:(NSDictionary *)accounts withAccessGroup:(NSString*)keyChainAccessGroup;
-- (void)removeFromKeychainWithAccessGroup:(NSString*)keyChainAccessGroup;
+- (NSDictionary *)accountsFromDefaultKeychainWithAccessGroup:(NSString *)keyChainAccessGroup;
+- (void)storeAccountsInDefaultKeychain:(NSDictionary *)accounts withAccessGroup:(NSString*)keyChainAccessGroup;
+- (void)removeFromDefaultKeychainWithAccessGroup:(NSString*)keyChainAccessGroup;
 
 @end
 
@@ -144,7 +144,7 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
 {
     if (accountsDict == nil) {
         accountsDict = [NSMutableDictionary dictionaryWithDictionary:
-                        [self accountsFromtKeychainWithAccessGroup:self.keychainAccessGroup]];
+                        [self accountsFromDefaultKeychainWithAccessGroup:self.keychainAccessGroup]];
     }
     
     return accountsDict;
@@ -229,7 +229,7 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
     if (account) {
         @synchronized (self.accountsDict) {
             [self.accountsDict removeObjectForKey:account.identifier];
-            [self storeAccountsInKeychain:self.accountsDict withAccessGroup:self.keychainAccessGroup];
+            [self storeAccountsInDefaultKeychain:self.accountsDict withAccessGroup:self.keychainAccessGroup];
         }
         [[NSNotificationCenter defaultCenter] postNotificationName:NXOAuth2AccountStoreAccountsDidChangeNotification object:self];
     }
@@ -532,7 +532,7 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
 {
     @synchronized (self.accountsDict) {
         [self.accountsDict setValue:account forKey:account.identifier];
-        [self storeAccountsInKeychain:self.accountsDict withAccessGroup:self.keychainAccessGroup];
+        [self storeAccountsInDefaultKeychain:self.accountsDict withAccessGroup:self.keychainAccessGroup];
     }
 
     NSDictionary *userInfo = [NSDictionary dictionaryWithObject:account
@@ -604,7 +604,7 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
     @synchronized (self.accountsDict) {
         // The user data of an account has been changed.
         // Save all accounts in the keychain.
-        [self storeAccountsInKeychain:self.accountsDict withAccessGroup:self.keychainAccessGroup];
+        [self storeAccountsInDefaultKeychain:self.accountsDict withAccessGroup:self.keychainAccessGroup];
     }
 }
 
@@ -613,7 +613,7 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
     @synchronized (self.accountsDict) {
         // An access token of an account has been changed.
         // Save all accounts in the keychain.
-        [self storeAccountsInKeychain:self.accountsDict withAccessGroup:self.keychainAccessGroup];
+        [self storeAccountsInDefaultKeychain:self.accountsDict withAccessGroup:self.keychainAccessGroup];
     }
 }
 
@@ -639,7 +639,7 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
 
 #if TARGET_OS_IPHONE
 
-- (NSDictionary *)accountsFromtKeychainWithAccessGroup:(NSString *)keyChainAccessGroup
+- (NSDictionary *)accountsFromDefaultKeychainWithAccessGroup:(NSString *)keyChainAccessGroup;
 {
     NSString *serviceName = [self accountsKeychainServiceName];
 
@@ -668,9 +668,9 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
     return [NSKeyedUnarchiver unarchiveObjectWithData:[result objectForKey:(__bridge NSString *)kSecAttrGeneric]];
 }
 
-- (void)storeAccountsInKeychain:(NSDictionary *)accounts withAccessGroup:(NSString *)keyChainAccessGroup
+- (void)storeAccountsInDefaultKeychain:(NSDictionary *)accounts withAccessGroup:(NSString *)keyChainAccessGroup;
 {
-    [self removeFromKeychainWithAccessGroup:keyChainAccessGroup];
+    [self removeFromDefaultKeychainWithAccessGroup:keyChainAccessGroup];
 
     NSString *serviceName = [self accountsKeychainServiceName];
 
@@ -692,7 +692,7 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
     NSAssert1(err == noErr, @"Error while adding token to keychain: %zd", err);
 }
 
-- (void)removeFromKeychainWithAccessGroup:(NSString *)keyChainAccessGroup
+- (void)removeFromDefaultKeychainWithAccessGroup:(NSString *)keyChainAccessGroup;
 {
     NSString *serviceName = [self accountsKeychainServiceName];
     NSMutableDictionary *query = [NSMutableDictionary dictionaryWithObjectsAndKeys:
@@ -713,9 +713,9 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
 
 #else
 
-+ (NSDictionary *)accountsFromDefaultKeychain;
+- (NSDictionary *)accountsFromDefaultKeychainWithAccessGroup:(NSString *)keyChainAccessGroup;
 {
-    NSString *serviceName = [self keychainServiceName];
+    NSString *serviceName = [self accountsKeychainServiceName];
 
     SecKeychainItemRef item = nil;
     OSStatus err = SecKeychainFindGenericPassword(NULL,
@@ -761,11 +761,11 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
     return [NSKeyedUnarchiver unarchiveObjectWithData:result];
 }
 
-+ (void)storeAccountsInDefaultKeychain:(NSDictionary *)accounts;
+- (void)storeAccountsInDefaultKeychain:(NSDictionary *)accounts withAccessGroup:(NSString *)keyChainAccessGroup;
 {
-    [self removeFromDefaultKeychain];
+    [self removeFromDefaultKeychainWithAccessGroup:keyChainAccessGroup];
 
-    NSString *serviceName = [self keychainServiceName];
+    NSString *serviceName = [self accountsKeychainServiceName];
 
     NSData *data = [NSKeyedArchiver archivedDataWithRootObject:accounts];
 
@@ -781,9 +781,9 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
     NSAssert1(err == noErr, @"Error while storing accounts in keychain: %d", err);
 }
 
-+ (void)removeFromDefaultKeychain;
+- (void)removeFromDefaultKeychainWithAccessGroup:(NSString *)keyChainAccessGroup;
 {
-    NSString *serviceName = [self keychainServiceName];
+    NSString *serviceName = [self accountsKeychainServiceName];
 
     SecKeychainItemRef item = nil;
     OSStatus err = SecKeychainFindGenericPassword(NULL,

@@ -66,16 +66,14 @@
 
 #pragma mark Keychain Support
 
-+ (instancetype)tokenFromDefaultKeychainWithServiceProviderName:(NSString *)provider __attribute__ ((deprecated));
-+ (instancetype)tokenFromKeychainWithServiceProviderName:(NSString *)provider
+//TODO: Support alternate KeyChain Locations
++ (instancetype)tokenFromDefaultKeychainWithServiceProviderName:(NSString *)provider
                                          withAccessGroup:(NSString *)accessGroup;
 
-- (void)storeInDefaultKeychainWithServiceProviderName:(NSString *)provider __attribute__ ((deprecated));
-- (void)storeInKeychainWithServiceProviderName:(NSString *)provider
+- (void)storeInDefaultKeychainWithServiceProviderName:(NSString *)provider
                                withAccessGroup:(NSString *)accessGroup;
 
-- (void)removeFromDefaultKeychainWithServiceProviderName:(NSString *)provider __attribute__ ((deprecated));
-- (void)removeFromKeychainWithServiceProviderName:(NSString *)provider
+- (void)removeFromDefaultKeychainWithServiceProviderName:(NSString *)provider
                                   withAccessGroup:(NSString *)accessGroup;
 
 @end
