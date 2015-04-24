@@ -485,7 +485,7 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
 #endif
 }
 
-- (void)oauthClientDidGetAccessToken:(NXOAuth2Client *)client;
+- (void)oauthClientDidGetAccessToken:(NXOAuth2Client *)client
 {
     NSString *accountType;
     @synchronized (self.pendingOAuthClients) {
@@ -496,6 +496,31 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
     NXOAuth2Account *account = [[NXOAuth2Account alloc] initAccountWithOAuthClient:client accountType:accountType];
 
     [self addAccount:account];
+}
+
+- (void)oauthClientDidRefreshAccessToken:(NXOAuth2Client *)client
+{
+    NXOAuth2Account* foundAccount = nil;
+
+    @synchronized (self.accountsDict)
+    {
+        for (NXOAuth2Account* account in self.accounts)
+        {
+            if (account.oauthClient == client)
+            {
+                foundAccount = account;
+                break;
+            }
+        }
+    }
+    
+    foundAccount.accessToken = client.accessToken;
+    NSDictionary *userInfo = [NSDictionary dictionaryWithObject: foundAccount
+                                                         forKey: NXOAuth2AccountStoreNewAccountUserInfoKey];
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:NXOAuth2AccountStoreAccountsDidChangeNotification
+                                                        object:self
+                                                      userInfo:userInfo];
 }
 
 - (void)addAccount:(NXOAuth2Account *)account;
