@@ -21,4 +21,6 @@
 - (instancetype)initAccountWithAccessToken:(NXOAuth2AccessToken *)accessToken
                                accountType:(NSString *)accountType;
 
+@property (nonatomic, strong) NXOAuth2AccessToken *accessToken;
+
 @end

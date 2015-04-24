@@ -33,6 +33,8 @@ NSString * const NXOAuth2AccountDidFailToGetAccessTokenNotification = @"NXOAuth2
 #pragma mark -
 
 @interface NXOAuth2Account () <NXOAuth2ClientDelegate, NXOAuth2TrustDelegate>
+
+@property (nonatomic, strong) NXOAuth2AccessToken *accessToken;
 @end
 
 #pragma mark -
@@ -84,7 +86,7 @@ NSString * const NXOAuth2AccountDidFailToGetAccessTokenNotification = @"NXOAuth2
     @synchronized (oauthClient) {
         if (oauthClient == nil) {
             NSDictionary *configuration = [[NXOAuth2AccountStore sharedStore] configurationForAccountType:self.accountType];
-            
+
             NSString *clientID = [configuration objectForKey:kNXOAuth2AccountStoreConfigurationClientID];
             NSString *clientSecret = [configuration objectForKey:kNXOAuth2AccountStoreConfigurationSecret];
             NSURL *authorizeURL = [configuration objectForKey:kNXOAuth2AccountStoreConfigurationAuthorizeURL];
@@ -106,11 +108,11 @@ NSString * const NXOAuth2AccountDidFailToGetAccessTokenNotification = @"NXOAuth2
             if (additionalQueryParams) {
                 oauthClient.additionalAuthenticationParameters = additionalQueryParams;
             }
-            
+
             if (customHeaderFields) {
                 oauthClient.customHeaderFields = customHeaderFields;
             }
-            
+
         }
     }
     return oauthClient;
