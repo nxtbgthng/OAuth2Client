@@ -418,7 +418,7 @@ sendingProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)aSendingProgres
     if (self.statusCode == 401
         && client.accessToken.refreshToken != nil
         && authenticateHeader
-        && [authenticateHeader rangeOfString:@"invalid_token"].location != NSNotFound) {
+        && ([authenticateHeader rangeOfString:@"invalid_token"].location != NSNotFound || [authenticateHeader rangeOfString:@"invalid_request"].location != NSNotFound)) {
         [self cancel];
         [client refreshAccessTokenAndRetryConnection:self];
     } else {
@@ -469,7 +469,7 @@ sendingProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)aSendingProgres
                 }
             }
             if (authenticateHeader
-                && [authenticateHeader rangeOfString:@"invalid_token"].location != NSNotFound) {
+                && ([authenticateHeader rangeOfString:@"invalid_token"].location != NSNotFound || [authenticateHeader rangeOfString:@"invalid_request"].location != NSNotFound)) {
                 client.accessToken = nil;
             }
         }
