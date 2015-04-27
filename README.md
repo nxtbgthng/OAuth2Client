@@ -190,6 +190,29 @@ account.userData = userData;
 
 This payload will be stored together with the accounts in the Keychain. Thus it shouldn't be too big.
 
+### Removing Accounts
+
+To remove an account and its tokens from the store:
+
+<pre>
+[[NXOAuth2AccountStore sharedStore]  removeAccount:account];
+</pre>
+
+Note that if you used a UIWebView to request access to a service as described above, it's likely that the token has been cached in `[NSHTTPCookieStorage sharedHTTPCookieStorage]`
+
+You can remove the auth token from the cookie cache using:
+
+<pre>
+for(NSHTTPCookie *cookie in [[NSHTTPCookieStorage sharedHTTPCookieStorage] cookies]) {
+    if([[cookie domain] isEqualToString:@"myapp.com"]) {
+        [[NSHTTPCookieStorage sharedHTTPCookieStorage] deleteCookie:cookie];
+    }
+}
+[[NSUserDefaults standardUserDefaults] synchronize];
+</pre>
+
+Where `myapp.com` is the domain from which you received the auth token -- likley the `authorizationURL` assigned to the store at the time of request.  As a convenience, you may want to store the domain of the token in the `account.userData` so that it is readily available if you need to delete the cookies.
+
 ### Invoking a Request
 
 A request using the authentication for a service can be invoked via `NXOAuth2Request`. The most convenient method (see below) is a class method which you pass the method, a resource and some parameters (or nil) for the request and to handlers (both optional). One for a progress and the other for the response. The account is used for authentication and can be nil. Then a normal request without authentication will be invoked.
