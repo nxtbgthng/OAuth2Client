@@ -224,15 +224,22 @@
 
 #if TARGET_OS_IPHONE
 
-+ (instancetype)tokenFromDefaultKeychainWithServiceProviderName:(NSString *)provider;
++ (instancetype)tokenFromDefaultKeychainWithServiceProviderName:(NSString *)provider withAccessGroup:(NSString *)accessGroup;
 {
     NSString *serviceName = [[self class] serviceNameWithProvider:provider];
     NSDictionary *result = nil;
-    NSDictionary *query = [NSDictionary dictionaryWithObjectsAndKeys:
-                           (__bridge NSString *)kSecClassGenericPassword, kSecClass,
-                           serviceName, kSecAttrService,
-                           kCFBooleanTrue, kSecReturnAttributes,
-                           nil];
+    NSMutableDictionary *query = [NSMutableDictionary dictionaryWithObjectsAndKeys:
+                                  (__bridge NSString *)kSecClassGenericPassword, kSecClass,
+                                  serviceName, kSecAttrService,
+                                  kCFBooleanTrue, kSecReturnAttributes,
+                                  nil];
+    
+#ifndef TARGET_IPHONE_SIMULATOR
+    if (accessGroup != nil) {
+        [query setObject:accessGroup forKey:(__bridge NSString *)kSecAttrAccessGroup];
+    }
+#endif
+    
     CFTypeRef cfResult = nil;
     OSStatus status = SecItemCopyMatching((__bridge CFDictionaryRef)query, &cfResult);
     result = (__bridge_transfer NSDictionary *)cfResult;
@@ -245,35 +252,49 @@
     return [NSKeyedUnarchiver unarchiveObjectWithData:[result objectForKey:(__bridge NSString *)kSecAttrGeneric]];
 }
 
-- (void)storeInDefaultKeychainWithServiceProviderName:(NSString *)provider;
+- (void)storeInDefaultKeychainWithServiceProviderName:(NSString *)provider withAccessGroup:(NSString *)accessGroup;
 {
     NSString *serviceName = [[self class] serviceNameWithProvider:provider];
     NSData *data = [NSKeyedArchiver archivedDataWithRootObject:self];
-    NSDictionary *query = [NSDictionary dictionaryWithObjectsAndKeys:
-                           (__bridge NSString *)kSecClassGenericPassword, kSecClass,
-                           serviceName, kSecAttrService,
-                           @"OAuth 2 Access Token", kSecAttrLabel,
-                           data, kSecAttrGeneric,
-                           nil];
-    [self removeFromDefaultKeychainWithServiceProviderName:provider];
+    NSMutableDictionary *query = [NSMutableDictionary dictionaryWithObjectsAndKeys:
+                                  (__bridge NSString *)kSecClassGenericPassword, kSecClass,
+                                  serviceName, kSecAttrService,
+                                  @"OAuth 2 Access Token", kSecAttrLabel,
+                                  data, kSecAttrGeneric,
+                                  nil];
+    
+#ifndef TARGET_IPHONE_SIMULATOR
+    if (accessGroup != nil) {
+        [query setObject:accessGroup forKey:(__bridge NSString *)kSecAttrAccessGroup];
+    }
+#endif
+    
+    [self removeFromDefaultKeychainWithServiceProviderName:provider withAccessGroup:accessGroup];
     OSStatus __attribute__((unused)) err = SecItemAdd((__bridge CFDictionaryRef)query, NULL);
     NSAssert1(err == noErr, @"error while adding token to keychain: %d", (int)err);
 }
 
-- (void)removeFromDefaultKeychainWithServiceProviderName:(NSString *)provider;
+- (void)removeFromDefaultKeychainWithServiceProviderName:(NSString *)provider withAccessGroup:(NSString *)accessGroup;
 {
     NSString *serviceName = [[self class] serviceNameWithProvider:provider];
-    NSDictionary *query = [NSDictionary dictionaryWithObjectsAndKeys:
+    NSMutableDictionary *query = [NSMutableDictionary dictionaryWithObjectsAndKeys:
                            (__bridge NSString *)kSecClassGenericPassword, kSecClass,
                            serviceName, kSecAttrService,
                            nil];
+    
+#ifndef TARGET_IPHONE_SIMULATOR
+    if (accessGroup != nil) {
+        [query setObject:accessGroup forKey:(__bridge NSString *)kSecAttrAccessGroup];
+    }
+#endif
+    
     OSStatus __attribute__((unused)) err = SecItemDelete((__bridge CFDictionaryRef)query);
     NSAssert1((err == noErr || err == errSecItemNotFound), @"error while deleting token from keychain: %d", (int)err);
 }
 
 #else
 
-+ (instancetype)tokenFromDefaultKeychainWithServiceProviderName:(NSString *)provider;
++ (instancetype)tokenFromDefaultKeychainWithServiceProviderName:(NSString *)provider withAccessGroup:(NSString *)accessGroup;
 {
     NSString *serviceName = [[self class] serviceNameWithProvider:provider];
     
@@ -321,9 +342,9 @@
     return [NSKeyedUnarchiver unarchiveObjectWithData:result];
 }
 
-- (void)storeInDefaultKeychainWithServiceProviderName:(NSString *)provider;
+- (void)storeInDefaultKeychainWithServiceProviderName:(NSString *)provider withAccessGroup:(NSString *)accessGroup;
 {
-    [self removeFromDefaultKeychainWithServiceProviderName:provider];
+    [self removeFromDefaultKeychainWithServiceProviderName:provider withAccessGroup:accessGroup];
     NSString *serviceName = [[self class] serviceNameWithProvider:provider];
     NSData *data = [NSKeyedArchiver archivedDataWithRootObject:self];
     
@@ -339,7 +360,7 @@
     NSAssert1(err == noErr, @"error while adding token to keychain: %d", err);
 }
 
-- (void)removeFromDefaultKeychainWithServiceProviderName:(NSString *)provider;
+- (void)removeFromDefaultKeychainWithServiceProviderName:(NSString *)provider withAccessGroup:(NSString *)accessGroup;
 {
     NSString *serviceName = [[self class] serviceNameWithProvider:provider];
     SecKeychainItemRef item = nil;
