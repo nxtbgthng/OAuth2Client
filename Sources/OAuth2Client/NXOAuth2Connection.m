@@ -418,7 +418,7 @@ sendingProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)aSendingProgres
     if (self.statusCode == 401
         && client.accessToken.refreshToken != nil
         && authenticateHeader
-        && [authenticateHeader rangeOfString:@"expired_token"].location != NSNotFound) {
+        && [authenticateHeader rangeOfString:@"invalid_token"].location != NSNotFound) {
         [self cancel];
         [client refreshAccessTokenAndRetryConnection:self];
     } else {
