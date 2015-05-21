@@ -233,7 +233,18 @@ NSString * const NXOAuth2ClientConnectionContextTokenRefresh = @"tokenRefresh";
 
 - (void)requestAccess;
 {
+    [self requestAccessAndRetryConnection:nil];
+}
+
+- (void)requestAccessAndRetryConnection:(NXOAuth2Connection *)retryConnection
+{
     if (!self.accessToken) {
+        
+        if (retryConnection) {
+            if (!waitingConnections) waitingConnections = [[NSMutableArray alloc] init];
+            [waitingConnections addObject:retryConnection];
+        }
+        
         [delegate oauthClientNeedsAuthentication:self];
     }
 }

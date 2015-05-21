@@ -143,6 +143,7 @@ extern NSString * const NXOAuth2ClientConnectionContextTokenRefresh;
 #pragma mark Public
 
 - (void)requestAccess;
+- (void)requestAccessAndRetryConnection:(NXOAuth2Connection *)retryConnection;
 
 - (void)refreshAccessToken;
 - (void)refreshAccessTokenAndRetryConnection:(NXOAuth2Connection *)retryConnection;
