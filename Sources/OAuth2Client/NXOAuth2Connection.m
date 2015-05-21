@@ -416,10 +416,10 @@ sendingProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)aSendingProgres
         }
     }
     
-    if (authenticateHeader && client.accessToken.refreshToken != nil && [authenticateHeader rangeOfString:@"expired_token"].location != NSNotFound) {
+    if (client.authConnection != self && authenticateHeader && client.accessToken.refreshToken != nil && [authenticateHeader rangeOfString:@"expired_token"].location != NSNotFound) {
         [self cancel];
         [client refreshAccessTokenAndRetryConnection:self];
-    } else if (authenticateHeader && client) {
+    } else if (client.authConnection != self && authenticateHeader && client) {
         [self cancel];
         [client requestAccessAndRetryConnection:self];
     } else {

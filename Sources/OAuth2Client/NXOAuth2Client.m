@@ -122,6 +122,7 @@ NSString * const NXOAuth2ClientConnectionContextTokenRefresh = @"tokenRefresh";
 @synthesize desiredScope, userAgent;
 @synthesize delegate, persistent, accessToken, authenticating;
 @synthesize additionalAuthenticationParameters;
+@synthesize authConnection = authConnection;
 
 - (void)setAdditionalAuthenticationParameters:(NSDictionary *)value;
 {
