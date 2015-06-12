@@ -76,6 +76,7 @@ extern NSString * const NXOAuth2ClientConnectionContextTokenRefresh;
 @property (nonatomic, strong) NXOAuth2AccessToken    *accessToken;
 @property (nonatomic, unsafe_unretained) NSObject<NXOAuth2ClientDelegate>*    delegate;
 
+@property (nonatomic, readonly) NXOAuth2Connection *authConnection;
 
 /*!
  * If set to NO, the access token is not stored any keychain, will be removed if it was.
@@ -143,6 +144,7 @@ extern NSString * const NXOAuth2ClientConnectionContextTokenRefresh;
 #pragma mark Public
 
 - (void)requestAccess;
+- (void)requestAccessAndRetryConnection:(NXOAuth2Connection *)retryConnection;
 
 - (void)refreshAccessToken;
 - (void)refreshAccessTokenAndRetryConnection:(NXOAuth2Connection *)retryConnection;
