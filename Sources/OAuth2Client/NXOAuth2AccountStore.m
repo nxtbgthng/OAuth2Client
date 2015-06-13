@@ -544,9 +544,13 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
         }
     }
     
-    foundAccount.accessToken = client.accessToken;
-    NSDictionary *userInfo = [NSDictionary dictionaryWithObject: foundAccount
-                                                         forKey: NXOAuth2AccountStoreNewAccountUserInfoKey];
+    NSDictionary *userInfo = @{};
+    
+    if (foundAccount)
+    {
+        foundAccount.accessToken = client.accessToken;
+        userInfo = @{ NXOAuth2AccountStoreNewAccountUserInfoKey : foundAccount};
+    }
     
     [[NSNotificationCenter defaultCenter] postNotificationName:NXOAuth2AccountStoreAccountsDidChangeNotification
                                                         object:self
@@ -589,13 +593,24 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
     NSString *accountType;
     @synchronized (self.pendingOAuthClients) {
         accountType = [self accountTypeOfPendingOAuthClient:client];
-        [self.pendingOAuthClients removeObjectForKey:accountType];
+        
+        if (nil != accountType)
+        {
+            [self.pendingOAuthClients removeObjectForKey:accountType];
+        }
     }
 
-    NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-                              accountType, kNXOAuth2AccountStoreAccountType,
-                              error, NXOAuth2AccountStoreErrorKey, nil];
-
+    NSDictionary *userInfo = nil;
+    if (nil != accountType)
+    {
+        userInfo = @{kNXOAuth2AccountStoreAccountType: accountType, NXOAuth2AccountStoreErrorKey : error};
+    }
+    else
+    {
+        userInfo = @{NXOAuth2AccountStoreErrorKey : error};
+    }
+    
+    
     [[NSNotificationCenter defaultCenter] postNotificationName:NXOAuth2AccountStoreDidFailToRequestAccessNotification
                                                         object:self
                                                       userInfo:userInfo];
@@ -640,6 +655,13 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
         // Save all accounts in the default keychain.
         [self storeAccountsInDefaultKeychain:self.accountsDict withAccessGroup:self.keychainAccessGroup];
     }
+    
+    NXOAuth2Account* notificationSender = aNotification.object;
+    
+    NSDictionary* userInfo = @{ NXOAuth2AccountStoreNewAccountUserInfoKey : notificationSender};
+    [[NSNotificationCenter defaultCenter] postNotificationName: NXOAuth2AccountStoreAccountsDidChangeNotification
+                                                        object: self
+                                                      userInfo: userInfo];
 }
 
 - (void)accountDidLoseAccessToken:(NSNotification *)aNotification;

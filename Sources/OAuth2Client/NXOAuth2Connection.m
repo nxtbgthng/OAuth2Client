@@ -181,6 +181,20 @@ sendingProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)aSendingProgres
         
         oauthAuthorizationHeader = [NSString stringWithFormat:@"%@ %@", tokenType, client.accessToken.accessToken];
     }
+    else if (isRefreshToken)
+    {
+        NSString* nonEncodedIdAndSecret =
+            [NSString stringWithFormat:
+                 @"%@:%@",
+                 requestParameters[@"client_id"],
+                 requestParameters[@"client_secret"] ];
+        
+        
+        NSData* nonEncodedIdAndSecretBinary = [nonEncodedIdAndSecret dataUsingEncoding: NSUTF8StringEncoding];
+
+        NSString* base64IdAndSecret = [nonEncodedIdAndSecretBinary base64EncodedStringWithOptions: (NSDataBase64EncodingOptions)0];
+        oauthAuthorizationHeader = [NSString stringWithFormat: @"Basic %@", base64IdAndSecret];
+    }
     
     NSMutableURLRequest *startRequest = [request mutableCopy];
     [self applyParameters:requestParameters onRequest:startRequest];
