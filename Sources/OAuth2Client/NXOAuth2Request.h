@@ -22,6 +22,7 @@
     NSDictionary *parameters;
     NSURL *resource;
     NSString *requestMethod;
+    NSString *requestContentType;
     NXOAuth2Account *account;
     NXOAuth2Connection *connection;
     NXOAuth2Request *me;
@@ -37,6 +38,18 @@
   sendProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)progressHandler
       responseHandler:(NXOAuth2ConnectionResponseHandler)responseHandler;
 
+/**
+ Content type nil will use form data.
+ */
++ (void)performMethod:(NSString *)method
+           onResource:(NSURL *)resource
+      withContentType:(NSString *) contentType
+      usingParameters:(NSDictionary *)parameters
+          withAccount:(NXOAuth2Account *)account
+  sendProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)progressHandler
+      responseHandler:(NXOAuth2ConnectionResponseHandler)responseHandler;
+
+
 
 #pragma mark Lifecycle
 
@@ -50,6 +63,7 @@
 @property (nonatomic, strong, readwrite) NXOAuth2Account *account;
 
 @property (nonatomic, strong, readwrite) NSString *requestMethod;
+@property (nonatomic, strong, readwrite) NSString *requestContentType;
 @property (nonatomic, strong, readwrite) NSURL *resource;
 @property (nonatomic, strong, readwrite) NSDictionary *parameters;
 

@@ -40,7 +40,7 @@
 #define NXOAuth2ConnectionDebug 0
 #endif
 
-
+FOUNDATION_EXPORT NSString * const jsonContentType;
 
 extern NSString * const NXOAuth2ConnectionDidStartNotification;
 extern NSString * const NXOAuth2ConnectionDidEndNotification;

@@ -22,6 +22,7 @@
 
 #import "NXOAuth2Request.h"
 
+
 @interface NXOAuth2Request () <NXOAuth2ConnectionDelegate>
 @property (nonatomic,  strong, readwrite) NXOAuth2Connection *connection;
 @property (nonatomic,  strong, readwrite) NXOAuth2Request *me;
@@ -49,6 +50,23 @@
 }
 
 
+
++ (void)performMethod:(NSString *)aMethod
+           onResource:(NSURL *)aResource
+      withContentType:(NSString *) aContentType
+      usingParameters:(NSDictionary *)someParameters
+          withAccount:(NXOAuth2Account *)anAccount
+  sendProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)progressHandler
+      responseHandler:(NXOAuth2ConnectionResponseHandler)responseHandler;
+{
+    NXOAuth2Request *request = [[NXOAuth2Request alloc] initWithResource:aResource
+                                                                  method:aMethod
+                                                              contentType:aContentType
+                                                              parameters:someParameters];
+    request.account = anAccount;
+    [request performRequestWithSendingProgressHandler:progressHandler responseHandler:responseHandler];
+}
+
 #pragma mark Lifecycle
 
 - (instancetype)initWithResource:(NSURL *)aResource method:(NSString *)aMethod parameters:(NSDictionary *)someParameters;
@@ -63,11 +81,24 @@
 }
 
 
+- (instancetype)initWithResource:(NSURL *)aResource method:(NSString *)aMethod contentType:(NSString *) aContentType parameters:(NSDictionary *)someParameters
+{
+    self = [super init];
+    if (self) {
+        resource = aResource;
+        parameters = someParameters;
+        requestMethod = aMethod;
+        requestContentType= aContentType;
+    }
+    return self;
+}
+
 #pragma mark Accessors
 
 @synthesize parameters;
 @synthesize resource;
 @synthesize requestMethod;
+@synthesize requestContentType;
 @synthesize account;
 @synthesize connection;
 @synthesize me;
@@ -105,6 +136,11 @@
     
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:self.resource];
     [request setHTTPMethod:self.requestMethod];
+    if(self.requestContentType)
+    {
+        [request setValue:self.requestContentType forHTTPHeaderField:@"Content-Type"];
+    }
+    
     self.connection = [[NXOAuth2Connection alloc] initWithRequest:request
                                                 requestParameters:self.parameters
                                                       oauthClient:self.account.oauthClient
@@ -160,14 +196,23 @@
     if (![@[@"POST",@"PUT",@"PATCH"] containsObject: [httpMethod uppercaseString]]) {
         aRequest.URL = [aRequest.URL nxoauth2_URLByAddingParameters:someParameters];
     } else {
-        NSInputStream *postBodyStream = [[NXOAuth2PostBodyStream alloc] initWithParameters:parameters];
+        if([requestContentType isEqualToString:jsonContentType]){
+            NSError *error;
+            NSData *jsonData = [NSJSONSerialization dataWithJSONObject:parameters options:0 error:&error];
+            if(!error)
+            {
+                [aRequest setHTTPBody:jsonData];
+            }
+            [aRequest setValue:requestContentType forHTTPHeaderField:@"Content-Type"];
+        } else  {
+            NSInputStream *postBodyStream = [[NXOAuth2PostBodyStream alloc] initWithParameters:parameters];
+            NSString *contentType = [NSString stringWithFormat:@"multipart/form-data; boundary=%@", [(NXOAuth2PostBodyStream *)postBodyStream boundary]];
+            [aRequest setValue:contentType forHTTPHeaderField:@"Content-Type"];
+            NSString *contentLength = [NSString stringWithFormat:@"%llu", [(NXOAuth2PostBodyStream *)postBodyStream length]];
+            [aRequest setValue:contentLength forHTTPHeaderField:@"Content-Length"];
+            [aRequest setHTTPBodyStream:postBodyStream];
+        }
         
-        NSString *contentType = [NSString stringWithFormat:@"multipart/form-data; boundary=%@", [(NXOAuth2PostBodyStream *)postBodyStream boundary]];
-        NSString *contentLength = [NSString stringWithFormat:@"%llu", [(NXOAuth2PostBodyStream *)postBodyStream length]];
-        [aRequest setValue:contentType forHTTPHeaderField:@"Content-Type"];
-        [aRequest setValue:contentLength forHTTPHeaderField:@"Content-Length"];
-        
-        [aRequest setHTTPBodyStream:postBodyStream];
     }
 }
 

@@ -25,6 +25,7 @@
 - (void)removeConnectionFromWaitingQueue:(NXOAuth2Connection *)connection;
 @end
 
+NSString * const jsonContentType = @"application/json" ;
 
 NSString * const NXOAuth2ConnectionDidStartNotification = @"NXOAuth2ConnectionDidStartNotification";
 NSString * const NXOAuth2ConnectionDidEndNotification = @"NXOAuth2ConnectionDidEndNotification";
@@ -222,7 +223,9 @@ sendingProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)aSendingProgres
     
     NSString *httpMethod = [aRequest HTTPMethod];
     if ([httpMethod caseInsensitiveCompare:@"POST"] != NSOrderedSame
-        && [httpMethod caseInsensitiveCompare:@"PUT"] != NSOrderedSame) {
+        && [httpMethod caseInsensitiveCompare:@"PUT"] != NSOrderedSame
+        && [httpMethod caseInsensitiveCompare:@"PATCH"] != NSOrderedSame
+        ) {
         
         aRequest.URL = [aRequest.URL nxoauth2_URLByAddingParameters:parameters];
         
@@ -243,7 +246,16 @@ sendingProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)aSendingProgres
             
             [aRequest setHTTPBodyStream:postBodyStream];
             
-        } else if ([contentType isEqualToString:@"application/x-www-form-urlencoded"]) {
+        }
+        else if([contentType isEqualToString:jsonContentType]){
+            NSError *error;
+            NSData *jsonData = [NSJSONSerialization dataWithJSONObject:parameters options:0 error:&error];
+            if(!error)
+            {
+                [aRequest setHTTPBody:jsonData];
+            }
+        }
+        else if ([contentType isEqualToString:@"application/x-www-form-urlencoded"]) {
             
             // sends the POST/PUT request as application/x-www-form-urlencoded
             
@@ -415,13 +427,12 @@ sendingProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)aSendingProgres
             }
         }
     }
-    
-    if (client.authConnection != self && authenticateHeader && client.accessToken.refreshToken != nil && [authenticateHeader rangeOfString:@"expired_token"].location != NSNotFound) {
+    if (self.statusCode == 401
+        && client.accessToken.refreshToken != nil
+        && authenticateHeader
+        && [authenticateHeader rangeOfString:@"expired_token"].location != NSNotFound) {
         [self cancel];
         [client refreshAccessTokenAndRetryConnection:self];
-    } else if (client.authConnection != self && authenticateHeader && client) {
-        [self cancel];
-        [client requestAccessAndRetryConnection:self];
     } else {
         if ([delegate respondsToSelector:@selector(oauthConnection:didReceiveData:)]) {
             [delegate oauthConnection:self didReceiveData:data];    // inform the delegate that we start with empty data
