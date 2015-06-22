@@ -373,8 +373,12 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
 
 
 #pragma mark Handle OAuth Redirects
+- (BOOL)handleRedirectURL:(NSURL *)aURL
+{
+    return [self handleRedirectURL:aURL error:nil];
+}
 
-- (BOOL)handleRedirectURL:(NSURL *)aURL;
+- (BOOL)handleRedirectURL:(NSURL *)aURL error: (NSError**) error
 {
     __block NSURL *fixedRedirectURL = nil;
     NSSet *accountTypes;
@@ -387,15 +391,7 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
 
                 // WORKAROUND: The URL which is passed to this method may be lower case also the scheme is registered in camel case. Therefor replace the prefix with the stored redirectURL.
                 if (fixedRedirectURL == nil) {
-                    if ([aURL.scheme isEqualToString:redirectURL.scheme]) {
-                        fixedRedirectURL = aURL;
-                    } else {
-                        NSRange prefixRange;
-                        prefixRange.location = 0;
-                        prefixRange.length = [redirectURL.absoluteString length];
-                        fixedRedirectURL = [NSURL URLWithString:[aURL.absoluteString stringByReplacingCharactersInRange:prefixRange
-                                                                                                             withString:redirectURL.absoluteString]];
-                    }
+                    fixedRedirectURL = [self fixRedirectURL: aURL storedURL:redirectURL];
                 }
 
                 return YES;
@@ -407,13 +403,28 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
 
     for (NSString *accountType in accountTypes) {
         NXOAuth2Client *client = [self pendingOAuthClientForAccountType:accountType];
-        if ([client openRedirectURL:fixedRedirectURL]) {
+        if ([client openRedirectURL:fixedRedirectURL error:error]) {
             return YES;
         }
     }
     return NO;
 }
 
+-(NSURL*) fixRedirectURL: (NSURL*) incomingURL storedURL: (NSURL*) redirectURL
+{
+    NSURL *fixedRedirectURL;
+    if ([incomingURL.scheme isEqualToString:redirectURL.scheme]) {
+        fixedRedirectURL = incomingURL;
+    } else {
+        NSRange prefixRange;
+        prefixRange.location = 0;
+        prefixRange.length = [redirectURL.absoluteString length];
+        fixedRedirectURL = [NSURL URLWithString:[incomingURL.absoluteString
+             stringByReplacingCharactersInRange:prefixRange
+                                     withString:redirectURL.absoluteString]];
+    }
+    return fixedRedirectURL;
+}
 
 #pragma mark OAuthClient to AccountType Relation
 
