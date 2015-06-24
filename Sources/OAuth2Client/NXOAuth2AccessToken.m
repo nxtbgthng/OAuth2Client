@@ -245,7 +245,7 @@
     result = (__bridge_transfer NSDictionary *)cfResult;
     
     if (status != noErr) {
-        NSAssert1(status == errSecItemNotFound, @"unexpected error while fetching token from keychain: %d", (int)status);
+        NSAssert1(status == errSecItemNotFound, @"unexpected error while fetching token from keychain: %@", @(status));
         return nil;
     }
     
@@ -271,7 +271,7 @@
     
     [self removeFromDefaultKeychainWithServiceProviderName:provider withAccessGroup:accessGroup];
     OSStatus __attribute__((unused)) err = SecItemAdd((__bridge CFDictionaryRef)query, NULL);
-    NSAssert1(err == noErr, @"error while adding token to keychain: %d", (int)err);
+    NSAssert1(err == noErr, @"error while adding token to keychain: %@", @(err));
 }
 
 - (void)removeFromDefaultKeychainWithServiceProviderName:(NSString *)provider withAccessGroup:(NSString *)accessGroup;
@@ -289,7 +289,7 @@
 #endif
     
     OSStatus __attribute__((unused)) err = SecItemDelete((__bridge CFDictionaryRef)query);
-    NSAssert1((err == noErr || err == errSecItemNotFound), @"error while deleting token from keychain: %d", (int)err);
+    NSAssert1((err == noErr || err == errSecItemNotFound), @"error while deleting token from keychain: %@", @(err));
 }
 
 #else
@@ -308,7 +308,7 @@
                                                   NULL,
                                                   &item);
     if (err != noErr) {
-        NSAssert1(err == errSecItemNotFound, @"unexpected error while fetching token from keychain: %d", err);
+        NSAssert1(err == errSecItemNotFound, @"unexpected error while fetching token from keychain: %@", @(err));
         return nil;
     }
     
@@ -335,7 +335,7 @@
         SecKeychainItemFreeContent(&list, password);
     } else {
         // TODO find out why this always works in i386 and always fails on ppc
-        NSLog(@"Error from SecKeychainItemCopyContent: %d", err);
+        NSLog(@"Error from SecKeychainItemCopyContent: %@", @(err));
         return nil;
     }
     CFRelease(item);
@@ -357,7 +357,7 @@
                                                                         [data bytes],
                                                                         NULL);
     
-    NSAssert1(err == noErr, @"error while adding token to keychain: %d", err);
+    NSAssert1(err == noErr, @"error while adding token to keychain: %@", @(err));
 }
 
 - (void)removeFromDefaultKeychainWithServiceProviderName:(NSString *)provider withAccessGroup:(NSString *)accessGroup;
@@ -372,14 +372,14 @@
                                                   NULL,
                                                   NULL,
                                                   &item);
-    NSAssert1((err == noErr || err == errSecItemNotFound), @"error while deleting token from keychain: %d", err);
+    NSAssert1((err == noErr || err == errSecItemNotFound), @"error while deleting token from keychain: %@", @(err));
     if (err == noErr) {
         err = SecKeychainItemDelete(item);
     }
     if (item) {
         CFRelease(item);
     }
-    NSAssert1((err == noErr || err == errSecItemNotFound), @"error while deleting token from keychain: %d", err);
+    NSAssert1((err == noErr || err == errSecItemNotFound), @"error while deleting token from keychain: %@", @(err));
 }
 
 #endif

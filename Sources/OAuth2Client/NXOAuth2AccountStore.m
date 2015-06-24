@@ -745,7 +745,7 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
 #endif
     
     OSStatus __attribute__((unused)) err = SecItemDelete((__bridge CFDictionaryRef)query);
-    NSAssert1((err == noErr || err == errSecItemNotFound), @"Error while deleting token from keychain: %zd", err);
+    NSAssert1((err == noErr || err == errSecItemNotFound), @"Error while deleting token from keychain: %zd", @(err));
 
 }
 
@@ -765,7 +765,7 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
                                                   NULL,
                                                   &item);
     if (err != noErr) {
-        NSAssert1(err == errSecItemNotFound, @"Unexpected error while fetching accounts from keychain: %d", err);
+        NSAssert1(err == errSecItemNotFound, @"Unexpected error while fetching accounts from keychain: %@", @(err));
         return nil;
     }
 
@@ -792,7 +792,7 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
         SecKeychainItemFreeContent(&list, password);
     } else {
         // TODO find out why this always works in i386 and always fails on ppc
-        NSLog(@"Error from SecKeychainItemCopyContent: %d", err);
+        NSLog(@"Error from SecKeychainItemCopyContent: %@", @(err));
         return nil;
     }
     CFRelease(item);
@@ -816,7 +816,7 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
                                                                         [data bytes],
                                                                         NULL);
 
-    NSAssert1(err == noErr, @"Error while storing accounts in keychain: %d", err);
+    NSAssert1(err == noErr, @"Error while storing accounts in keychain: %@", @(err));
 }
 
 - (void)removeFromDefaultKeychainWithAccessGroup:(NSString *)keyChainAccessGroup;
@@ -832,14 +832,14 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
                                                   NULL,
                                                   NULL,
                                                   &item);
-    NSAssert1((err == noErr || err == errSecItemNotFound), @"Error while deleting accounts from keychain: %d", err);
+    NSAssert1((err == noErr || err == errSecItemNotFound), @"Error while deleting accounts from keychain: %@", @(err));
     if (err == noErr) {
         err = SecKeychainItemDelete(item);
     }
     if (item) {
         CFRelease(item);
     }
-    NSAssert1((err == noErr || err == errSecItemNotFound), @"Error while deleting accounts from keychain: %d", err);
+    NSAssert1((err == noErr || err == errSecItemNotFound), @"Error while deleting accounts from keychain: %@", @(err));
 }
 
 #endif
