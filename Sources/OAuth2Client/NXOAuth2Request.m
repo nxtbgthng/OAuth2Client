@@ -136,6 +136,7 @@
     
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:self.resource];
     [request setHTTPMethod:self.requestMethod];
+    [request setCachePolicy:NSURLRequestReloadIgnoringLocalCacheData];
     if(self.requestContentType)
     {
         [request setValue:self.requestContentType forHTTPHeaderField:@"Content-Type"];
