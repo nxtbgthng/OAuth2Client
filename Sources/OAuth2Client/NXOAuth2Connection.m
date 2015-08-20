@@ -470,7 +470,7 @@ sendingProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)aSendingProgres
                 }
             }
             if (authenticateHeader
-                && [authenticateHeader rangeOfString:@"invalid_grant"].location != NSNotFound) {
+                && ([authenticateHeader rangeOfString:@"invalid_token"].location != NSNotFound || [authenticateHeader rangeOfString:@"invalid_grant"].location != NSNotFound)) {
                 
                 // Try to refresh the token if possible, otherwise remove this account.
                 if (client.accessToken.refreshToken) {
