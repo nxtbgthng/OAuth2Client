@@ -196,9 +196,9 @@
 {
     for (id key in someHeaders) {
         id value = someHeaders[key];
-        if ([key isKindOfClass:[NSString class]] && [value isKindOfClass:[NSString class]]) {
-            [aRequest setValue:value forHTTPHeaderField:key];
-        }
+        NSAssert1([key isKindOfClass:[NSString class]], @"Header name should be a string. name=%@", key);
+        NSAssert2([value isKindOfClass:[NSString class]], @"Header value should be a string. name=%@, value=%@", key, value);
+        [aRequest setValue:value forHTTPHeaderField:key];
     }
 }
 
