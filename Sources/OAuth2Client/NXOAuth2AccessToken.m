@@ -54,7 +54,7 @@
     NSString *expiresIn = [jsonDict objectForKey:@"expires_in"];
     NSString *anAccessToken = [jsonDict objectForKey:@"access_token"];
     NSString *aRefreshToken = [jsonDict objectForKey:@"refresh_token"];
-    NSString *scopeString = [jsonDict objectForKey:@"scope"];
+    NSObject *scopeObj = [jsonDict objectForKey:@"scope"];
     
     // if the response overrides token_type we take it from the response
     if ([jsonDict objectForKey:@"token_type"]) {
@@ -62,8 +62,13 @@
     }
     
     NSSet *scope = nil;
-    if (scopeString && ![scopeString isEqual:[NSNull null]]) {
-        scope = [NSSet setWithArray:[scopeString componentsSeparatedByCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]]];
+    if (scopeObj && ![scopeObj isEqual:[NSNull null]]) {
+        if([scopeObj isKindOfClass:[NSArray class]]) {
+            scope = [NSSet setWithArray:(NSArray*)scopeObj];
+        }
+        else if([scopeObj isKindOfClass:[NSString class]]) {
+            scope = [NSSet setWithArray:[(NSString *)scopeObj componentsSeparatedByCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]]];
+        }
     }
 
     NSDate *expiryDate = nil;
