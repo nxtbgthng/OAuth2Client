@@ -415,12 +415,18 @@ sendingProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)aSendingProgres
             }
         }
     }
+
     if (self.statusCode == 401
         && client.accessToken.refreshToken != nil
         && authenticateHeader
-        && ([authenticateHeader rangeOfString:@"invalid_token"].location != NSNotFound || [authenticateHeader rangeOfString:@"invalid_request"].location != NSNotFound)) {
+        && ([authenticateHeader rangeOfString:@"invalid_token"].location != NSNotFound || 
+            [authenticateHeader rangeOfString:@"expired_token"].location != NSNotFound ) 
+    {
         [self cancel];
         [client refreshAccessTokenAndRetryConnection:self];
+    } else if (client.authConnection != self && authenticateHeader && client) {
+        [self cancel];
+        [client requestAccessAndRetryConnection:self];
     } else {
         if ([delegate respondsToSelector:@selector(oauthConnection:didReceiveData:)]) {
             [delegate oauthConnection:self didReceiveData:data];    // inform the delegate that we start with empty data
@@ -469,8 +475,21 @@ sendingProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)aSendingProgres
                 }
             }
             if (authenticateHeader
+<<<<<<< HEAD
                 && ([authenticateHeader rangeOfString:@"invalid_token"].location != NSNotFound || [authenticateHeader rangeOfString:@"invalid_request"].location != NSNotFound)) {
                 client.accessToken = nil;
+=======
+                && ([authenticateHeader rangeOfString:@"invalid_token"].location != NSNotFound || [authenticateHeader rangeOfString:@"invalid_grant"].location != NSNotFound)) {
+                
+                // Try to refresh the token if possible, otherwise remove this account.
+                if (client.accessToken.refreshToken) {
+                    [self cancel];
+                    [client refreshAccessTokenAndRetryConnection:self];
+                    return;
+                } else {
+                    client.accessToken = nil;
+                }
+>>>>>>> develop
             }
         }
         
