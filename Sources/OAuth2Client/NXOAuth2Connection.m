@@ -420,7 +420,7 @@ sendingProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)aSendingProgres
         && client.accessToken.refreshToken != nil
         && authenticateHeader
         && ([authenticateHeader rangeOfString:@"invalid_token"].location != NSNotFound || 
-            [authenticateHeader rangeOfString:@"expired_token"].location != NSNotFound ) 
+            [authenticateHeader rangeOfString:@"expired_token"].location != NSNotFound ))
     {
         [self cancel];
         [client refreshAccessTokenAndRetryConnection:self];
@@ -474,13 +474,7 @@ sendingProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)aSendingProgres
                     }
                 }
             }
-            if (authenticateHeader
-<<<<<<< HEAD
-                && ([authenticateHeader rangeOfString:@"invalid_token"].location != NSNotFound || [authenticateHeader rangeOfString:@"invalid_request"].location != NSNotFound)) {
-                client.accessToken = nil;
-=======
-                && ([authenticateHeader rangeOfString:@"invalid_token"].location != NSNotFound || [authenticateHeader rangeOfString:@"invalid_grant"].location != NSNotFound)) {
-                
+            if (authenticateHeader && ([authenticateHeader rangeOfString:@"invalid_token"].location != NSNotFound || [authenticateHeader rangeOfString:@"invalid_grant"].location != NSNotFound)) {
                 // Try to refresh the token if possible, otherwise remove this account.
                 if (client.accessToken.refreshToken) {
                     [self cancel];
@@ -489,7 +483,6 @@ sendingProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)aSendingProgres
                 } else {
                     client.accessToken = nil;
                 }
->>>>>>> develop
             }
         }
         
