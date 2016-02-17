@@ -28,7 +28,7 @@ In order to install the library this way add the following line to your `Podfile
 
 and run the following command `pod install`.
 
-*Note:* CocoaPods is now the preferred way to integrate NXOAuth2Client into XCode
+*Note:* CocoaPods is now the preferred way to integrate NXOAuth2Client into Xcode
 
 ### Manually including the library in your Xcode project
 
