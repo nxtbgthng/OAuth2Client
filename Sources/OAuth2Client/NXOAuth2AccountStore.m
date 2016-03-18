@@ -407,7 +407,7 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
 
     for (NSString *accountType in accountTypes) {
         NXOAuth2Client *client = [self pendingOAuthClientForAccountType:accountType];
-        if ([client openRedirectURL:fixedRedirectURL]) {
+        if ([self.activeAccountType isEqualToString:accountType] && [client openRedirectURL:fixedRedirectURL]) {
             return YES;
         }
     }
