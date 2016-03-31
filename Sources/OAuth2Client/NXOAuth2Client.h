@@ -57,7 +57,11 @@ extern NSString * const NXOAuth2ClientConnectionContextTokenRefresh;
     NSInteger        refreshConnectionDidRetryCount;
     
     // delegates
+#if __has_feature(objc_arc_weak)
+    NSObject<NXOAuth2ClientDelegate>*    __weak delegate;
+#else
     NSObject<NXOAuth2ClientDelegate>*    __unsafe_unretained delegate;    // assigned
+#endif
 }
 
 @property (nonatomic, readonly, getter = isAuthenticating) BOOL authenticating;
@@ -74,7 +78,12 @@ extern NSString * const NXOAuth2ClientConnectionContextTokenRefresh;
 @property (nonatomic, copy) NSString *acceptType; // defaults to application/json
 
 @property (nonatomic, strong) NXOAuth2AccessToken    *accessToken;
-@property (nonatomic, unsafe_unretained) NSObject<NXOAuth2ClientDelegate>*    delegate;
+
+#if __has_feature(objc_arc_weak)
+    @property (nonatomic, weak) NSObject<NXOAuth2ClientDelegate>*    delegate;
+#else
+    @property (nonatomic, unsafe_unretained) NSObject<NXOAuth2ClientDelegate>*    delegate;
+#endif
 
 @property (nonatomic, readonly) NXOAuth2Connection *authConnection;
 
