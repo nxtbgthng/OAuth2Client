@@ -158,7 +158,7 @@ sendingProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)aSendingProgres
 - (NSURLConnection *)createConnection;
 {
     // if the request is a token refresh request don't sign it and don't check for the expiration of the token (we know that already)
-    NSString *oauthAuthorizationHeader = nil;
+    NSString *oauthAuthorizationHeader = request.allHTTPHeaderFields[@"Authorization"];
     if (client.accessToken &&
         ![[requestParameters objectForKey:@"grant_type"] isEqualToString:@"refresh_token"]) {
         
