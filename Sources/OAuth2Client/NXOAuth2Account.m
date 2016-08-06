@@ -78,18 +78,22 @@ NSString * const NXOAuth2AccountDidFailToGetAccessTokenNotification = @"NXOAuth2
             
             NSString *clientID = [configuration objectForKey:kNXOAuth2AccountStoreConfigurationClientID];
             NSString *clientSecret = [configuration objectForKey:kNXOAuth2AccountStoreConfigurationSecret];
+            NSString *grantType = [configuration objectForKey:kNXOAuth2AccountStoreConfigurationGrantType];
             NSURL *authorizeURL = [configuration objectForKey:kNXOAuth2AccountStoreConfigurationAuthorizeURL];
             NSURL *tokenURL = [configuration objectForKey:kNXOAuth2AccountStoreConfigurationTokenURL];
             NSString *tokenType = [configuration objectForKey:kNXOAuth2AccountStoreConfigurationTokenType];
             NSDictionary *additionalQueryParams = [configuration objectForKey:kNXOAuth2AccountStoreConfigurationAdditionalAuthenticationParameters];
-
+            NSDictionary *headerParameters = [configuration objectForKey:kNXOAuth2AccountStoreConfigurationHeaderParameters];
+            
             oauthClient = [[NXOAuth2Client alloc] initWithClientID:clientID
                                                       clientSecret:clientSecret
+                                                         grantType:grantType
                                                       authorizeURL:authorizeURL
                                                           tokenURL:tokenURL
                                                        accessToken:self.accessToken
                                                          tokenType:tokenType
                                                         persistent:NO
+                                                  headerParameters:headerParameters
                                                           delegate:self];
             if (additionalQueryParams) {
                 oauthClient.additionalAuthenticationParameters = additionalQueryParams;

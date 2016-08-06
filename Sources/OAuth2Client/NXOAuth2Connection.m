@@ -73,7 +73,7 @@ sendingProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)aSendingProgres
         sendConnectionDidEndNotification = NO;
         delegate = aDelegate;    // assign only
         client = aClient;
-
+        
         request = [aRequest copy];
         requestParameters = [someRequestParameters copy];
         connection = [self createConnection];
@@ -86,7 +86,7 @@ sendingProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)aSendingProgres
 {
     if (sendConnectionDidEndNotification) [[NSNotificationCenter defaultCenter] postNotificationName:NXOAuth2ConnectionDidEndNotification object:self];
     sendConnectionDidEndNotification = NO;
-
+    
     [connection cancel];
     
 #if (NXOAuth2ConnectionDebug)
@@ -199,6 +199,7 @@ sendingProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)aSendingProgres
     if (client.acceptType) {
         [startRequest setValue:client.acceptType forHTTPHeaderField:@"Accept"];
     }
+    
     
     NSURLConnection *aConnection = [[NSURLConnection alloc] initWithRequest:startRequest delegate:self startImmediately:NO];    // don't start yet
     [aConnection scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];    // let's first schedule it in the current runloop. (see http://github.com/soundcloud/cocoa-api-wrapper/issues#issue/2 )
@@ -527,14 +528,24 @@ sendingProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)aSendingProgres
     NSMutableURLRequest *mutableRequest = [aRequest mutableCopy];
     mutableRequest.HTTPMethod = request.HTTPMethod;
     
+    if (mutableRequest.HTTPBody != aConnection.currentRequest.HTTPBody){
+        [mutableRequest setHTTPBody:aConnection.currentRequest.HTTPBody];
+    }
+    
     if (hostChanged || (schemeChanged && !schemeChangedToHTTPS)) {
         [mutableRequest setValue:nil forHTTPHeaderField:@"Authorization"]; // strip Authorization information
         return mutableRequest;
     } else {
         // iOS 5 automaticaly strips the authorization 'token' from the header.
         // Thus we have to add the OAuth2 'token' again.
-        [mutableRequest setValue:[NSString stringWithFormat:@"%@ %@", client.accessToken.tokenType, client.accessToken.accessToken]
-              forHTTPHeaderField:@"Authorization"];
+        if ([[[aConnection.currentRequest allHTTPHeaderFields] allKeys] containsObject:@"Authorization"]) {
+            NSString *authorizationValue = [[aConnection.currentRequest allHTTPHeaderFields] objectForKey:@"Authorization"];
+            [mutableRequest setValue: authorizationValue forHTTPHeaderField:@"Authorization"];
+        }
+        else {
+            [mutableRequest setValue:[NSString stringWithFormat:@"%@ %@", client.accessToken.tokenType, client.accessToken.accessToken]
+                  forHTTPHeaderField:@"Authorization"];
+        }
     }
     return mutableRequest;
 }

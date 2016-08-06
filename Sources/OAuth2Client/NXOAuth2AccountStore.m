@@ -37,12 +37,14 @@ NSString * const NXOAuth2AccountStoreNewAccountUserInfoKey = @"NXOAuth2AccountSt
 
 NSString * const kNXOAuth2AccountStoreConfigurationClientID = @"kNXOAuth2AccountStoreConfigurationClientID";
 NSString * const kNXOAuth2AccountStoreConfigurationSecret = @"kNXOAuth2AccountStoreConfigurationSecret";
+NSString * const kNXOAuth2AccountStoreConfigurationGrantType = @"kNXOAuth2AccountStoreConfigurationGrantType";
 NSString * const kNXOAuth2AccountStoreConfigurationAuthorizeURL = @"kNXOAuth2AccountStoreConfigurationAuthorizeURL";
 NSString * const kNXOAuth2AccountStoreConfigurationTokenURL = @"kNXOAuth2AccountStoreConfigurationTokenURL";
 NSString * const kNXOAuth2AccountStoreConfigurationRedirectURL = @"kNXOAuth2AccountStoreConfigurationRedirectURL";
 NSString * const kNXOAuth2AccountStoreConfigurationScope = @"kNXOAuth2AccountStoreConfigurationScope";
 NSString * const kNXOAuth2AccountStoreConfigurationTokenType = @"kNXOAuth2AccountStoreConfigurationTokenType";
 NSString * const kNXOAuth2AccountStoreConfigurationAdditionalAuthenticationParameters = @"kNXOAuth2AccountStoreConfigurationAdditionalAuthenticationParameters";
+NSString * const kNXOAuth2AccountStoreConfigurationHeaderParameters = @"kNXOAuth2AccountStoreConfigurationHeaderParameters";
 
 #pragma mark Account Type
 
@@ -226,55 +228,67 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
 
 - (void)setClientID:(NSString *)aClientID
              secret:(NSString *)aSecret
+          grantType:(NSString *)aGrantType
    authorizationURL:(NSURL *)anAuthorizationURL
            tokenURL:(NSURL *)aTokenURL
         redirectURL:(NSURL *)aRedirectURL
+   headerParameters:(NSDictionary *) someHeaderParameters
      forAccountType:(NSString *)anAccountType;
 {
     [self setConfiguration:[NSDictionary dictionaryWithObjectsAndKeys:
                             aClientID, kNXOAuth2AccountStoreConfigurationClientID,
                             aSecret, kNXOAuth2AccountStoreConfigurationSecret,
+                            aGrantType, kNXOAuth2AccountStoreConfigurationGrantType,
                             anAuthorizationURL, kNXOAuth2AccountStoreConfigurationAuthorizeURL,
                             aTokenURL, kNXOAuth2AccountStoreConfigurationTokenURL,
-                            aRedirectURL, kNXOAuth2AccountStoreConfigurationRedirectURL, nil]
+                            aRedirectURL, kNXOAuth2AccountStoreConfigurationRedirectURL,
+                            someHeaderParameters, kNXOAuth2AccountStoreConfigurationHeaderParameters, nil]
             forAccountType:anAccountType];
 }
 
 - (void)setClientID:(NSString *)aClientID
              secret:(NSString *)aSecret
+          grantType:(NSString *)aGrantType
               scope:(NSSet *)theScope
    authorizationURL:(NSURL *)anAuthorizationURL
            tokenURL:(NSURL *)aTokenURL
         redirectURL:(NSURL *)aRedirectURL
+   headerParameters:(NSDictionary *) someHeaderParameters
      forAccountType:(NSString *)anAccountType;
 {
     [self setConfiguration:[NSDictionary dictionaryWithObjectsAndKeys:
                             aClientID, kNXOAuth2AccountStoreConfigurationClientID,
                             aSecret, kNXOAuth2AccountStoreConfigurationSecret,
+                            aGrantType, kNXOAuth2AccountStoreConfigurationGrantType,
                             theScope, kNXOAuth2AccountStoreConfigurationScope,
                             anAuthorizationURL, kNXOAuth2AccountStoreConfigurationAuthorizeURL,
                             aTokenURL, kNXOAuth2AccountStoreConfigurationTokenURL,
-                            aRedirectURL, kNXOAuth2AccountStoreConfigurationRedirectURL, nil]
+                            aRedirectURL, kNXOAuth2AccountStoreConfigurationRedirectURL,
+                            someHeaderParameters, kNXOAuth2AccountStoreConfigurationHeaderParameters, nil]
             forAccountType:anAccountType];
 }
 
 - (void)setClientID:(NSString *)aClientID
              secret:(NSString *)aSecret
+          grantType:(NSString *)aGrantType
               scope:(NSSet *)theScope
    authorizationURL:(NSURL *)anAuthorizationURL
            tokenURL:(NSURL *)aTokenURL
         redirectURL:(NSURL *)aRedirectURL
+   headerParameters:(NSDictionary *) someHeaderParameters
           tokenType:(NSString *)aTokenType
      forAccountType:(NSString *)anAccountType;
 {
     [self setConfiguration:[NSDictionary dictionaryWithObjectsAndKeys:
                             aClientID, kNXOAuth2AccountStoreConfigurationClientID,
                             aSecret, kNXOAuth2AccountStoreConfigurationSecret,
+                            aGrantType, kNXOAuth2AccountStoreConfigurationGrantType,
                             theScope, kNXOAuth2AccountStoreConfigurationScope,
                             anAuthorizationURL, kNXOAuth2AccountStoreConfigurationAuthorizeURL,
                             aTokenURL, kNXOAuth2AccountStoreConfigurationTokenURL,
                             aTokenType, kNXOAuth2AccountStoreConfigurationTokenType,
-                            aRedirectURL, kNXOAuth2AccountStoreConfigurationRedirectURL, nil]
+                            aRedirectURL, kNXOAuth2AccountStoreConfigurationRedirectURL,
+                            someHeaderParameters, kNXOAuth2AccountStoreConfigurationHeaderParameters, nil]
             forAccountType:anAccountType];
 }
 
@@ -391,19 +405,23 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
             
             NSString *clientID = [configuration objectForKey:kNXOAuth2AccountStoreConfigurationClientID];
             NSString *clientSecret = [configuration objectForKey:kNXOAuth2AccountStoreConfigurationSecret];
+            NSString *grantType = [configuration objectForKey:kNXOAuth2AccountStoreConfigurationGrantType];
             NSSet *scope = [configuration objectForKey:kNXOAuth2AccountStoreConfigurationScope];
             NSURL *authorizeURL = [configuration objectForKey:kNXOAuth2AccountStoreConfigurationAuthorizeURL];
             NSURL *tokenURL = [configuration objectForKey:kNXOAuth2AccountStoreConfigurationTokenURL];
             NSString *tokenType = [configuration objectForKey:kNXOAuth2AccountStoreConfigurationTokenType];
             NSDictionary *additionalAuthenticationParameters = [configuration objectForKey:kNXOAuth2AccountStoreConfigurationAdditionalAuthenticationParameters];
+            NSDictionary *headerParameters = [configuration objectForKey:kNXOAuth2AccountStoreConfigurationHeaderParameters];
             
             client = [[NXOAuth2Client alloc] initWithClientID:clientID
                                                  clientSecret:clientSecret
+                                                    grantType:grantType
                                                  authorizeURL:authorizeURL
                                                      tokenURL:tokenURL
                                                   accessToken:nil
                                                     tokenType:tokenType
                                                    persistent:YES
+                                             headerParameters:headerParameters
                                                      delegate:self];
             
             client.persistent = NO;
@@ -455,9 +473,9 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
     NSURL *preparedURL = [client authorizationURLWithRedirectURL:redirectURL];
     
 #if TARGET_OS_IPHONE
-        [[UIApplication sharedApplication] openURL:preparedURL];
+    [[UIApplication sharedApplication] openURL:preparedURL];
 #else
-        [[NSWorkspace sharedWorkspace] openURL:preparedURL];
+    [[NSWorkspace sharedWorkspace] openURL:preparedURL];
 #endif
 }
 
@@ -596,7 +614,7 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
 + (void)storeAccountsInDefaultKeychain:(NSDictionary *)accounts;
 {
     [self removeFromDefaultKeychain];
- 
+    
     NSString *serviceName = [self keychainServiceName];
     
     NSData *data = [NSKeyedArchiver archivedDataWithRootObject:accounts];
@@ -619,7 +637,7 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
                            nil];
     OSStatus __attribute__((unused)) err = SecItemDelete((__bridge CFDictionaryRef)query);
     NSAssert1((err == noErr || err == errSecItemNotFound), @"Error while deleting token from keychain: %ld", err);
-
+    
 }
 
 #else
@@ -675,7 +693,7 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
 + (void)storeAccountsInDefaultKeychain:(NSDictionary *)accounts;
 {
     [self removeFromDefaultKeychain];
- 
+    
     NSString *serviceName = [self keychainServiceName];
     
     NSData *data = [NSKeyedArchiver archivedDataWithRootObject:accounts];

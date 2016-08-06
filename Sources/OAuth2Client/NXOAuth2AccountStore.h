@@ -29,6 +29,7 @@ extern NSString * const NXOAuth2AccountStoreNewAccountUserInfoKey;
 
 extern NSString * const kNXOAuth2AccountStoreConfigurationClientID;
 extern NSString * const kNXOAuth2AccountStoreConfigurationSecret;
+extern NSString * const kNXOAuth2AccountStoreConfigurationGrantType;
 extern NSString * const kNXOAuth2AccountStoreConfigurationAuthorizeURL;
 extern NSString * const kNXOAuth2AccountStoreConfigurationTokenURL;
 extern NSString * const kNXOAuth2AccountStoreConfigurationRedirectURL;
@@ -36,14 +37,14 @@ extern NSString * const kNXOAuth2AccountStoreConfigurationScope;
 extern NSString * const kNXOAuth2AccountStoreConfigurationTokenType;
 
 
-/* 
+/*
  * Requires a NSDictionary as a value.
  * They are passed onto the authentication request as additional query parameters.
  * The dictionary may not contain the keys "grant_type", "client_id", "client_secret",
  * "username", "password", "redirect_uri", "code", "assertion_type" and "assertion" are not allowed.
  */
 extern NSString * const kNXOAuth2AccountStoreConfigurationAdditionalAuthenticationParameters;
-
+extern NSString * const kNXOAuth2AccountStoreConfigurationHeaderParameters;
 
 #pragma mark Account Type
 
@@ -81,25 +82,31 @@ typedef void(^NXOAuth2PreparedAuthorizationURLHandler)(NSURL *preparedURL);
 
 - (void)setClientID:(NSString *)aClientID
              secret:(NSString *)aSecret
+          grantType:(NSString *)aGrantType
    authorizationURL:(NSURL *)anAuthorizationURL
            tokenURL:(NSURL *)aTokenURL
         redirectURL:(NSURL *)aRedirectURL
+   headerParameters:(NSDictionary *) someHeaderParameters
      forAccountType:(NSString *)anAccountType;
 
 - (void)setClientID:(NSString *)aClientID
              secret:(NSString *)aSecret
+          grantType:(NSString *)aGrantType
               scope:(NSSet *)theScope
    authorizationURL:(NSURL *)anAuthorizationURL
            tokenURL:(NSURL *)aTokenURL
         redirectURL:(NSURL *)aRedirectURL
+   headerParameters:(NSDictionary *) someHeaderParameters
      forAccountType:(NSString *)anAccountType;
 
 - (void)setClientID:(NSString *)aClientID
              secret:(NSString *)aSecret
+          grantType:(NSString *)aGrantType
               scope:(NSSet *)theScope
    authorizationURL:(NSURL *)anAuthorizationURL
            tokenURL:(NSURL *)aTokenURL
         redirectURL:(NSURL *)aRedirectURL
+   headerParameters:(NSDictionary *) someHeaderParameters
           tokenType:(NSString *)aTokenType
      forAccountType:(NSString *)anAccountType;
 

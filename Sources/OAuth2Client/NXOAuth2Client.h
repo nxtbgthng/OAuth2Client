@@ -35,9 +35,11 @@ extern NSString * const NXOAuth2ClientConnectionContextTokenRefresh;
 @protected
     BOOL authenticating;
     BOOL persistent;
-
+    
     NSString    *clientId;
     NSString    *clientSecret;
+    NSString    *grantType;
+    NSDictionary *headerParameters;
     
     NSSet       *desiredScope;
     NSString    *userAgent;
@@ -62,8 +64,11 @@ extern NSString * const NXOAuth2ClientConnectionContextTokenRefresh;
 
 @property (nonatomic, copy, readonly) NSString *clientId;
 @property (nonatomic, copy, readonly) NSString *clientSecret;
+@property (nonatomic, copy, readonly) NSString *grantType;
 @property (nonatomic, copy, readonly) NSString *tokenType;
 @property (nonatomic, strong, readwrite) NSDictionary *additionalAuthenticationParameters;
+@property (nonatomic, strong, readwrite) NSDictionary *headerParameters;
+
 
 @property (nonatomic, copy) NSSet *desiredScope;
 @property (nonatomic, copy) NSString *userAgent;
@@ -84,12 +89,14 @@ extern NSString * const NXOAuth2ClientConnectionContextTokenRefresh;
  */
 - (id)initWithClientID:(NSString *)clientId
           clientSecret:(NSString *)clientSecret
+             grantType:(NSString *)aGrantType
           authorizeURL:(NSURL *)authorizeURL
               tokenURL:(NSURL *)tokenURL
               delegate:(NSObject<NXOAuth2ClientDelegate> *)delegate;
 
 - (id)initWithClientID:(NSString *)clientId
           clientSecret:(NSString *)clientSecret
+             grantType:(NSString *)aGrantType
           authorizeURL:(NSURL *)authorizeURL
               tokenURL:(NSURL *)tokenURL
            accessToken:(NXOAuth2AccessToken *)accessToken
@@ -98,11 +105,13 @@ extern NSString * const NXOAuth2ClientConnectionContextTokenRefresh;
 
 - (id)initWithClientID:(NSString *)clientId
           clientSecret:(NSString *)clientSecret
+             grantType:(NSString *)aGrantType
           authorizeURL:(NSURL *)authorizeURL
               tokenURL:(NSURL *)tokenURL
            accessToken:(NXOAuth2AccessToken *)accessToken
              tokenType:(NSString *)tokenType
             persistent:(BOOL)shouldPersist
+      headerParameters:(NSDictionary*)someheaderParameters
               delegate:(NSObject<NXOAuth2ClientDelegate> *)delegate;
 
 - (BOOL)openRedirectURL:(NSURL *)URL;
