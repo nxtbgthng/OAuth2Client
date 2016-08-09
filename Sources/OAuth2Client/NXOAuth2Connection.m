@@ -222,7 +222,8 @@ sendingProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)aSendingProgres
     
     NSString *httpMethod = [aRequest HTTPMethod];
     if ([httpMethod caseInsensitiveCompare:@"POST"] != NSOrderedSame
-        && [httpMethod caseInsensitiveCompare:@"PUT"] != NSOrderedSame) {
+        && [httpMethod caseInsensitiveCompare:@"PUT"] != NSOrderedSame
+        && [httpMethod caseInsensitiveCompare:@"PATCH"] != NSOrderedSame) {
         
         aRequest.URL = [aRequest.URL nxoauth2_URLByAddingParameters:parameters];
         
@@ -232,7 +233,7 @@ sendingProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)aSendingProgres
         
         if (!contentType || [contentType isEqualToString:@"multipart/form-data"]) {
         
-            // sends the POST/PUT request as multipart/form-data as default
+            // sends the POST/PUT/PATCH request as multipart/form-data as default
             
             NSInputStream *postBodyStream = [[NXOAuth2PostBodyStream alloc] initWithParameters:parameters];
             
@@ -245,7 +246,7 @@ sendingProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)aSendingProgres
             
         } else if ([contentType isEqualToString:@"application/x-www-form-urlencoded"]) {
             
-            // sends the POST/PUT request as application/x-www-form-urlencoded
+            // sends the POST/PUT/PATCH request as application/x-www-form-urlencoded
             
             NSString *query = [[aRequest.URL nxoauth2_URLByAddingParameters:parameters] query];
             [aRequest setHTTPBody:[query dataUsingEncoding:NSUTF8StringEncoding]];
