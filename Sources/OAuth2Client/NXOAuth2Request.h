@@ -22,7 +22,6 @@
     NSDictionary *parameters;
     NSURL *resource;
     NSString *requestMethod;
-    NSString *requestContentType;
     NXOAuth2Account *account;
     NXOAuth2Connection *connection;
     NXOAuth2Request *me;
