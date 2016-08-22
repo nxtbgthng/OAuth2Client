@@ -69,23 +69,6 @@
 }
 
 
-
-+ (void)performMethod:(NSString *)aMethod
-           onResource:(NSURL *)aResource
-      withContentType:(NSString *) aContentType
-      usingParameters:(NSDictionary *)someParameters
-          withAccount:(NXOAuth2Account *)anAccount
-  sendProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)progressHandler
-      responseHandler:(NXOAuth2ConnectionResponseHandler)responseHandler;
-{
-    NXOAuth2Request *request = [[NXOAuth2Request alloc] initWithResource:aResource
-                                                                  method:aMethod
-                                                              contentType:aContentType
-                                                              parameters:someParameters];
-    request.account = anAccount;
-    [request performRequestWithSendingProgressHandler:progressHandler responseHandler:responseHandler];
-}
-
 #pragma mark Lifecycle
 
 - (instancetype)initWithResource:(NSURL *)aResource method:(NSString *)aMethod parameters:(NSDictionary *)someParameters;

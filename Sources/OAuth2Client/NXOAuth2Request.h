@@ -39,9 +39,6 @@
       responseHandler:(NXOAuth2ConnectionResponseHandler)responseHandler;
 
 
-/**
- Content type nil will use form data.
- */
 + (void)performMethod:(NSString *)method
            onResource:(NSURL *)resource
       usingParameters:(NSDictionary *)parameters
