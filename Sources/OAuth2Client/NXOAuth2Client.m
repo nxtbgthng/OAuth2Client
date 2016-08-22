@@ -261,59 +261,26 @@ NSString * const NXOAuth2ClientConnectionContextTokenRefresh = @"tokenRefresh";
 // Web Server Flow only
 - (BOOL)openRedirectURL:(NSURL *)URL;
 {
+    return [self openRedirectURL:URL error:nil];
+}
+
+- (BOOL)openRedirectURL:(NSURL *)URL error: (NSError**) error;
+{
     NSString *accessGrant = [URL nxoauth2_valueForQueryParameterKey:@"code"];
     if (accessGrant) {
         [self requestTokenWithAuthGrant:accessGrant redirectURL:[URL nxoauth2_URLWithoutQueryString]];
         return YES;
     }
-    
-    NSString *errorString = [URL nxoauth2_valueForQueryParameterKey:@"error"];
-    if (errorString) {
-        NSInteger errorCode = 0;
-        NSString *localizedError = nil;
-        
-        if ([errorString caseInsensitiveCompare:@"invalid_request"] == NSOrderedSame) {
-            errorCode = NXOAuth2InvalidRequestErrorCode;
-            localizedError = NSLocalizedString(@"Invalid request to OAuth2 Server", @"NXOAuth2InvalidRequestErrorCode description");
-            
-        } else if ([errorString caseInsensitiveCompare:@"invalid_client"] == NSOrderedSame) {
-            errorCode = NXOAuth2InvalidClientErrorCode;
-            localizedError = NSLocalizedString(@"Invalid OAuth2 Client", @"NXOAuth2InvalidClientErrorCode description");
-            
-        } else if ([errorString caseInsensitiveCompare:@"unauthorized_client"] == NSOrderedSame) {
-            errorCode = NXOAuth2UnauthorizedClientErrorCode;
-            localizedError = NSLocalizedString(@"Unauthorized Client", @"NXOAuth2UnauthorizedClientErrorCode description");
-            
-        } else if ([errorString caseInsensitiveCompare:@"redirect_uri_mismatch"] == NSOrderedSame) {
-            errorCode = NXOAuth2RedirectURIMismatchErrorCode;
-            localizedError = NSLocalizedString(@"Redirect URI mismatch", @"NXOAuth2RedirectURIMismatchErrorCode description");
-            
-        } else if ([errorString caseInsensitiveCompare:@"access_denied"] == NSOrderedSame) {
-            errorCode = NXOAuth2AccessDeniedErrorCode;
-            localizedError = NSLocalizedString(@"Access denied", @"NXOAuth2AccessDeniedErrorCode description");
-            
-        } else if ([errorString caseInsensitiveCompare:@"unsupported_response_type"] == NSOrderedSame) {
-            errorCode = NXOAuth2UnsupportedResponseTypeErrorCode;
-            localizedError = NSLocalizedString(@"Unsupported response type", @"NXOAuth2UnsupportedResponseTypeErrorCode description");
-            
-        } else if ([errorString caseInsensitiveCompare:@"invalid_scope"] == NSOrderedSame) {
-            errorCode = NXOAuth2InvalidScopeErrorCode;
-            localizedError = NSLocalizedString(@"Invalid scope", @"NXOAuth2InvalidScopeErrorCode description");
+    else{
+        NSError* oauthError = [URL nxoauth2_redirectURLError];
+        if (oauthError && error) {
+            *error = oauthError;
         }
-        
-        if (errorCode != 0) {
-            NSDictionary *userInfo = nil;
-            if (localizedError) {
-                userInfo = [NSDictionary dictionaryWithObject:localizedError forKey:NSLocalizedDescriptionKey];
-            }
-            if ([delegate respondsToSelector:@selector(oauthClient:didFailToGetAccessTokenWithError:)]) {
-                [delegate oauthClient:self didFailToGetAccessTokenWithError:[NSError errorWithDomain:NXOAuth2ErrorDomain
-                                                                                                code:errorCode
-                                                                                            userInfo:userInfo]];
-            }
+        if ([delegate respondsToSelector:@selector(oauthClient:didFailToGetAccessTokenWithError:)]) {
+            [delegate oauthClient:self didFailToGetAccessTokenWithError: oauthError];
         }
+        return NO;
     }
-    return NO;
 }
 
 #pragma mark Request Token
@@ -484,6 +451,13 @@ NSString * const NXOAuth2ClientConnectionContextTokenRefresh = @"tokenRefresh";
                                            clientSecret, @"client_secret",
                                            accessToken.refreshToken, @"refresh_token",
                                            nil];
+        
+        if (self.customHeaderFields) {
+            [self.customHeaderFields enumerateKeysAndObjectsUsingBlock:^(NSString *key, NSString *obj, BOOL *stop) {
+                [tokenRequest addValue:obj forHTTPHeaderField:key];
+            }];
+        }
+        
         if (self.desiredScope) {
             [parameters setObject:[[self.desiredScope allObjects] componentsJoinedByString:@" "] forKey:@"scope"];
         }

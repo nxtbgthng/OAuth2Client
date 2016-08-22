@@ -159,7 +159,7 @@ sendingProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)aSendingProgres
 - (NSURLConnection *)createConnection;
 {
     // if the request is a token refresh request don't sign it and don't check for the expiration of the token (we know that already)
-    NSString *oauthAuthorizationHeader = nil;
+    NSString *oauthAuthorizationHeader = request.allHTTPHeaderFields[@"Authorization"];
     if (client.accessToken &&
         ![[requestParameters objectForKey:@"grant_type"] isEqualToString:@"refresh_token"]) {
         
@@ -224,8 +224,7 @@ sendingProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)aSendingProgres
     NSString *httpMethod = [aRequest HTTPMethod];
     if ([httpMethod caseInsensitiveCompare:@"POST"] != NSOrderedSame
         && [httpMethod caseInsensitiveCompare:@"PUT"] != NSOrderedSame
-        && [httpMethod caseInsensitiveCompare:@"PATCH"] != NSOrderedSame
-        ) {
+        && [httpMethod caseInsensitiveCompare:@"PATCH"] != NSOrderedSame) {
         
         aRequest.URL = [aRequest.URL nxoauth2_URLByAddingParameters:parameters];
         
@@ -235,7 +234,7 @@ sendingProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)aSendingProgres
         
         if (!contentType || [contentType isEqualToString:@"multipart/form-data"]) {
         
-            // sends the POST/PUT request as multipart/form-data as default
+            // sends the POST/PUT/PATCH request as multipart/form-data as default
             
             NSInputStream *postBodyStream = [[NXOAuth2PostBodyStream alloc] initWithParameters:parameters];
             
@@ -257,7 +256,7 @@ sendingProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)aSendingProgres
         }
         else if ([contentType isEqualToString:@"application/x-www-form-urlencoded"]) {
             
-            // sends the POST/PUT request as application/x-www-form-urlencoded
+            // sends the POST/PUT/PATCH request as application/x-www-form-urlencoded
             
             NSString *query = [[aRequest.URL nxoauth2_URLByAddingParameters:parameters] query];
             [aRequest setHTTPBody:[query dataUsingEncoding:NSUTF8StringEncoding]];
@@ -427,10 +426,14 @@ sendingProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)aSendingProgres
             }
         }
     }
+
     if (self.statusCode == 401
         && client.accessToken.refreshToken != nil
         && authenticateHeader
-        && [authenticateHeader rangeOfString:@"expired_token"].location != NSNotFound) {
+        && ([authenticateHeader rangeOfString:@"invalid_token"].location != NSNotFound || 
+            [authenticateHeader rangeOfString:@"expired_token"].location != NSNotFound ))
+    {
+
         [self cancel];
         [client refreshAccessTokenAndRetryConnection:self];
     } else {
@@ -480,9 +483,15 @@ sendingProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)aSendingProgres
                     }
                 }
             }
-            if (authenticateHeader
-                && [authenticateHeader rangeOfString:@"invalid_token"].location != NSNotFound) {
-                client.accessToken = nil;
+            if (authenticateHeader && ([authenticateHeader rangeOfString:@"invalid_token"].location != NSNotFound || [authenticateHeader rangeOfString:@"invalid_grant"].location != NSNotFound)) {
+                // Try to refresh the token if possible, otherwise remove this account.
+                if (client.accessToken.refreshToken) {
+                    [self cancel];
+                    [client refreshAccessTokenAndRetryConnection:self];
+                    return;
+                } else {
+                    client.accessToken = nil;
+                }
             }
         }
         

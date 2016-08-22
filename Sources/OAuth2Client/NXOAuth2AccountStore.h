@@ -145,5 +145,6 @@ typedef void(^NXOAuth2PreparedAuthorizationURLHandler)(NSURL *preparedURL);
 #pragma mark Handle OAuth Redirects
 
 - (BOOL)handleRedirectURL:(NSURL *)URL;
+- (BOOL)handleRedirectURL:(NSURL *)aURL error: (NSError**) error;
 
 @end

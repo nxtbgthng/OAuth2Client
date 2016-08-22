@@ -38,17 +38,17 @@
   sendProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)progressHandler
       responseHandler:(NXOAuth2ConnectionResponseHandler)responseHandler;
 
+
 /**
  Content type nil will use form data.
  */
 + (void)performMethod:(NSString *)method
            onResource:(NSURL *)resource
-      withContentType:(NSString *) contentType
       usingParameters:(NSDictionary *)parameters
+         usingHeaders:(NSDictionary *)headers
           withAccount:(NXOAuth2Account *)account
   sendProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)progressHandler
       responseHandler:(NXOAuth2ConnectionResponseHandler)responseHandler;
-
 
 
 #pragma mark Lifecycle
@@ -67,6 +67,7 @@
 @property (nonatomic, strong, readwrite) NSURL *resource;
 @property (nonatomic, strong, readwrite) NSDictionary *parameters;
 
+@property (nonatomic, strong, readwrite) NSDictionary *headerFields;
 
 #pragma mark Signed NSURLRequest
 

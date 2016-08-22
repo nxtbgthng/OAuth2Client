@@ -14,7 +14,7 @@
 #import "NSString+NXOAuth2.h"
 
 #import "NSURL+NXOAuth2.h"
-
+#import "NXOAuth2Constants.h"
 
 @implementation NSURL (NXOAuth2)
 
@@ -60,6 +60,53 @@
 {
     NSArray *parts = [[self absoluteString] componentsSeparatedByString:@"?"];
     return [parts objectAtIndex:0];
+}
+
+- (NSError*) nxoauth2_redirectURLError
+{
+    NSURL* redirectURL = self;
+    NSInteger errorCode = 0;
+    NSDictionary *userInfo = nil;
+    NSString *errorString = [redirectURL nxoauth2_valueForQueryParameterKey:@"error"];
+    if (errorString) {
+        NSString *localizedError = nil;
+        
+        if ([errorString caseInsensitiveCompare:@"invalid_request"] == NSOrderedSame) {
+            errorCode = NXOAuth2InvalidRequestErrorCode;
+            localizedError = NSLocalizedString(@"Invalid request to OAuth2 Server", @"NXOAuth2InvalidRequestErrorCode description");
+            
+        } else if ([errorString caseInsensitiveCompare:@"invalid_client"] == NSOrderedSame) {
+            errorCode = NXOAuth2InvalidClientErrorCode;
+            localizedError = NSLocalizedString(@"Invalid OAuth2 Client", @"NXOAuth2InvalidClientErrorCode description");
+            
+        } else if ([errorString caseInsensitiveCompare:@"unauthorized_client"] == NSOrderedSame) {
+            errorCode = NXOAuth2UnauthorizedClientErrorCode;
+            localizedError = NSLocalizedString(@"Unauthorized Client", @"NXOAuth2UnauthorizedClientErrorCode description");
+            
+        } else if ([errorString caseInsensitiveCompare:@"redirect_uri_mismatch"] == NSOrderedSame) {
+            errorCode = NXOAuth2RedirectURIMismatchErrorCode;
+            localizedError = NSLocalizedString(@"Redirect URI mismatch", @"NXOAuth2RedirectURIMismatchErrorCode description");
+            
+        } else if ([errorString caseInsensitiveCompare:@"access_denied"] == NSOrderedSame) {
+            errorCode = NXOAuth2AccessDeniedErrorCode;
+            localizedError = NSLocalizedString(@"Access denied", @"NXOAuth2AccessDeniedErrorCode description");
+            
+        } else if ([errorString caseInsensitiveCompare:@"unsupported_response_type"] == NSOrderedSame) {
+            errorCode = NXOAuth2UnsupportedResponseTypeErrorCode;
+            localizedError = NSLocalizedString(@"Unsupported response type", @"NXOAuth2UnsupportedResponseTypeErrorCode description");
+            
+        } else if ([errorString caseInsensitiveCompare:@"invalid_scope"] == NSOrderedSame) {
+            errorCode = NXOAuth2InvalidScopeErrorCode;
+            localizedError = NSLocalizedString(@"Invalid scope", @"NXOAuth2InvalidScopeErrorCode description");
+        }
+        
+        if (localizedError) {
+            userInfo = [NSDictionary dictionaryWithObject:localizedError forKey:NSLocalizedDescriptionKey];
+        }
+    }
+    return [NSError errorWithDomain:NXOAuth2ErrorDomain
+                               code:errorCode
+                           userInfo:userInfo];
 }
 
 @end
