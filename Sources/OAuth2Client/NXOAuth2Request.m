@@ -27,6 +27,7 @@
 @property (nonatomic,  strong, readwrite) NXOAuth2Request *me;
 #pragma mark Apply Parameters
 - (void)applyParameters:(NSDictionary *)someParameters onRequest:(NSMutableURLRequest *)aRequest;
+- (void)applyHeaders:(NSDictionary *)someHeaders onRequest:(NSMutableURLRequest *)aRequest;
 @end
 
 
@@ -41,17 +42,35 @@
   sendProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)progressHandler
       responseHandler:(NXOAuth2ConnectionResponseHandler)responseHandler;
 {
+    [self performMethod:aMethod
+             onResource:aResource
+        usingParameters:someParameters
+           usingHeaders:nil
+            withAccount:anAccount
+    sendProgressHandler:progressHandler
+        responseHandler:responseHandler];
+}
+
++ (void)performMethod:(NSString *)aMethod
+           onResource:(NSURL *)aResource
+      usingParameters:(NSDictionary *)someParameters
+         usingHeaders:(NSDictionary *)someHeaders
+          withAccount:(NXOAuth2Account *)anAccount
+  sendProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)progressHandler
+      responseHandler:(NXOAuth2ConnectionResponseHandler)responseHandler
+{
     NXOAuth2Request *request = [[NXOAuth2Request alloc] initWithResource:aResource
                                                                   method:aMethod
                                                               parameters:someParameters];
     request.account = anAccount;
+    request.headerFields = someHeaders;
     [request performRequestWithSendingProgressHandler:progressHandler responseHandler:responseHandler];
 }
 
 
 #pragma mark Lifecycle
 
-- (id)initWithResource:(NSURL *)aResource method:(NSString *)aMethod parameters:(NSDictionary *)someParameters;
+- (instancetype)initWithResource:(NSURL *)aResource method:(NSString *)aMethod parameters:(NSDictionary *)someParameters;
 {
     self = [super init];
     if (self) {
@@ -81,6 +100,7 @@
     
     [request setHTTPMethod:self.requestMethod];
     
+    [self applyHeaders:self.headerFields onRequest:request];
     [self applyParameters:self.parameters onRequest:request];
     
     if (self.account.oauthClient.userAgent && ![request valueForHTTPHeaderField:@"User-Agent"]) {
@@ -105,6 +125,7 @@
     
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:self.resource];
     [request setHTTPMethod:self.requestMethod];
+    [self applyHeaders:self.headerFields onRequest:request];
     self.connection = [[NXOAuth2Connection alloc] initWithRequest:request
                                                 requestParameters:self.parameters
                                                       oauthClient:self.account.oauthClient
@@ -168,6 +189,16 @@
         [aRequest setValue:contentLength forHTTPHeaderField:@"Content-Length"];
         
         [aRequest setHTTPBodyStream:postBodyStream];
+    }
+}
+
+- (void)applyHeaders:(NSDictionary *)someHeaders onRequest:(NSMutableURLRequest *)aRequest;
+{
+    for (id key in someHeaders) {
+        id value = someHeaders[key];
+        NSAssert1([key isKindOfClass:[NSString class]], @"Header name should be a string. name=%@", key);
+        NSAssert2([value isKindOfClass:[NSString class]], @"Header value should be a string. name=%@, value=%@", key, value);
+        [aRequest setValue:value forHTTPHeaderField:key];
     }
 }
 

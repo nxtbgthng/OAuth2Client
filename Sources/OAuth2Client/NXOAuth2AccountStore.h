@@ -35,6 +35,8 @@ extern NSString * const kNXOAuth2AccountStoreConfigurationRedirectURL;
 extern NSString * const kNXOAuth2AccountStoreConfigurationScope;
 extern NSString * const kNXOAuth2AccountStoreConfigurationTokenType;
 extern NSString * const kNXOAuth2AccountStoreConfigurationTokenRequestHTTPMethod;
+extern NSString * const kNXOAuth2AccountStoreConfigurationKeyChainGroup;
+extern NSString * const kNXOAuth2AccountStoreConfigurationKeyChainAccessGroup;
 
 /* 
  * Requires a NSDictionary as a value.
@@ -75,10 +77,12 @@ typedef void(^NXOAuth2PreparedAuthorizationURLHandler)(NSURL *preparedURL);
     NSMutableDictionary *trustedCertificatesHandler;
 }
 
-+ (id)sharedStore;
++ (instancetype)sharedStore;
 
 #pragma mark Accessors
 
+@property(nonatomic, strong) NSString *keychainAccessGroup;
+@property(nonatomic, strong) NSString *keychainServiceName;
 @property(nonatomic, strong, readonly) NSArray *accounts;
 - (NSArray *)accountsWithAccountType:(NSString *)accountType;
 - (NXOAuth2Account *)accountWithIdentifier:(NSString *)identifier;
@@ -140,5 +144,6 @@ typedef void(^NXOAuth2PreparedAuthorizationURLHandler)(NSURL *preparedURL);
 #pragma mark Handle OAuth Redirects
 
 - (BOOL)handleRedirectURL:(NSURL *)URL;
+- (BOOL)handleRedirectURL:(NSURL *)aURL error: (NSError**) error;
 
 @end

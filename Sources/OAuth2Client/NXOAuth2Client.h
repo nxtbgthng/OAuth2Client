@@ -43,6 +43,7 @@ extern NSString * const NXOAuth2ClientConnectionContextTokenRefresh;
     NSString    *userAgent;
     NSString    *assertion;
     NSString    *keyChainGroup;
+    NSString    *keyChainAccessGroup;
     
     // server information
     NSURL        *authorizeURL;
@@ -75,6 +76,7 @@ extern NSString * const NXOAuth2ClientConnectionContextTokenRefresh;
 @property (nonatomic, strong) NXOAuth2AccessToken    *accessToken;
 @property (nonatomic, unsafe_unretained) NSObject<NXOAuth2ClientDelegate>*    delegate;
 
+@property (nonatomic, readonly) NXOAuth2Connection *authConnection;
 
 /*!
  * If set to NO, the access token is not stored any keychain, will be removed if it was.
@@ -85,32 +87,35 @@ extern NSString * const NXOAuth2ClientConnectionContextTokenRefresh;
 /*!
  * Initializes the Client
  */
-- (id)initWithClientID:(NSString *)clientId
-          clientSecret:(NSString *)clientSecret
-          authorizeURL:(NSURL *)authorizeURL
-              tokenURL:(NSURL *)tokenURL
-              delegate:(NSObject<NXOAuth2ClientDelegate> *)delegate;
+- (instancetype)initWithClientID:(NSString *)clientId
+                    clientSecret:(NSString *)clientSecret
+                    authorizeURL:(NSURL *)authorizeURL
+                        tokenURL:(NSURL *)tokenURL
+                        delegate:(NSObject<NXOAuth2ClientDelegate> *)delegate;
 
-- (id)initWithClientID:(NSString *)clientId
-          clientSecret:(NSString *)clientSecret
-          authorizeURL:(NSURL *)authorizeURL
-              tokenURL:(NSURL *)tokenURL
-           accessToken:(NXOAuth2AccessToken *)accessToken
-         keyChainGroup:(NSString *)keyChainGroup
-            persistent:(BOOL)shouldPersist
-              delegate:(NSObject<NXOAuth2ClientDelegate> *)delegate;
+- (instancetype)initWithClientID:(NSString *)clientId
+                    clientSecret:(NSString *)clientSecret
+                    authorizeURL:(NSURL *)authorizeURL
+                        tokenURL:(NSURL *)tokenURL
+                     accessToken:(NXOAuth2AccessToken *)accessToken
+                   keyChainGroup:(NSString *)keyChainGroup
+             keyChainAccessGroup:(NSString *)keyChainAccessGroup
+                      persistent:(BOOL)shouldPersist
+                        delegate:(NSObject<NXOAuth2ClientDelegate> *)delegate;
 
-- (id)initWithClientID:(NSString *)clientId
-          clientSecret:(NSString *)clientSecret
-          authorizeURL:(NSURL *)authorizeURL
-              tokenURL:(NSURL *)tokenURL
-           accessToken:(NXOAuth2AccessToken *)accessToken
-             tokenType:(NSString *)tokenType
-         keyChainGroup:(NSString *)keyChainGroup
-            persistent:(BOOL)shouldPersist
-              delegate:(NSObject<NXOAuth2ClientDelegate> *)delegate;
+- (instancetype)initWithClientID:(NSString *)clientId
+                    clientSecret:(NSString *)clientSecret
+                    authorizeURL:(NSURL *)authorizeURL
+                        tokenURL:(NSURL *)tokenURL
+                     accessToken:(NXOAuth2AccessToken *)accessToken
+                       tokenType:(NSString *)tokenType
+                   keyChainGroup:(NSString *)keyChainGroup
+             keyChainAccessGroup:(NSString *)keyChainAccessGroup
+                      persistent:(BOOL)shouldPersist
+                        delegate:(NSObject<NXOAuth2ClientDelegate> *)delegate;
 
 - (BOOL)openRedirectURL:(NSURL *)URL;
+- (BOOL)openRedirectURL:(NSURL *)URL error: (NSError**) error;
 
 
 #pragma mark Authorisation Methods
@@ -140,6 +145,7 @@ extern NSString * const NXOAuth2ClientConnectionContextTokenRefresh;
 #pragma mark Public
 
 - (void)requestAccess;
+- (void)requestAccessAndRetryConnection:(NXOAuth2Connection *)retryConnection;
 
 - (void)refreshAccessToken;
 - (void)refreshAccessTokenAndRetryConnection:(NXOAuth2Connection *)retryConnection;

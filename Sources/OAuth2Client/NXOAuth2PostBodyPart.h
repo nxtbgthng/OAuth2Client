@@ -34,12 +34,22 @@
  *    - NSData
  *    - NXOAuth2FileStreamWrapper
  */
-+ (id)partWithName:(NSString *)name content:(id)content;
-- (id)initWithName:(NSString *)name content:(id)content;
++ (instancetype)partWithName:(NSString *)name
+                     content:(id)content;
 
-- (id)initWithHeaders:(NSString *)headers dataContent:(NSData *)data;
-- (id)initWithName:(NSString *)name streamContent:(NSInputStream *)stream streamLength:(unsigned long long)streamLength fileName:(NSString *)fileName;
+- (instancetype)initWithName:(NSString *)name
+                     content:(id)content;
 
-- (id)initWithHeaders:(NSString *)headers streamContent:(NSInputStream *)stream length:(unsigned long long)length; //designated initializer
+- (instancetype)initWithHeaders:(NSString *)headers
+                    dataContent:(NSData *)data;
+
+- (instancetype)initWithName:(NSString *)name
+               streamContent:(NSInputStream *)stream
+                streamLength:(unsigned long long)streamLength
+                    fileName:(NSString *)fileName;
+
+- (instancetype)initWithHeaders:(NSString *)headers
+                  streamContent:(NSInputStream *)stream
+                         length:(unsigned long long)length; //designated initializer
 
 @end

@@ -33,6 +33,8 @@ NSString * const NXOAuth2AccountDidFailToGetAccessTokenNotification = @"NXOAuth2
 #pragma mark -
 
 @interface NXOAuth2Account () <NXOAuth2ClientDelegate, NXOAuth2TrustDelegate>
+
+@property (nonatomic, strong) NXOAuth2AccessToken *accessToken;
 @end
 
 #pragma mark -
@@ -41,17 +43,18 @@ NSString * const NXOAuth2AccountDidFailToGetAccessTokenNotification = @"NXOAuth2
 
 #pragma mark Lifecycle
 
-- (id)initAccountWithOAuthClient:(NXOAuth2Client *)anOAuthClient accountType:(NSString *)anAccountType;
+- (instancetype)initAccountWithOAuthClient:(NXOAuth2Client *)anOAuthClient accountType:(NSString *)anAccountType;
 {
     self = [self initAccountWithAccessToken:anOAuthClient.accessToken
                                 accountType:anAccountType];
     if (self) {
         oauthClient = anOAuthClient;
+        oauthClient.delegate = self;
     }
     return self;
 }
 
-- (id)initAccountWithAccessToken:(NXOAuth2AccessToken *)anAccessToken accountType:(NSString *)anAccountType;
+- (instancetype)initAccountWithAccessToken:(NXOAuth2AccessToken *)anAccessToken accountType:(NSString *)anAccountType;
 {
     self = [super init];
     if (self) {
@@ -84,13 +87,14 @@ NSString * const NXOAuth2AccountDidFailToGetAccessTokenNotification = @"NXOAuth2
     @synchronized (oauthClient) {
         if (oauthClient == nil) {
             NSDictionary *configuration = [[NXOAuth2AccountStore sharedStore] configurationForAccountType:self.accountType];
-            
+
             NSString *clientID = [configuration objectForKey:kNXOAuth2AccountStoreConfigurationClientID];
             NSString *clientSecret = [configuration objectForKey:kNXOAuth2AccountStoreConfigurationSecret];
             NSURL *authorizeURL = [configuration objectForKey:kNXOAuth2AccountStoreConfigurationAuthorizeURL];
             NSURL *tokenURL = [configuration objectForKey:kNXOAuth2AccountStoreConfigurationTokenURL];
             NSString *tokenType = [configuration objectForKey:kNXOAuth2AccountStoreConfigurationTokenType];
-            NSString *keychainGroup = [configuration objectForKey:kNXOAuth2AccountStoreConfigurationTokenType];
+            NSString *keychainGroup = [configuration objectForKey:kNXOAuth2AccountStoreConfigurationKeyChainGroup];
+            NSString *keychainAccessGroup = [configuration objectForKey:kNXOAuth2AccountStoreConfigurationKeyChainAccessGroup];
             NSDictionary *additionalQueryParams = [configuration objectForKey:kNXOAuth2AccountStoreConfigurationAdditionalAuthenticationParameters];
             NSDictionary *customHeaderFields = [configuration objectForKey:kNXOAuth2AccountStoreConfigurationCustomHeaderFields];
 
@@ -101,16 +105,17 @@ NSString * const NXOAuth2AccountDidFailToGetAccessTokenNotification = @"NXOAuth2
                                                        accessToken:self.accessToken
                                                          tokenType:tokenType
                                                      keyChainGroup:keychainGroup
+                                               keyChainAccessGroup:keychainAccessGroup
                                                         persistent:NO
                                                           delegate:self];
             if (additionalQueryParams) {
                 oauthClient.additionalAuthenticationParameters = additionalQueryParams;
             }
-            
+
             if (customHeaderFields) {
                 oauthClient.customHeaderFields = customHeaderFields;
             }
-            
+
         }
     }
     return oauthClient;
@@ -202,7 +207,7 @@ NSString * const NXOAuth2AccountDidFailToGetAccessTokenNotification = @"NXOAuth2
     [aCoder encodeObject:userData forKey:@"userData"];
 }
 
-- (id)initWithCoder:(NSCoder *)aDecoder
+- (instancetype)initWithCoder:(NSCoder *)aDecoder
 {
     if (self = [super init]) {
         userData = [aDecoder decodeObjectForKey:@"userData"];

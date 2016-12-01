@@ -80,6 +80,19 @@ The best place to configure your client is `+[UIApplicationDelegate initialize]`
 
 Take a look at the [Wiki](https://github.com/nxtbgthng/OAuth2Client/wiki) for some examples.
 
+Unless otherwise specficied, the token request will be called with a HTTP Header 'Content-Type' set to 'multipart/form-data'.  If you wish that header to be set to 'application/x-www-form-urlencoded', the custom header fields must be modified.
+
+<pre>
+NSMutableDictionary *configuration = [NSMutableDictionary dictionaryWithDictionary:[[NXOAuth2AccountStore sharedStore] configurationForAccountType:kOAuth2AccountType]];
+NSDictionary *customHeaderFields = [NSDictionary dictionaryWithObject:@"application/x-www-form-urlencoded" forKey:@"Content-Type"];
+[configuration setObject:customHeaderFields forKey:kNXOAuth2AccountStoreConfigurationCustomHeaderFields];
+[[NXOAuth2AccountStore sharedStore] setConfiguration:configuration forAccountType:kOAuth2AccountType];
+</pre>
+  
+Consult the documentation of the OAuth2 provider to determine acceptable Content-Type header values. 
+
+    
+
 ### Requesting Access to a Service
 
 Once you have configured your client you are ready to request access to one of those services. The NXOAuth2AccountStore provides three different methods for this:
@@ -96,7 +109,12 @@ Once you have configured your client you are ready to request access to one of t
  [[NXOAuth2AccountStore sharedStore] requestAccessToAccountWithType:@"myFancyService"];
  </pre>
   
- If you are using an external browser, your application needs to handle the URL you have registered as an redirect URL for the account type. The service will redirect to that URL after the authentication process.
+ If you are using an external browser, your application needs to handle the URL you have registered as an redirect URL for the account type (e.g. a custom URL scheme like `myfancyscheme://oauth`). The service will redirect to that URL after the authentication process.
+ 
+ In `-[AppDelegate application: openURL: sourceApplication: annotation:]` pass the redirect URL to
+ <pre>
+     [[NXOAuth2AccountStore sharedStore] handleRedirectURL: url];
+ </pre>
 
 - Provide an Authorization URL Handler
  <pre>
@@ -106,6 +124,24 @@ Once you have configured your client you are ready to request access to one of t
  	                            }];
  </pre>
  Using an authorization URL handler gives you the ability to open the URL in an own web view or do some fancy stuff for authentication. Therefore you pass a block to the NXOAuth2AccountStore while requesting access.
+ 
+ One method for receiving a code and exchanging it for an auth token requires the following:
+ 
+  1) Load the preparedURL into an existing UIWebView as part of the block code above. Be certain to set the delegate for the UIWebView.
+  
+ <pre>
+ [_webView loadRequest:[NSURLRequest requestWithURL:preparedURL]];
+ </pre>
+ 
+  2) In the `webViewDidFinishLoad:` delegate method, you will need to parse the URL for your callback URL.  If there is a match, pass that URL to `-[NXOAuth2AccountStore handleRedirectURL:]`
+
+ <pre>
+ if ([webView.request.URL.absoluteString rangeOfString:kOAuth2RedirectURL options:NSCaseInsensitiveSearch].location != NSNotFound) {
+        [[NXOAuth2AccountStore sharedStore] handleRedirectURL:[NSURL URLWithString:webView.request.URL.absoluteString]];        
+    }
+</pre>   
+
+This is a very basic example.  In the above, it is assumed that the `code` being returned from the OAuth2 provider is in the query parameter of the webView.request.URL (i.e. `http://myredirecturl.com?code=<verylongcodestring>`).  This is not always the case and you may have to look elsewhere for the code (e.g. in the page content, web page title).  You must prepare a URL in the format described above to pass to `-[NXOAuth2AccountStore handleRedirectURL:]`.
 
 #### On Success
 
@@ -122,7 +158,7 @@ If an account was added the `userInfo` dictionary of the notification will conta
 
 #### On Failure
 
-If the authentication did not succeed, a notification of type `NXOAuth2AccountStoreDidFailToRequestAccessNotification` containing an `NSError` will be send.
+If the authentication did not succeed, a notification of type `NXOAuth2AccountStoreDidFailToRequestAccessNotification` containing an `NSError` will be sent.
 <pre>
 [[NSNotificationCenter defaultCenter] addObserverForName:NXOAuth2AccountStoreDidFailToRequestAccessNotification
                                                   object:[NXOAuth2AccountStore sharedStore]
@@ -157,7 +193,30 @@ NSDictionary *userData = // ...
 account.userData = userData;
 </pre>
 
-This payload will be stored together with the accounts in the Keychain. Thus it shouldn't be to big.
+This payload will be stored together with the accounts in the Keychain. Thus it shouldn't be too big.
+
+### Removing Accounts
+
+To remove an account and its tokens from the store:
+
+<pre>
+[[NXOAuth2AccountStore sharedStore]  removeAccount:account];
+</pre>
+
+Note that if you used a UIWebView to request access to a service as described above, it's likely that the token has been cached in `[NSHTTPCookieStorage sharedHTTPCookieStorage]`
+
+You can remove the auth token from the cookie cache using:
+
+<pre>
+for(NSHTTPCookie *cookie in [[NSHTTPCookieStorage sharedHTTPCookieStorage] cookies]) {
+    if([[cookie domain] isEqualToString:@"myapp.com"]) {
+        [[NSHTTPCookieStorage sharedHTTPCookieStorage] deleteCookie:cookie];
+    }
+}
+[[NSUserDefaults standardUserDefaults] synchronize];
+</pre>
+
+Where `myapp.com` is the domain from which you received the auth token -- likley the `authorizationURL` assigned to the store at the time of request.  As a convenience, you may want to store the domain of the token in the `account.userData` so that it is readily available if you need to delete the cookies.
 
 ### Invoking a Request
 
@@ -175,7 +234,7 @@ A request using the authentication for a service can be invoked via `NXOAuth2Req
 
 #### Getting a signed NSURLRequest
 
-In some circumstances you have to go the *good old way* and use an `NSURLConnection`. Maybe if you to download a large file. Therefore `NXOAuth2Request` gives you the possibility to get an `NSURLRequest` containing the additional information to authenticate that request.
+In some circumstances you have to go the *good old way* and use an `NSURLConnection`. Maybe if you want to download a large file. Therefore `NXOAuth2Request` gives you the possibility to get an `NSURLRequest` containing the additional information to authenticate that request.
 
 <pre>
 NXOAuth2Request *theRequest = [[NXOAuth2Request alloc] initWithResource:[NSURL URLWithString:@"https://...your service URL..."]
