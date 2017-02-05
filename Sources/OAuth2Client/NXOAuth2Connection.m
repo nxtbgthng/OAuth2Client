@@ -502,7 +502,7 @@ sendingProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)aSendingProgres
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error;
 {
 #if (NXOAuth2ConnectionDebug)
-    NSLog(@"%.0fms (FAIL) - %@ (%@ %i)", -[startDate timeIntervalSinceNow]*1000.0, [self descriptionForRequest:request], [error domain], [error code]);
+    NSLog(@"%.0fms (FAIL) - %@ (%@ %ld)", -[startDate timeIntervalSinceNow]*1000.0, [self descriptionForRequest:request], [error domain], (long)[error code]);
 #endif
     
     if (sendConnectionDidEndNotification) [[NSNotificationCenter defaultCenter] postNotificationName:NXOAuth2ConnectionDidEndNotification object:self];
