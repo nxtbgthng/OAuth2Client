@@ -121,7 +121,7 @@ typedef void(^NXOAuth2PreparedAuthorizationURLHandler)(NSURL *preparedURL);
 - (NSDictionary *)configurationForAccountType:(NSString *)accountType;
 
 
-#pragma Trust Mode Handler
+#pragma mark Trust Mode Handler
 
 - (void)setTrustModeHandlerForAccountType:(NSString *)accountType block:(NXOAuth2TrustModeHandler)handler;
 - (NXOAuth2TrustModeHandler)trustModeHandlerForAccountType:(NSString *)accountType;
