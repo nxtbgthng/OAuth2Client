@@ -487,7 +487,7 @@ sendingProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)aSendingProgres
             }
         }
         
-        NSString *localizedError = [NSString stringWithFormat:NSLocalizedString(@"HTTP Error: %d", @"NXOAuth2HTTPErrorDomain description"), self.statusCode];
+        NSString *localizedError = [NSString stringWithFormat:NSLocalizedString(@"HTTP Error: %ld", @"NXOAuth2HTTPErrorDomain description"), (long)self.statusCode];
         NSDictionary *errorUserInfo = [NSDictionary dictionaryWithObject:localizedError forKey:NSLocalizedDescriptionKey];
         NSError *error = [NSError errorWithDomain:NXOAuth2HTTPErrorDomain
                                              code:self.statusCode
