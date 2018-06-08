@@ -84,6 +84,7 @@ typedef void(^NXOAuth2PreparedAuthorizationURLHandler)(NSURL *preparedURL);
 @property(nonatomic, strong) NSString *keychainAccessGroup;
 @property(nonatomic, strong) NSString *keychainServiceName;
 @property(nonatomic, strong, readonly) NSArray *accounts;
+@property(nonatomic, copy) NSString *activeAccountType;
 - (NSArray *)accountsWithAccountType:(NSString *)accountType;
 - (NXOAuth2Account *)accountWithIdentifier:(NSString *)identifier;
 

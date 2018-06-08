@@ -22,6 +22,7 @@
 
 #import "NXOAuth2Request.h"
 
+
 @interface NXOAuth2Request () <NXOAuth2ConnectionDelegate>
 @property (nonatomic,  strong, readwrite) NXOAuth2Connection *connection;
 @property (nonatomic,  strong, readwrite) NXOAuth2Request *me;
@@ -82,6 +83,17 @@
 }
 
 
+- (instancetype)initWithResource:(NSURL *)aResource method:(NSString *)aMethod contentType:(NSString *) aContentType parameters:(NSDictionary *)someParameters
+{
+    self = [super init];
+    if (self) {
+        resource = aResource;
+        parameters = someParameters;
+        requestMethod = aMethod;
+    }
+    return self;
+}
+
 #pragma mark Accessors
 
 @synthesize parameters;
@@ -125,7 +137,15 @@
     
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:self.resource];
     [request setHTTPMethod:self.requestMethod];
+
+    [request setCachePolicy:NSURLRequestReloadIgnoringLocalCacheData];
+    if(self.requestContentType)
+    {
+        [request setValue:self.requestContentType forHTTPHeaderField:@"Content-Type"];
+    }
+    
     [self applyHeaders:self.headerFields onRequest:request];
+
     self.connection = [[NXOAuth2Connection alloc] initWithRequest:request
                                                 requestParameters:self.parameters
                                                       oauthClient:self.account.oauthClient
@@ -180,16 +200,15 @@
     NSString *httpMethod = [aRequest HTTPMethod];
     if (![@[@"POST",@"PUT",@"PATCH"] containsObject: [httpMethod uppercaseString]]) {
         aRequest.URL = [aRequest.URL nxoauth2_URLByAddingParameters:someParameters];
-    } else {
+    }  else  {
         NSInputStream *postBodyStream = [[NXOAuth2PostBodyStream alloc] initWithParameters:parameters];
-        
         NSString *contentType = [NSString stringWithFormat:@"multipart/form-data; boundary=%@", [(NXOAuth2PostBodyStream *)postBodyStream boundary]];
-        NSString *contentLength = [NSString stringWithFormat:@"%llu", [(NXOAuth2PostBodyStream *)postBodyStream length]];
         [aRequest setValue:contentType forHTTPHeaderField:@"Content-Type"];
+        NSString *contentLength = [NSString stringWithFormat:@"%llu", [(NXOAuth2PostBodyStream *)postBodyStream length]];
         [aRequest setValue:contentLength forHTTPHeaderField:@"Content-Length"];
-        
         [aRequest setHTTPBodyStream:postBodyStream];
     }
+    
 }
 
 - (void)applyHeaders:(NSDictionary *)someHeaders onRequest:(NSMutableURLRequest *)aRequest;

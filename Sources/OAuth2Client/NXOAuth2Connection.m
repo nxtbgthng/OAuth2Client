@@ -25,6 +25,7 @@
 - (void)removeConnectionFromWaitingQueue:(NXOAuth2Connection *)connection;
 @end
 
+NSString * const jsonContentType = @"application/json" ;
 
 NSString * const NXOAuth2ConnectionDidStartNotification = @"NXOAuth2ConnectionDidStartNotification";
 NSString * const NXOAuth2ConnectionDidEndNotification = @"NXOAuth2ConnectionDidEndNotification";
@@ -244,7 +245,16 @@ sendingProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)aSendingProgres
             
             [aRequest setHTTPBodyStream:postBodyStream];
             
-        } else if ([contentType isEqualToString:@"application/x-www-form-urlencoded"]) {
+        }
+        else if([contentType isEqualToString:jsonContentType]){
+            NSError *error;
+            NSData *jsonData = [NSJSONSerialization dataWithJSONObject:parameters options:0 error:&error];
+            if(!error)
+            {
+                [aRequest setHTTPBody:jsonData];
+            }
+        }
+        else if ([contentType isEqualToString:@"application/x-www-form-urlencoded"]) {
             
             // sends the POST/PUT/PATCH request as application/x-www-form-urlencoded
             
@@ -423,11 +433,9 @@ sendingProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)aSendingProgres
         && ([authenticateHeader rangeOfString:@"invalid_token"].location != NSNotFound || 
             [authenticateHeader rangeOfString:@"expired_token"].location != NSNotFound ))
     {
+
         [self cancel];
         [client refreshAccessTokenAndRetryConnection:self];
-    } else if (client.authConnection != self && authenticateHeader && client) {
-        [self cancel];
-        [client requestAccessAndRetryConnection:self];
     } else {
         if ([delegate respondsToSelector:@selector(oauthConnection:didReceiveData:)]) {
             [delegate oauthConnection:self didReceiveData:data];    // inform the delegate that we start with empty data
@@ -598,6 +606,10 @@ sendingProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)aSendingProgres
             [[challenge sender] cancelAuthenticationChallenge:challenge];
         }
     }
+}
+
+- (NSCachedURLResponse *)connection:(NSURLConnection *)connection willCacheResponse:(NSCachedURLResponse *)cachedResponse {
+    return nil;
 }
 
 @end

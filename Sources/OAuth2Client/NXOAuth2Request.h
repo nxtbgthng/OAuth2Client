@@ -37,6 +37,7 @@
   sendProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)progressHandler
       responseHandler:(NXOAuth2ConnectionResponseHandler)responseHandler;
 
+
 + (void)performMethod:(NSString *)method
            onResource:(NSURL *)resource
       usingParameters:(NSDictionary *)parameters
@@ -58,6 +59,7 @@
 @property (nonatomic, strong, readwrite) NXOAuth2Account *account;
 
 @property (nonatomic, strong, readwrite) NSString *requestMethod;
+@property (nonatomic, strong, readwrite) NSString *requestContentType;
 @property (nonatomic, strong, readwrite) NSURL *resource;
 @property (nonatomic, strong, readwrite) NSDictionary *parameters;
 
