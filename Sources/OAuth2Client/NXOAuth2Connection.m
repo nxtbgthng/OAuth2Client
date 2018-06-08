@@ -425,7 +425,7 @@ sendingProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)aSendingProgres
     {
         [self cancel];
         [client refreshAccessTokenAndRetryConnection:self];
-    } else if (client.authConnection != self && authenticateHeader && client) {
+    } else if (client.authConnection != self && authenticateHeader && client && !client.accessToken) {
         [self cancel];
         [client requestAccessAndRetryConnection:self];
     } else {
