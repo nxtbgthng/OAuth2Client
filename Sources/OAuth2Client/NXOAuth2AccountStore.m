@@ -703,7 +703,7 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
     result = (__bridge_transfer NSDictionary *)cfResult;
 
     if (status != noErr) {
-        NSAssert1(status == errSecItemNotFound, @"Unexpected error while fetching accounts from keychain: %zd", status);
+        NSAssert1(status == errSecItemNotFound, @"Unexpected error while fetching accounts from keychain: %d", status);
         return nil;
     }
 
@@ -731,7 +731,7 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
 #endif
     
     OSStatus __attribute__((unused)) err = SecItemAdd((__bridge CFDictionaryRef)query, NULL);
-    NSAssert1(err == noErr, @"Error while adding token to keychain: %zd", err);
+    NSAssert1(err == noErr, @"Error while adding token to keychain: %d", err);
 }
 
 - (void)removeFromDefaultKeychainWithAccessGroup:(NSString *)keyChainAccessGroup;
@@ -749,7 +749,7 @@ NSString * const kNXOAuth2AccountStoreAccountType = @"kNXOAuth2AccountStoreAccou
 #endif
     
     OSStatus __attribute__((unused)) err = SecItemDelete((__bridge CFDictionaryRef)query);
-    NSAssert1((err == noErr || err == errSecItemNotFound), @"Error while deleting token from keychain: %zd", err);
+    NSAssert1((err == noErr || err == errSecItemNotFound), @"Error while deleting token from keychain: %d", err);
 
 }
 
