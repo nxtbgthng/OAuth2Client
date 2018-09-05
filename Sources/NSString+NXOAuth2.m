@@ -29,11 +29,31 @@
 
 + (NSString *)nxoauth2_stringWithEncodedQueryParameters:(NSDictionary *)parameters;
 {
-    
-    NSMutableArray *parameterPairs = [NSMutableArray array];
+    __block NSMutableArray *parameterPairs = [NSMutableArray array];
     for (NSString *key in [parameters allKeys]) {
-        NSString *pair = [NSString stringWithFormat:@"%@=%@", [key nxoauth2_URLEncodedString], [[parameters objectForKey:key] nxoauth2_URLEncodedString]];
-        [parameterPairs addObject:pair];
+        id parameterValue = [parameters objectForKey:key];
+        __block NSString *pair = nil;
+        if ([parameterValue isKindOfClass:[NSString class]]) {
+            pair = [NSString stringWithFormat:@"%@=%@",
+                    [key nxoauth2_URLEncodedString],
+                    [[parameters objectForKey:key] nxoauth2_URLEncodedString]];
+            [parameterPairs addObject:pair];
+        } else if ([parameterValue isKindOfClass:[NSArray class]]) {
+            [(NSArray *)parameterValue enumerateObjectsUsingBlock:^(NSString *subParam, NSUInteger idx, BOOL *stop) {
+                pair = [NSString stringWithFormat:@"%@=%@",
+                        [key nxoauth2_URLEncodedString],
+                        [subParam nxoauth2_URLEncodedString]];
+                [parameterPairs addObject:pair];
+            }];
+        } else if ([parameterValue isKindOfClass:[NSDictionary class]]) {
+            [(NSDictionary *)parameterValue enumerateKeysAndObjectsUsingBlock:^(NSString *subParamKey, NSString *subParamValue, BOOL *stop) {
+                pair = [NSString stringWithFormat:@"%@[%@]=%@",
+                        [key nxoauth2_URLEncodedString],
+                        [subParamKey nxoauth2_URLEncodedString],
+                        [subParamValue nxoauth2_URLEncodedString]];
+                [parameterPairs addObject:pair];
+            }];
+        }
     }
     return [parameterPairs componentsJoinedByString:@"&"];
 }
