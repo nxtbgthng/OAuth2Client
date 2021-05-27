@@ -421,7 +421,8 @@ sendingProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)aSendingProgres
         && client.accessToken.refreshToken != nil
         && authenticateHeader
         && ([authenticateHeader rangeOfString:@"invalid_token"].location != NSNotFound || 
-            [authenticateHeader rangeOfString:@"expired_token"].location != NSNotFound ))
+            [authenticateHeader rangeOfString:@"invalid_grant"].location != NSNotFound ||
+            [authenticateHeader rangeOfString:@"expired_token"].location != NSNotFound))
     {
         [self cancel];
         [client refreshAccessTokenAndRetryConnection:self];
@@ -570,34 +571,34 @@ sendingProgressHandler:(NXOAuth2ConnectionSendingProgressHandler)aSendingProgres
     return [protectionSpace.authenticationMethod isEqualToString:NSURLAuthenticationMethodServerTrust];
 }
 
-- (void)connection:(NSURLConnection *)connection didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge;
-{
-    if ([challenge.protectionSpace.authenticationMethod isEqualToString:NSURLAuthenticationMethodServerTrust]) {
-        NSString *hostname = challenge.protectionSpace.host;
-        
-        NXOAuth2TrustMode effectiveTrustMode = NXOAuth2TrustModeSystem;
-        if ([self.trustDelegate respondsToSelector:@selector(connection:trustModeForHostname:)]) {
-            effectiveTrustMode = [self.trustDelegate connection:self trustModeForHostname:hostname];
-        }
-        BOOL shouldTrustCerificate = [self trustsAuthenticationChallenge:challenge
-                                                             forHostname:hostname
-                                                           withTrustMode:effectiveTrustMode];
-        
-        if (shouldTrustCerificate) {
-            [challenge.sender useCredential:[NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust]
-                 forAuthenticationChallenge:challenge];
-        } else {
-            [challenge.sender cancelAuthenticationChallenge:challenge];
-        }
-        
-    } else {
-        
-        if ( [challenge previousFailureCount] == 0 ) {
-            [[challenge sender] continueWithoutCredentialForAuthenticationChallenge:challenge];
-        } else {
-            [[challenge sender] cancelAuthenticationChallenge:challenge];
-        }
-    }
-}
+//- (void)connection:(NSURLConnection *)connection didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge;
+//{
+//    if ([challenge.protectionSpace.authenticationMethod isEqualToString:NSURLAuthenticationMethodServerTrust]) {
+//        NSString *hostname = challenge.protectionSpace.host;
+//        
+//        NXOAuth2TrustMode effectiveTrustMode = NXOAuth2TrustModeSystem;
+//        if ([self.trustDelegate respondsToSelector:@selector(connection:trustModeForHostname:)]) {
+//            effectiveTrustMode = [self.trustDelegate connection:self trustModeForHostname:hostname];
+//        }
+//        BOOL shouldTrustCerificate = [self trustsAuthenticationChallenge:challenge
+//                                                             forHostname:hostname
+//                                                           withTrustMode:effectiveTrustMode];
+//        
+//        if (shouldTrustCerificate) {
+//            [challenge.sender useCredential:[NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust]
+//                 forAuthenticationChallenge:challenge];
+//        } else {
+//            [challenge.sender cancelAuthenticationChallenge:challenge];
+//        }
+//        
+//    } else {
+//        
+//        if ( [challenge previousFailureCount] == 0 ) {
+//            [[challenge sender] continueWithoutCredentialForAuthenticationChallenge:challenge];
+//        } else {
+//            [[challenge sender] cancelAuthenticationChallenge:challenge];
+//        }
+//    }
+//}
 
 @end
